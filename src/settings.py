@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 from terminusgps.authorizenet.constants import Environment, ValidationMode
+from terminusgps.wialon.flags import TokenFlag
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,6 +37,12 @@ STATIC_URL = "static/"
 TIME_ZONE = "US/Central"
 USE_I18N = True
 USE_TZ = True
+TERMINUSGPS_WIALON_TOKEN = os.getenv("TERMINUSGPS_WIALON_TOKEN")
+WIALON_TOKEN_ACCESS_TYPE = (
+    TokenFlag.VIEW_ACCESS
+    | TokenFlag.MANAGE_NONSENSITIVE
+    | TokenFlag.MANAGE_SENSITIVE
+)
 WSGI_APPLICATION = "src.wsgi.application"
 
 INSTALLED_APPS = [

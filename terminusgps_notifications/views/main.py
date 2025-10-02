@@ -1,7 +1,10 @@
 import typing
 import urllib.parse
+from functools import lru_cache
 
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.http import HttpRequest, HttpResponse
 from django.urls import reverse
 from django.views.generic import RedirectView, TemplateView
@@ -41,42 +44,47 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
     template_name = "terminusgps_notifications/account.html"
 
     @staticmethod
+    @lru_cache(maxsize=3, typed=True)
     def generate_wialon_login_params(
         customer: Customer,
-        client_id: str = "Terminus GPS Notifications",
-        access_type: int = -1,
         activation_time: int = 0,
-        duration: int = 2_592_000,
-        lang: str = "en",
-        flags: int = 0x1,
-    ) -> str:
-        redirect_uri = urllib.parse.urljoin(
-            "http://localhost:8000/",  # TODO: Get actual domain
-            reverse("terminusgps_notifications:wialon callback"),
-        )
-        return urllib.parse.urlencode(
-            {
-                "client_id": client_id,
-                "access_type": access_type,
-                "activation_time": activation_time,
-                "duration": duration,
-                "lang": lang,
-                "flags": flags,
-                "redirect_uri": redirect_uri,
-                "response_type": "token",
-                "user": customer.user.username,
-            }
-        )
+        token_lifetime: int = 2_592_000,
+    ) -> dict[str, typing.Any]:
+        """
+        Returns a dictionary of Wialon login parameters for Terminus GPS Notifications.
+
+        :param customer: A customer.
+        :type customer: ~terminusgps_notifications.Customer
+        :param activation_time: Token activation time in UNIX-timestamp format. Default is ``0`` (now).
+        :type activation_time: int
+        :param token_lifetime: How long (in seconds) the token will live for. Default is ``2_592_000`` (30 days).
+        :returns: A dictionary of Wialon login parameters.
+        :rtype: dict[str, ~typing.Any]
+
+        """
+        return {
+            "client_id": "Terminus GPS Notifications",
+            "access_type": settings.WIALON_TOKEN_ACCESS_TYPE,
+            "activation_time": activation_time,
+            "duration": token_lifetime,
+            "lang": "en",
+            "flags": 0x1,
+            "response_type": "token",
+            "user": customer.user.username,
+            "redirect_uri": urllib.parse.urljoin(
+                "http://localhost:8000/"
+                if settings.DEBUG
+                else "https://app.terminusgps.com/n/",
+                reverse("terminusgps_notifications:wialon callback"),
+            ),
+        }
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         customer = Customer.objects.get(user=self.request.user)
         login_params = self.generate_wialon_login_params(customer)
-        context["login_params"] = login_params
-        try:
-            context["wialon_token"] = customer.wialon_token
-        except WialonToken.DoesNotExist:
-            context["wialon_token"] = None
+        context["login_params"] = urllib.parse.urlencode(login_params)
+        context["wialon_token"] = customer.wialon_token
         return context
 
 
@@ -121,16 +129,16 @@ class WialonCallbackView(HtmxTemplateResponseMixin, TemplateView):
     )
     template_name = "terminusgps_notifications/wialon_callback.html"
 
+    @transaction.atomic
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         if username := request.GET.get("user"):
             if (
                 request.user.is_authenticated
                 and request.user.username == username
             ):
-                customer = Customer.objects.get(user__username=username)
-                token = WialonToken()
-                token.value = request.GET.get("access_token")
+                token = WialonToken(name=request.GET.get("access_token"))
                 token.save()
+                customer = Customer.objects.get(user__username=username)
                 customer.wialon_token = token
                 customer.save()
         return super().get(request, *args, **kwargs)

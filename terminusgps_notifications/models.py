@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from encrypted_field import EncryptedField
 from terminusgps.authorizenet.constants import SubscriptionStatus
+from terminusgps.wialon.session import WialonSession
 
 
 class Customer(models.Model):
@@ -54,8 +56,8 @@ class Customer(models.Model):
 class WialonToken(models.Model):
     """A Wialon API token."""
 
-    value = EncryptedField()
-    """Wialon token value."""
+    name = EncryptedField(max_length=72)
+    """Wialon token name."""
     date_created = models.DateTimeField(auto_now_add=True)
     """Date/time created."""
     date_updated = models.DateTimeField(auto_now=True)
@@ -67,6 +69,30 @@ class WialonToken(models.Model):
 
     def __str__(self) -> str:
         return f"WialonToken #{self.pk}"
+
+    @transaction.atomic
+    def refresh(self, duration: int = 2_592_000) -> None:
+        """
+        Refreshes the Wialon API token for another ``duration`` seconds.
+
+        :param duration: Token lifetime duration in seconds. Default is ``2_592_000`` (30 days).
+        :type days: int
+        :returns: Nothing.
+        :rtype: None
+
+        """
+        with WialonSession(token=settings.TERMINUSGPS_WIALON_TOKEN) as session:
+            session.wialon_api.token_update(
+                **{
+                    "callMode": "update",
+                    "h": self.name,
+                    "app": "Terminus GPS Notifications",
+                    "at": 0,
+                    "dur": duration,
+                    "fl": settings.WIALON_TOKEN_ACCESS_TYPE,
+                    "p": "{}",
+                }
+            )
 
 
 class Notification(models.Model):
