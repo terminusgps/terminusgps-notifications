@@ -1,0 +1,51 @@
+from django.urls import path
+
+from . import views
+
+app_name = "terminusgps_notifications"
+urlpatterns = [
+    path("", views.HomeView.as_view(), name="home"),
+    path(
+        "wialon/login/", views.WialonLoginView.as_view(), name="wialon login"
+    ),
+    path(
+        "wialon/callback/",
+        views.WialonCallbackView.as_view(),
+        name="wialon callback",
+    ),
+    path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
+    path("account/", views.AccountView.as_view(), name="account"),
+    path(
+        "subscription/", views.SubscriptionView.as_view(), name="subscription"
+    ),
+    path(
+        "notifications/",
+        views.NotificationsView.as_view(),
+        name="notifications",
+    ),
+    path(
+        "notifications/list/",
+        views.NotificationListView.as_view(),
+        name="list notification",
+    ),
+    path(
+        "notifications/create/",
+        views.NotificationCreateView.as_view(),
+        name="create notification",
+    ),
+    path(
+        "notifications/<int:notification_pk>/detail/",
+        views.NotificationDetailView.as_view(),
+        name="detail notification",
+    ),
+    path(
+        "notifications/<int:notification_pk>/update/",
+        views.NotificationUpdateView.as_view(),
+        name="update notification",
+    ),
+    path(
+        "notifications/<int:notification_pk>/delete/",
+        views.NotificationDeleteView.as_view(),
+        name="delete notification",
+    ),
+]

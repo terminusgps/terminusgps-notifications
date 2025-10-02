@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>{% if title %}{{ title }} | {% endif %}Notification Manager</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <link rel="icon" href="{% static 'terminusgps_notifications/favicon.ico' %}">
+        <link rel="stylesheet" href="{% static 'terminusgps_notifications/css/output.css' %}">
+        <script src="{% static 'terminusgps_notifications/js/htmx.min.js' %}" defer></script>
+    </head>
+    <body class="h-fit bg-gradient-to-b from-terminus-red-100 to-terminus-red-900 bg-no-repeat text-gray-800 dark:text-gray-100">
+        <main class="container mx-auto -mt-2 max-w-screen-lg">
+            <div class="border-lr mx-8 border-gray-600 bg-stone-100 dark:bg-terminus-gray-800">
+                <section class="mt-2 flex flex-col gap-2 bg-gray-200 p-8 shadow-inner dark:bg-terminus-gray-700">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-xl font-bold md:text-2xl">{{ title }}</h2>
+                        <svg id="loading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="htmx-indicator size-8 animate-spin">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                    </div>
+                    {% if subtitle %}<h3 class="font-light md:text-lg">{{ subtitle }}</h3>{% endif %}
+                </section>
+                <section class="p-8" hx-indicator="#loading">
+                    {% block content %}{% endblock content %}
+                </section>
+            </div>
+        </main>
+    </body>
+</html>

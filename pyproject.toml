@@ -1,0 +1,65 @@
+[project]
+name = "terminusgps-notifications"
+version = "1.0.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django-encrypted-field>=1.0.5",
+    "django>=5.2.7",
+    "python-terminusgps>=46.1.0",
+    "terminusgps-payments>=1.4.3",
+]
+
+[project.urls]
+Documentation = "https://github.com/terminusgps/terminusgps-notifications"
+Repository = "https://github.com/terminusgps/terminusgps-notifications"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["terminusgps_notifications/"]
+
+[tool.pyright]
+strictListInference = false
+strictDictionaryInference = false
+strictSetInference = false
+typeCheckingMode = "basic"
+
+[tool.ruff]
+exclude = [
+    ".git",
+    ".gitignore",
+    ".venv",
+    "venv",
+    ".vscode",
+    "__pycache__",
+    "node_modules",
+    "site-packages",
+    "dist",
+    "build",
+    "db.sqlite3",
+]
+line-length = 79
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E4",
+    "E7",
+    "E9",
+    "F",
+]
+ignore = ["F821"]
+fixable = [ "ALL" ]
+unfixable = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = false
+skip-magic-trailing-comma = true
