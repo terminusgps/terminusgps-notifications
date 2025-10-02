@@ -4,6 +4,7 @@ from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from encrypted_field import EncryptedField
 from terminusgps.authorizenet.constants import SubscriptionStatus
+from terminusgps.wialon import flags
 from terminusgps.wialon.session import WialonSession
 
 
@@ -16,6 +17,9 @@ class Customer(models.Model):
         max_digits=9, decimal_places=4, default=0.0825
     )
     """Tax rate."""
+    wialon_resource_id = models.PositiveIntegerField(null=True, blank=True)
+    """Wialon resource id."""
+
     subscription = models.ForeignKey(
         "terminusgps_payments.Subscription",
         on_delete=models.SET_NULL,
@@ -24,8 +28,6 @@ class Customer(models.Model):
         default=None,
     )
     """Notifications subscription."""
-    wialon_resource_id = models.PositiveIntegerField(null=True, blank=True)
-    """Wialon resource id."""
     wialon_token = models.OneToOneField(
         "terminusgps_notifications.WialonToken",
         on_delete=models.SET_NULL,
@@ -43,14 +45,54 @@ class Customer(models.Model):
         """Returns the customer's username."""
         return self.user.username
 
+    def save(self, **kwargs) -> None:
+        if not self.wialon_resource_id and self.wialon_token is not None:
+            # TODO: Retrieve resource_name from somewhere else (settings?)
+            resource_name: str = "Terminus GPS Notifications"
+            resource_id: int = self._get_wialon_resource_id(resource_name)
+            self.wialon_resource_id = resource_id
+        return super().save(**kwargs)
+
+    def _get_wialon_resource_id(self, resource_name: str) -> int:
+        """Retrieves or creates a Wialon resource by name."""
+        with WialonSession(token=self.wialon_token.name) as session:
+            wialon_response = session.wialon_api.core_search_items(
+                **{
+                    "spec": {
+                        "itemsType": "avl_resource",
+                        "propName": "sys_name",
+                        "propValueMask": resource_name,
+                        "sortType": "sys_name",
+                        "propType": "property",
+                    },
+                    "force": 0,
+                    "flags": flags.DataFlag.RESOURCE_BASE,
+                    "from": 0,
+                    "to": 0,
+                }
+            )
+            if int(wialon_response.get("totalItemsCount", 0)) == 1:
+                resource = wialon_response.get("items")[0]
+            else:
+                wialon_response = session.wialon_api.core_create_resource(
+                    **{
+                        "creatorId": session.uid,
+                        "name": resource_name,
+                        "dataFlags": flags.DataFlag.RESOURCE_BASE,
+                        "skipCreatorCheck": True,
+                    }
+                )
+                resource = wialon_response.get("item")
+            return int(resource.get("id"))
+
     @property
     def is_subscribed(self) -> bool:
         """Whether the customer is subscribed."""
-        if self.subscription is None:
-            return False
-        status = self.subscription.status
-        active = SubscriptionStatus.ACTIVE
-        return status == active
+        return (
+            self.subscription.status == SubscriptionStatus.ACTIVE
+            if self.subscription is not None
+            else False
+        )
 
 
 class WialonToken(models.Model):
@@ -66,6 +108,7 @@ class WialonToken(models.Model):
     class Meta:
         verbose_name = _("wialon token")
         verbose_name_plural = _("wialon tokens")
+        ordering = ["-date_updated"]
 
     def __str__(self) -> str:
         return f"WialonToken #{self.pk}"
@@ -73,7 +116,7 @@ class WialonToken(models.Model):
     @transaction.atomic
     def refresh(self, duration: int = 2_592_000) -> None:
         """
-        Refreshes the Wialon API token for another ``duration`` seconds.
+        Refreshes the Wialon API token.
 
         :param duration: Token lifetime duration in seconds. Default is ``2_592_000`` (30 days).
         :type days: int
@@ -81,7 +124,7 @@ class WialonToken(models.Model):
         :rtype: None
 
         """
-        with WialonSession(token=settings.TERMINUSGPS_WIALON_TOKEN) as session:
+        with WialonSession(token=settings.WIALON_TOKEN) as session:
             session.wialon_api.token_update(
                 **{
                     "callMode": "update",
