@@ -1,16 +1,13 @@
 import typing
-import urllib.parse
-from functools import lru_cache
 
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db import transaction
 from django.http import HttpRequest, HttpResponse
-from django.urls import reverse
-from django.views.generic import RedirectView, TemplateView
+from django.views.generic import FormView, RedirectView, TemplateView
 from terminusgps.mixins import HtmxTemplateResponseMixin
+from terminusgps_payments.models import AddressProfile, PaymentProfile
 
-from terminusgps_notifications.models import Customer, WialonToken
+from terminusgps_notifications.forms import CustomerSubscriptionCreationForm
+from terminusgps_notifications.models import Customer
 
 
 class HomeView(HtmxTemplateResponseMixin, TemplateView):
@@ -35,6 +32,13 @@ class DashboardView(
     )
     template_name = "terminusgps_notifications/dashboard.html"
 
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        context["customer"], _ = Customer.objects.get_or_create(
+            user=self.request.user
+        )
+        return context
+
 
 class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
     content_type = "text/html"
@@ -43,48 +47,12 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
     partial_template_name = "terminusgps_notifications/partials/_account.html"
     template_name = "terminusgps_notifications/account.html"
 
-    @staticmethod
-    @lru_cache(maxsize=3, typed=True)
-    def generate_wialon_login_params(
-        customer: Customer,
-        activation_time: int = 0,
-        token_lifetime: int = 2_592_000,
-    ) -> dict[str, typing.Any]:
-        """
-        Returns a dictionary of Wialon login parameters for Terminus GPS Notifications.
-
-        :param customer: A customer.
-        :type customer: ~terminusgps_notifications.Customer
-        :param activation_time: Token activation time in UNIX-timestamp format. Default is ``0`` (now).
-        :type activation_time: int
-        :param token_lifetime: How long (in seconds) the token will live for. Default is ``2_592_000`` (30 days).
-        :returns: A dictionary of Wialon login parameters.
-        :rtype: dict[str, ~typing.Any]
-
-        """
-        return {
-            "client_id": "Terminus GPS Notifications",
-            "access_type": settings.WIALON_TOKEN_ACCESS_TYPE,
-            "activation_time": activation_time,
-            "duration": token_lifetime,
-            "lang": "en",
-            "flags": 0x1,
-            "response_type": "token",
-            "user": customer.user.username,
-            "redirect_uri": urllib.parse.urljoin(
-                "http://localhost:8000/"
-                if settings.DEBUG
-                else "https://app.terminusgps.com/n/",
-                reverse("terminusgps_notifications:wialon callback"),
-            ),
-        }
-
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer = Customer.objects.get(user=self.request.user)
-        login_params = self.generate_wialon_login_params(customer)
-        context["login_params"] = urllib.parse.urlencode(login_params)
-        context["wialon_token"] = customer.wialon_token
+        try:
+            context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+            context["customer"] = Customer.objects.get(user=self.request.user)
+        except Customer.DoesNotExist:
+            context["customer"] = None
         return context
 
 
@@ -112,33 +80,68 @@ class NotificationsView(
     template_name = "terminusgps_notifications/notifications.html"
 
 
+class CustomerSubscriptionCreateView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
+):
+    content_type = "text/html"
+    extra_context = {"title": "Create Subscription"}
+    form_class = CustomerSubscriptionCreationForm
+    http_method_names = ["get", "post"]
+    partial_template_name = (
+        "terminusgps_notifications/partials/_create_subscription.html"
+    )
+    template_name = "terminusgps_notifications/create_subscription.html"
+
+    def get_form(self, form_class=None) -> CustomerSubscriptionCreationForm:
+        form = super().get_form(form_class=form_class)
+        payment_qs = PaymentProfile.objects.for_user(self.request.user)
+        address_qs = AddressProfile.objects.for_user(self.request.user)
+        form.fields["payment_profile"].queryset = payment_qs
+        form.fields["payment_profile"].empty_label = None
+        form.fields["address_profile"].queryset = address_qs
+        form.fields["address_profile"].empty_label = None
+        return form
+
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        context["customer"], _ = Customer.objects.get_or_create(
+            user=self.request.user
+        )
+        return context
+
+
+class CustomerStatsView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
+):
+    content_type = "text/html"
+    http_method_names = ["get"]
+    partial_template_name = "terminusgps_notifications/partials/_stats.html"
+    template_name = "terminusgps_notifications/stats.html"
+
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        try:
+            context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+            context["customer"] = Customer.objects.get(user=self.request.user)
+        except Customer.DoesNotExist:
+            context["customer"] = None
+        return context
+
+
 class WialonLoginView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, RedirectView
 ):
+    http_method_names = ["get"]
     permanent = True
     query_string = True
     url = "https://hosting.terminusgps.com/login.html"
 
 
-class WialonCallbackView(HtmxTemplateResponseMixin, TemplateView):
+class WialonCallbackView(TemplateView):
     content_type = "text/html"
-    http_method_names = ["get"]
     extra_context = {"title": "Logged Into Wialon"}
-    partial_template_name = (
-        "terminusgps_notifications/partials/_wialon_callback.html"
-    )
+    http_method_names = ["get"]
     template_name = "terminusgps_notifications/wialon_callback.html"
 
-    @transaction.atomic
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        if username := request.GET.get("user"):
-            if (
-                request.user.is_authenticated
-                and request.user.username == username
-            ):
-                token = WialonToken(name=request.GET.get("access_token"))
-                token.save()
-                customer = Customer.objects.get(user__username=username)
-                customer.wialon_token = token
-                customer.save()
+        print(f"{request.GET = }")
         return super().get(request, *args, **kwargs)

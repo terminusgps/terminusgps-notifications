@@ -1,11 +1,12 @@
-from django.conf import settings
+import decimal
+
+from authorizenet import apicontractsv1
 from django.contrib.auth import get_user_model
-from django.db import models, transaction
+from django.db import models
+from django.db.models import F
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from encrypted_field import EncryptedField
-from terminusgps.authorizenet.constants import SubscriptionStatus
-from terminusgps.wialon import flags
-from terminusgps.wialon.session import WialonSession
 
 
 class Customer(models.Model):
@@ -13,29 +14,49 @@ class Customer(models.Model):
 
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     """Django user."""
+    resource_id = models.CharField(
+        max_length=8, null=True, blank=True, default=None
+    )
+    """Wialon resource id."""
+    max_sms_count = models.IntegerField(default=500)
+    """Maximum number of allowed sms messages for the period."""
+    max_voice_count = models.IntegerField(default=500)
+    """Maximum number of allowed voice messages for the period."""
+    sms_count = models.IntegerField(default=0)
+    """Current number of sms messages for the period."""
+    voice_count = models.IntegerField(default=0)
+    """Current number of voice messages for the period."""
+
     tax_rate = models.DecimalField(
         max_digits=9, decimal_places=4, default=0.0825
     )
-    """Tax rate."""
-    wialon_resource_id = models.PositiveIntegerField(null=True, blank=True)
-    """Wialon resource id."""
+    """Subscription tax rate."""
+    subtotal = models.DecimalField(
+        max_digits=9, decimal_places=2, default=44.99
+    )
+    """Subscription subtotal."""
+    tax = models.GeneratedField(
+        expression=(F("subtotal") * (F("tax_rate") + 1)) - F("subtotal"),
+        output_field=models.DecimalField(max_digits=9, decimal_places=2),
+        db_persist=True,
+    )
+    """Subscription tax."""
+    grand_total = models.GeneratedField(
+        expression=F("subtotal") * (F("tax_rate") + 1),
+        output_field=models.DecimalField(max_digits=9, decimal_places=2),
+        db_persist=True,
+    )
+    """Subscription grand total (subtotal + tax)."""
 
     subscription = models.ForeignKey(
         "terminusgps_payments.Subscription",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
+        related_name="customer",
         null=True,
         blank=True,
         default=None,
     )
-    """Notifications subscription."""
-    wialon_token = models.OneToOneField(
-        "terminusgps_notifications.WialonToken",
-        on_delete=models.SET_NULL,
-        default=None,
-        null=True,
-        blank=True,
-    )
-    """Wialon API token."""
+    """Associated subscription."""
 
     class Meta:
         verbose_name = _("customer")
@@ -45,97 +66,55 @@ class Customer(models.Model):
         """Returns the customer's username."""
         return self.user.username
 
-    def save(self, **kwargs) -> None:
-        if not self.wialon_resource_id and self.wialon_token is not None:
-            # TODO: Retrieve resource_name from somewhere else (settings?)
-            resource_name: str = "Terminus GPS Notifications"
-            resource_id: int = self._get_wialon_resource_id(resource_name)
-            self.wialon_resource_id = resource_id
-        return super().save(**kwargs)
+    def generate_authorizenet_subscription(
+        self,
+        customer_profile_id: str,
+        payment_profile_id: str,
+        address_profile_id: str,
+    ) -> apicontractsv1.ARBSubscriptionType:
+        # Infinitely recurring starting now
+        schedule = apicontractsv1.paymentScheduleType()
+        schedule.startDate = timezone.now()
+        schedule.totalOccurrences = 9999
+        schedule.trialOccurrences = 0
 
-    def _get_wialon_resource_id(self, resource_name: str) -> int:
-        """Retrieves or creates a Wialon resource by name."""
-        with WialonSession(token=self.wialon_token.name) as session:
-            wialon_response = session.wialon_api.core_search_items(
-                **{
-                    "spec": {
-                        "itemsType": "avl_resource",
-                        "propName": "sys_name",
-                        "propValueMask": resource_name,
-                        "sortType": "sys_name",
-                        "propType": "property",
-                    },
-                    "force": 0,
-                    "flags": flags.DataFlag.RESOURCE_BASE,
-                    "from": 0,
-                    "to": 0,
-                }
-            )
-            if int(wialon_response.get("totalItemsCount", 0)) == 1:
-                resource = wialon_response.get("items")[0]
-            else:
-                wialon_response = session.wialon_api.core_create_resource(
-                    **{
-                        "creatorId": session.uid,
-                        "name": resource_name,
-                        "dataFlags": flags.DataFlag.RESOURCE_BASE,
-                        "skipCreatorCheck": True,
-                    }
-                )
-                resource = wialon_response.get("item")
-            return int(resource.get("id"))
+        # Charge profile once per month
+        schedule.interval = apicontractsv1.paymentScheduleTypeInterval()
+        schedule.interval.length = 1
+        schedule.interval.unit = apicontractsv1.ARBSubscriptionUnitEnum.months
 
-    @property
-    def is_subscribed(self) -> bool:
-        """Whether the customer is subscribed."""
-        return (
-            self.subscription.status == SubscriptionStatus.ACTIVE
-            if self.subscription is not None
-            else False
-        )
+        # Set customer data
+        profile = apicontractsv1.customerProfileIdType()
+        profile.customerProfileId = customer_profile_id
+        profile.customerPaymentProfileId = payment_profile_id
+        profile.customerAddressId = address_profile_id
+
+        # Create the Authorizenet subscription contract
+        anet_subscription = apicontractsv1.ARBSubscriptionType()
+        anet_subscription.name = "Terminus GPS Notifications"
+        anet_subscription.paymentSchedule = schedule
+        anet_subscription.trialAmount = decimal.Decimal("0.00")
+        anet_subscription.profile = profile
+        anet_subscription.amount = self.grand_total
+        return anet_subscription
 
 
 class WialonToken(models.Model):
     """A Wialon API token."""
 
+    customer = models.OneToOneField(
+        "terminusgps_notifications.Customer",
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="wialon_token",
+    )
+    """Associated customer."""
     name = EncryptedField(max_length=72)
-    """Wialon token name."""
-    date_created = models.DateTimeField(auto_now_add=True)
-    """Date/time created."""
-    date_updated = models.DateTimeField(auto_now=True)
-    """Date/time updated."""
-
-    class Meta:
-        verbose_name = _("wialon token")
-        verbose_name_plural = _("wialon tokens")
-        ordering = ["-date_updated"]
+    """Wialon API token name."""
 
     def __str__(self) -> str:
-        return f"WialonToken #{self.pk}"
-
-    @transaction.atomic
-    def refresh(self, duration: int = 2_592_000) -> None:
-        """
-        Refreshes the Wialon API token.
-
-        :param duration: Token lifetime duration in seconds. Default is ``2_592_000`` (30 days).
-        :type days: int
-        :returns: Nothing.
-        :rtype: None
-
-        """
-        with WialonSession(token=settings.WIALON_TOKEN) as session:
-            session.wialon_api.token_update(
-                **{
-                    "callMode": "update",
-                    "h": self.name,
-                    "app": "Terminus GPS Notifications",
-                    "at": 0,
-                    "dur": duration,
-                    "fl": settings.WIALON_TOKEN_ACCESS_TYPE,
-                    "p": "{}",
-                }
-            )
+        """Returns '<username>'s Wialon Token'."""
+        return f"{self.customer.user.username}'s Wialon Token"
 
 
 class Notification(models.Model):

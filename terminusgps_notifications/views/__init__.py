@@ -1,5 +1,7 @@
 from .main import (
     AccountView,
+    CustomerStatsView,
+    CustomerSubscriptionCreateView,
     DashboardView,
     HomeView,
     NotificationsView,

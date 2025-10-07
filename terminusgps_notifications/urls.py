@@ -9,14 +9,20 @@ urlpatterns = [
         "wialon/login/", views.WialonLoginView.as_view(), name="wialon login"
     ),
     path(
-        "wialon/callback/",
+        "wialon/<int:customer_pk>/callback/",
         views.WialonCallbackView.as_view(),
         name="wialon callback",
     ),
     path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
+    path("stats/", views.CustomerStatsView.as_view(), name="stats"),
     path("account/", views.AccountView.as_view(), name="account"),
     path(
         "subscription/", views.SubscriptionView.as_view(), name="subscription"
+    ),
+    path(
+        "subscription/create/",
+        views.CustomerSubscriptionCreateView.as_view(),
+        name="create subscription",
     ),
     path(
         "notifications/",

@@ -10,7 +10,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(models.WialonToken)
 class WialonTokenAdmin(admin.ModelAdmin):
-    list_display = ["__str__"]
+    list_display = ["customer"]
 
 
 @admin.register(models.Notification)

@@ -1,1 +1,7 @@
-Subscription View
+<div class="flex flex-col gap-8" hx-indicator="#loading">
+    {% if customer.subscription != None %}
+    <section id="subscription" hx-get="{% url 'terminusgps_payments:detail subscription' customer.subscription.pk %}" hx-target="this" hx-trigger="load"></section>
+    {% else %}
+    <section id="subscription" hx-get="{% url 'terminusgps_notifications:create subscription' %}" hx-target="this" hx-trigger="load"></section>
+    {% endif %}
+</div>
