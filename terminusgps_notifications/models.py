@@ -1,6 +1,7 @@
 import typing
 import urllib.parse
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinLengthValidator
@@ -12,13 +13,13 @@ from encrypted_field import EncryptedField
 from terminusgps.wialon import flags
 from terminusgps.wialon.session import WialonSession
 
-from .constants import WialonNotificationTrigger
+from .constants import WialonNotificationTriggerType
 
 
 def validate_is_digit(value: str) -> None:
     if not value.isdigit():
         raise ValidationError(
-            _("This value can only contain digits, got '%(value)s'."),
+            _("Value can only contain digits, got '%(value)s'."),
             code="invalid",
             params={"value": value},
         )
@@ -29,40 +30,33 @@ class Customer(models.Model):
 
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     """Django user."""
-    wialon_token = models.ForeignKey(
-        "terminusgps_notifications.WialonToken",
-        on_delete=models.SET_NULL,
-        related_name="customers",
-        blank=True,
-        null=True,
-        default=None,
-    )
-    """Associated Wialon API token."""
+    date_format = models.CharField(max_length=64, default="%Y-%m-%d %H:%M:%S")
+    """Date format for notifications."""
     resource_id = models.CharField(
         max_length=8,
         null=True,
         blank=True,
         default=None,
-        help_text="Please provide an 8-digit Wialon resource id for notifications.",
+        help_text="Please enter an 8-digit Wialon resource id to create notifications in.",
         validators=[validate_is_digit, MinLengthValidator(8)],
     )
     """Wialon resource id."""
-    max_sms_count = models.IntegerField(
+    max_sms_count = models.PositiveIntegerField(
         default=500,
         help_text="Please enter the maximum number of allowed sms messages for the customer in a single period.",
     )
     """Maximum number of allowed sms messages for the period."""
-    max_voice_count = models.IntegerField(
+    max_voice_count = models.PositiveIntegerField(
         default=500,
         help_text="Please enter the maximum number of allowed voice messages for the customer in a single period.",
     )
     """Maximum number of allowed voice messages for the period."""
-    sms_count = models.IntegerField(
+    sms_count = models.PositiveIntegerField(
         default=0,
         help_text="Please enter the current sms message count for the customer.",
     )
     """Current number of sms messages for the period."""
-    voice_count = models.IntegerField(
+    voice_count = models.PositiveIntegerField(
         default=0,
         help_text="Please enter the current voice message count for the customer.",
     )
@@ -110,45 +104,71 @@ class Customer(models.Model):
         verbose_name_plural = _("customers")
 
     def __str__(self) -> str:
-        """Returns the customer's username."""
-        return self.user.username
+        """Returns the customer user."""
+        return str(self.user)
 
-    def get_unit_choices(self) -> list[tuple[int, str]]:
-        if self.wialon_token is None:
-            return []
-        with WialonSession(token=self.wialon_token.name) as session:
-            return [
-                (int(unit.get("id")), _(str(unit.get("nm"))))
-                for unit in self._get_wialon_unit_list(session)
-            ]
-
-    def _get_wialon_unit_list(self, session: WialonSession) -> dict:
-        return session.wialon_api.core_search_items(
-            **{
-                "spec": {
-                    "itemsType": "avl_unit",
-                    "propName": "sys_name",
-                    "propValueMask": "*",
-                    "sortType": "sys_name",
-                    "propType": "property",
-                },
-                "force": int(False),
-                "flags": flags.DataFlag.UNIT_BASE,
-                "from": 0,
-                "to": 0,
-            }
-        ).get("items", {})
+    def get_units_from_wialon(self) -> dict[str, typing.Any]:
+        """Returns a dictionary of Wialon units from the Wialon API for the customer."""
+        if not hasattr(self, "token"):
+            return {}
+        with WialonSession(token=getattr(self, "token").name) as session:
+            return session.wialon_api.core_search_items(
+                **{
+                    "spec": {
+                        "itemsType": "avl_unit",
+                        "propName": "sys_name",
+                        "propValueMask": "*",
+                        "sortType": "sys_name",
+                        "propType": "property",
+                    },
+                    "force": int(False),
+                    "flags": flags.DataFlag.UNIT_BASE,
+                    "from": 0,
+                    "to": 0,
+                }
+            ).get("items", {})
 
 
 class WialonToken(models.Model):
-    """A Wialon API token."""
+    """Wialon API token."""
+
+    customer = models.OneToOneField(
+        "terminusgps_notifications.Customer",
+        on_delete=models.CASCADE,
+        related_name="token",
+    )
+    """Associated customer."""
 
     name = EncryptedField(max_length=72)
     """Wialon API token name."""
+    flags = models.PositiveIntegerField(
+        default=settings.WIALON_TOKEN_ACCESS_TYPE
+    )
+    """Wialon token flags."""
 
     def __str__(self) -> str:
-        """Returns the Wialon API token id."""
-        return str(self.pk)
+        """Returns '<customer email>'s WialonToken'."""
+        return f"{self.customer}'s WialonToken"
+
+
+class WialonUnit(models.Model):
+    """Customer Wialon unit."""
+
+    wialon_id = models.PositiveBigIntegerField()
+    """Wialon unit id."""
+    name = models.CharField(max_length=64)
+    """Wialon unit name."""
+
+    customer = models.ForeignKey(
+        "terminusgps_notifications.Customer",
+        on_delete=models.CASCADE,
+        related_name="units",
+    )
+    """Associated customer."""
+
+    def __str__(self) -> str:
+        """Returns the Wialon unit's name."""
+        return str(self.name)
 
 
 class WialonNotification(models.Model):
@@ -160,7 +180,7 @@ class WialonNotification(models.Model):
         SMS = "sms", _("SMS")
         VOICE = "voice", _("Voice")
 
-    wialon_id = models.PositiveIntegerField()
+    wialon_id = models.PositiveBigIntegerField()
     """Wialon id."""
     customer = models.ForeignKey(
         "terminusgps_notifications.Customer",
@@ -183,15 +203,6 @@ class WialonNotification(models.Model):
         help_text="Please select a notification method.",
     )
     """Notification method."""
-    trigger = models.CharField(
-        max_length=64,
-        choices=WialonNotificationTrigger.choices,
-        default=WialonNotificationTrigger.SENSOR,
-        help_text="Please select a notification trigger.",
-    )
-    """Notification trigger."""
-    trigger_parameters = models.JSONField(default=dict)
-    """Notification trigger parameters."""
     activation_time = models.DateTimeField(
         default=timezone.now,
         null=True,
@@ -256,20 +267,23 @@ class WialonNotification(models.Model):
     )
     """Minimum duration of previous state in seconds. Max is ``86400`` (1 day)."""
     language = models.CharField(
-        max_length=2, default="en", choices={("en", _("English"))}
+        max_length=2, default="en", choices=[("en", _("English"))]
     )
     """2-letter language code."""
-    units = models.CharField(blank=True, default="")
-    """Comma-separated list of units for the notification."""
     flags = models.PositiveSmallIntegerField(
         default=0,
-        choices={
+        choices=[
             (0, _("Trigger on first message")),
             (1, _("Trigger on every message")),
             (2, _("Disabled")),
-        },
+        ],
     )
     """Flags."""
+    units = models.ManyToManyField(
+        "terminusgps_notifications.WialonUnit",
+        help_text="Please select Wialon units to assign to the notification.",
+    )
+    """Associated Wialon units."""
 
     class Meta:
         verbose_name = _("wialon notification")
@@ -280,7 +294,7 @@ class WialonNotification(models.Model):
         return str(self.name)
 
     def get_action(self) -> dict[str, typing.Any]:
-        """Returns the notification's action dictionary."""
+        """Returns the notification action."""
         return {
             "act": {
                 "t": "push_messages",
@@ -293,3 +307,12 @@ class WialonNotification(models.Model):
                 },
             }
         }
+
+
+class WialonNotificationTrigger(models.Model):
+    type = models.CharField(
+        max_length=64,
+        choices=WialonNotificationTriggerType.choices,
+        default=WialonNotificationTriggerType.SENSOR,
+    )
+    parameters = models.JSONField(default=dict)

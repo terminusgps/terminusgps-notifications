@@ -1,13 +1,35 @@
-<form action="{% url 'terminusgps_notifications:create notification' %}" method="post" novalidate>
+<form hx-post="{% url 'terminusgps_notifications:create notification' %}" method="post" novalidate>
     {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
-    <section id="fields" class="flex flex-col gap-4">
+    <section id="fields" class="flex flex-col gap-8">
         {% csrf_token %}
         <div id="{{ form.name.id_for_label }}_group" class="group flex flex-col gap-2">
-            {{ form.name.as_field_group }}
+            <label for="{{ form.name.id_for_label }}">Notification name:</label>
+            {{ form.name }}
+            <p id="{{ form.name.id_for_label }}_helptext" class="text-sm">{{ form.name.help_text }}</p>
         </div>
         <div id="{{ form.method.id_for_label }}_group" class="group flex flex-col gap-2">
-            {{ form.method.as_field_group }}
+            <label for="{{ form.method.id_for_label }}">Notification method:</label>
+            {{ form.method }}
+            <p id="{{ form.method.id_for_label }}_helptext" class="text-sm">{{ form.method.help_text }}</p>
         </div>
+        <div id="{{ form.units.id_for_label }}_group" class="group flex flex-col gap-2">
+            <label for="{{ form.units.id_for_label }}">Wialon units:</label>
+            {{ form.units }}
+            <p id="{{ form.units.id_for_label }}_helptext" class="text-sm order-last">{{ form.units.help_text }}</p>
+        </div>
+        <div id="{{ form.trigger.id_for_label }}_group" class="group flex flex-col gap-2">
+            <label for="{{ form.trigger.id_for_label }}">Notification trigger:</label>
+            {{ form.trigger }}
+            <p id="{{ form.trigger.id_for_label }}_helptext" class="text-sm">{{ form.trigger.help_text }}</p>
+        </div>
+        <div id="{{ form.trigger_parameters.id_for_label }}_group" class="group flex flex-col gap-2">
+            <label for="{{ form.trigger_parameters.id_for_label }}">Trigger parameters:</label>
+            {{ form.trigger_parameters }}
+            <p id="{{ form.trigger_parameters.id_for_label }}_helptext" class="text-sm">{{ form.trigger_parameters.help_text }}</p>
+        </div>
+        <section id="advanced-fields">
+            <div id=""></div>
+        </section>
     </section>
     <section id="buttons" class="flex flex-col gap-2 mt-4">
         <button type="submit" class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400">Submit</button>

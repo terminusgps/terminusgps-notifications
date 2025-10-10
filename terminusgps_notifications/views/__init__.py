@@ -14,5 +14,7 @@ from .notifications import (
     WialonNotificationDeleteView,
     WialonNotificationDetailView,
     WialonNotificationListView,
+    WialonNotificationTriggerFormSuccessView,
+    WialonNotificationTriggerFormView,
     WialonNotificationUpdateView,
 )

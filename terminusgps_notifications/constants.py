@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class WialonNotificationTrigger(models.TextChoices):
+class WialonNotificationTriggerType(models.TextChoices):
     GEOFENCE = "geozone", _("Geofence")
     ADDRESS = "address", _("Address")
     SPEED = "speed", _("Speed")
@@ -22,7 +22,7 @@ class WialonNotificationTrigger(models.TextChoices):
     HEALTH = "health_check", _("Health check")
 
 
-class WialonUnitSensor(models.TextChoices):
+class WialonUnitSensorType(models.TextChoices):
     ANY = "", _("Any")
     # Mileage
     MILEAGE = "mileage", _("Mileage sensor")

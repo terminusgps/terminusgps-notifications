@@ -9,7 +9,6 @@ class WialonNotificationCreationForm(forms.ModelForm):
         fields = [
             "name",
             "method",
-            "trigger",
             "activation_time",
             "deactivation_time",
             "max_alarms",
@@ -25,12 +24,12 @@ class WialonNotificationCreationForm(forms.ModelForm):
         widgets = {
             "name": forms.widgets.TextInput(
                 attrs={
-                    "class": "p-2 rounded border border-current bg-gray-50 order-2 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
                 }
             ),
             "method": forms.widgets.Select(
                 attrs={
-                    "class": "p-2 rounded border border-current bg-gray-50 order-2 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
                 }
             ),
             "units": forms.widgets.SelectMultiple(

@@ -1,4 +1,6 @@
+import json
 import typing
+import urllib.parse
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
@@ -28,6 +30,11 @@ class WialonNotificationTriggerFormSuccessView(
         "terminusgps_notifications/notifications/trigger_success.html"
     )
 
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        context["value"] = json.dumps(self.request.GET)
+        return context
+
 
 class WialonNotificationTriggerFormView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
@@ -40,26 +47,47 @@ class WialonNotificationTriggerFormView(
     success_url = reverse_lazy("terminusgps_notifications:trigger success")
     template_name = "terminusgps_notifications/notifications/trigger_form.html"
 
+    # TODO: Move this map somewhere else, settings maybe?
+    TRIGGERS_MAP = {
+        constants.WialonNotificationTriggerType.SENSOR: {
+            "initial": {
+                "lower_bound": -1,
+                "prev_msg_diff": 0,
+                "sensor_name_mask": "*",
+                "sensor_type": constants.WialonUnitSensorType.ANY,
+                "type": 0,
+                "upper_bound": 1,
+            },
+            "form_cls": forms.SensorValueTriggerForm,
+        }
+    }
+
+    def get_success_url(self) -> str:
+        """Adds the form data to the success url as path parameters before returning it."""
+        url = super().get_success_url()
+        params = self.request.POST.copy()
+        params.pop("csrfmiddlewaretoken")
+        return "%s?%s" % (url, urllib.parse.urlencode(params))
+
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        context["trigger"] = self.request.GET.get("trigger")
+        return context
+
     def get_initial(self) -> dict[str, typing.Any]:
         initial: dict[str, typing.Any] = super().get_initial()
-        match self.request.GET.get("trigger"):
-            case constants.WialonNotificationTrigger.SENSOR:
-                initial["lower_bound"] = -1
-                initial["upper_bound"] = 1
-                initial["prev_msg_diff"] = 0
-                initial["sensor_name_mask"] = "*"
-                initial["sensor_type"] = constants.WialonUnitSensor.ANY
-                initial["type"] = 0
-            case _:
-                pass
+        if trigger := self.request.GET.get("trigger"):
+            if trigger in self.TRIGGERS_MAP:
+                for k, v in self.TRIGGERS_MAP[trigger]["initial"].items():
+                    initial[k] = v
         return initial
 
     def get_form_class(self) -> Form:
-        match self.request.GET.get("trigger"):
-            case constants.WialonNotificationTrigger.SENSOR:
-                return forms.SensorValueTriggerForm
-            case _:
-                return Form
+        """Returns the form class for the trigger based on path parameters."""
+        if trigger := self.request.GET.get("trigger"):
+            if trigger in self.TRIGGERS_MAP:
+                return self.TRIGGERS_MAP[trigger]["form_cls"]
+        return Form
 
 
 class WialonNotificationCreateView(
@@ -79,6 +107,12 @@ class WialonNotificationCreateView(
         self, form_class=None
     ) -> forms.WialonNotificationCreationForm:
         form = super().get_form(form_class=form_class)
+        customer, _ = models.Customer.objects.get_or_create(
+            user=self.request.user
+        )
+        form.fields["units"].queryset = models.WialonUnit.objects.filter(
+            customer=customer
+        )
         return form
 
 
