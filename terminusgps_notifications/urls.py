@@ -31,27 +31,27 @@ urlpatterns = [
     ),
     path(
         "notifications/list/",
-        views.NotificationListView.as_view(),
+        views.WialonNotificationListView.as_view(),
         name="list notification",
     ),
     path(
         "notifications/create/",
-        views.NotificationCreateView.as_view(),
+        views.WialonNotificationCreateView.as_view(),
         name="create notification",
     ),
     path(
         "notifications/<int:notification_pk>/detail/",
-        views.NotificationDetailView.as_view(),
+        views.WialonNotificationDetailView.as_view(),
         name="detail notification",
     ),
     path(
         "notifications/<int:notification_pk>/update/",
-        views.NotificationUpdateView.as_view(),
+        views.WialonNotificationUpdateView.as_view(),
         name="update notification",
     ),
     path(
         "notifications/<int:notification_pk>/delete/",
-        views.NotificationDeleteView.as_view(),
+        views.WialonNotificationDeleteView.as_view(),
         name="delete notification",
     ),
 ]

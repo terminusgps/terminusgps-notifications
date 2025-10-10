@@ -1,0 +1,22 @@
+<section id="account" class="flex flex-col gap-8">
+    <section id="payment-methods" class="flex flex-col gap-4">
+        <h3 class="text-lg font-semibold">Payment Methods</h3>
+        <section
+            id="payment-profiles-list"
+            class="flex flex-col gap-4"
+            hx-get="{% url 'terminusgps_payments:list payment profile' %}"
+            hx-target="this"
+            hx-trigger="load"
+        ></section>
+    </section>
+    <section id="shipping-addresses" class="flex flex-col gap-4">
+        <h3 class="text-lg font-semibold">Shipping Addresses</h3>
+        <section
+            id="address-profiles-list"
+            class="flex flex-col gap-4"
+            hx-get="{% url 'terminusgps_payments:list address profile' %}"
+            hx-target="this"
+            hx-trigger="load"
+        ></section>
+    </section>
+</section>

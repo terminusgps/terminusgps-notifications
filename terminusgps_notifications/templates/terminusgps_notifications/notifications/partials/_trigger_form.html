@@ -1,0 +1,5 @@
+<form id="trigger-form" hx-post="{% url 'terminusgps_notifications:trigger form' %}" hx-target="this">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit">Save</button>
+</form>

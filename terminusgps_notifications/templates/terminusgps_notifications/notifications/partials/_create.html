@@ -1,0 +1,16 @@
+<form action="{% url 'terminusgps_notifications:create notification' %}" method="post" novalidate>
+    {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+    <section id="fields" class="flex flex-col gap-4">
+        {% csrf_token %}
+        <div id="{{ form.name.id_for_label }}_group" class="group flex flex-col gap-2">
+            {{ form.name.as_field_group }}
+        </div>
+        <div id="{{ form.method.id_for_label }}_group" class="group flex flex-col gap-2">
+            {{ form.method.as_field_group }}
+        </div>
+    </section>
+    <section id="buttons" class="flex flex-col gap-2 mt-4">
+        <button type="submit" class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400">Submit</button>
+        <button type="button" hx-get="{% url 'terminusgps_notifications:list notification' %}" class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-gray-600 bg-gray-400 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-gray-100 hover:text-gray-600">Cancel</button>
+    </section>
+</form>

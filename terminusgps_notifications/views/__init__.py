@@ -1,18 +1,18 @@
-from .main import (
+from .customers import (
     AccountView,
     CustomerStatsView,
     CustomerSubscriptionCreateView,
     DashboardView,
-    HomeView,
     NotificationsView,
     SubscriptionView,
     WialonCallbackView,
     WialonLoginView,
 )
+from .main import HomeView
 from .notifications import (
-    NotificationCreateView,
-    NotificationDeleteView,
-    NotificationDetailView,
-    NotificationListView,
-    NotificationUpdateView,
+    WialonNotificationCreateView,
+    WialonNotificationDeleteView,
+    WialonNotificationDetailView,
+    WialonNotificationListView,
+    WialonNotificationUpdateView,
 )

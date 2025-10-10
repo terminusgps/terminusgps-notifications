@@ -1,12 +1,27 @@
-import decimal
+import typing
+import urllib.parse
 
-from authorizenet import apicontractsv1
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinLengthValidator
 from django.db import models
 from django.db.models import F
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from encrypted_field import EncryptedField
+from terminusgps.wialon import flags
+from terminusgps.wialon.session import WialonSession
+
+from .constants import WialonNotificationTrigger
+
+
+def validate_is_digit(value: str) -> None:
+    if not value.isdigit():
+        raise ValidationError(
+            _("This value can only contain digits, got '%(value)s'."),
+            code="invalid",
+            params={"value": value},
+        )
 
 
 class Customer(models.Model):
@@ -14,25 +29,57 @@ class Customer(models.Model):
 
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     """Django user."""
+    wialon_token = models.ForeignKey(
+        "terminusgps_notifications.WialonToken",
+        on_delete=models.SET_NULL,
+        related_name="customers",
+        blank=True,
+        null=True,
+        default=None,
+    )
+    """Associated Wialon API token."""
     resource_id = models.CharField(
-        max_length=8, null=True, blank=True, default=None
+        max_length=8,
+        null=True,
+        blank=True,
+        default=None,
+        help_text="Please provide an 8-digit Wialon resource id for notifications.",
+        validators=[validate_is_digit, MinLengthValidator(8)],
     )
     """Wialon resource id."""
-    max_sms_count = models.IntegerField(default=500)
+    max_sms_count = models.IntegerField(
+        default=500,
+        help_text="Please enter the maximum number of allowed sms messages for the customer in a single period.",
+    )
     """Maximum number of allowed sms messages for the period."""
-    max_voice_count = models.IntegerField(default=500)
+    max_voice_count = models.IntegerField(
+        default=500,
+        help_text="Please enter the maximum number of allowed voice messages for the customer in a single period.",
+    )
     """Maximum number of allowed voice messages for the period."""
-    sms_count = models.IntegerField(default=0)
+    sms_count = models.IntegerField(
+        default=0,
+        help_text="Please enter the current sms message count for the customer.",
+    )
     """Current number of sms messages for the period."""
-    voice_count = models.IntegerField(default=0)
+    voice_count = models.IntegerField(
+        default=0,
+        help_text="Please enter the current voice message count for the customer.",
+    )
     """Current number of voice messages for the period."""
 
     tax_rate = models.DecimalField(
-        max_digits=9, decimal_places=4, default=0.0825
+        max_digits=9,
+        decimal_places=4,
+        default=0.0825,
+        help_text="Please enter a tax rate for the customer.",
     )
     """Subscription tax rate."""
     subtotal = models.DecimalField(
-        max_digits=9, decimal_places=2, default=44.99
+        max_digits=9,
+        decimal_places=2,
+        default=44.99,
+        help_text="Please enter a dollar amount to charge the customer (+tax) every period.",
     )
     """Subscription subtotal."""
     tax = models.GeneratedField(
@@ -66,60 +113,55 @@ class Customer(models.Model):
         """Returns the customer's username."""
         return self.user.username
 
-    def generate_authorizenet_subscription(
-        self,
-        customer_profile_id: str,
-        payment_profile_id: str,
-        address_profile_id: str,
-    ) -> apicontractsv1.ARBSubscriptionType:
-        # Infinitely recurring starting now
-        schedule = apicontractsv1.paymentScheduleType()
-        schedule.startDate = timezone.now()
-        schedule.totalOccurrences = 9999
-        schedule.trialOccurrences = 0
+    def get_unit_choices(self) -> list[tuple[int, str]]:
+        if self.wialon_token is None:
+            return []
+        with WialonSession(token=self.wialon_token.name) as session:
+            return [
+                (int(unit.get("id")), _(str(unit.get("nm"))))
+                for unit in self._get_wialon_unit_list(session)
+            ]
 
-        # Charge profile once per month
-        schedule.interval = apicontractsv1.paymentScheduleTypeInterval()
-        schedule.interval.length = 1
-        schedule.interval.unit = apicontractsv1.ARBSubscriptionUnitEnum.months
-
-        # Set customer data
-        profile = apicontractsv1.customerProfileIdType()
-        profile.customerProfileId = customer_profile_id
-        profile.customerPaymentProfileId = payment_profile_id
-        profile.customerAddressId = address_profile_id
-
-        # Create the Authorizenet subscription contract
-        anet_subscription = apicontractsv1.ARBSubscriptionType()
-        anet_subscription.name = "Terminus GPS Notifications"
-        anet_subscription.paymentSchedule = schedule
-        anet_subscription.trialAmount = decimal.Decimal("0.00")
-        anet_subscription.profile = profile
-        anet_subscription.amount = self.grand_total
-        return anet_subscription
+    def _get_wialon_unit_list(self, session: WialonSession) -> dict:
+        return session.wialon_api.core_search_items(
+            **{
+                "spec": {
+                    "itemsType": "avl_unit",
+                    "propName": "sys_name",
+                    "propValueMask": "*",
+                    "sortType": "sys_name",
+                    "propType": "property",
+                },
+                "force": int(False),
+                "flags": flags.DataFlag.UNIT_BASE,
+                "from": 0,
+                "to": 0,
+            }
+        ).get("items", {})
 
 
 class WialonToken(models.Model):
     """A Wialon API token."""
 
-    customer = models.OneToOneField(
-        "terminusgps_notifications.Customer",
-        on_delete=models.CASCADE,
-        primary_key=True,
-        related_name="wialon_token",
-    )
-    """Associated customer."""
     name = EncryptedField(max_length=72)
     """Wialon API token name."""
 
     def __str__(self) -> str:
-        """Returns '<username>'s Wialon Token'."""
-        return f"{self.customer.user.username}'s Wialon Token"
+        """Returns the Wialon API token id."""
+        return str(self.pk)
 
 
-class Notification(models.Model):
-    """A notification."""
+class WialonNotification(models.Model):
+    """Wialon notification."""
 
+    class WialonNotificationMethod(models.TextChoices):
+        """Wialon notification method."""
+
+        SMS = "sms", _("SMS")
+        VOICE = "voice", _("Voice")
+
+    wialon_id = models.PositiveIntegerField()
+    """Wialon id."""
     customer = models.ForeignKey(
         "terminusgps_notifications.Customer",
         on_delete=models.CASCADE,
@@ -127,9 +169,127 @@ class Notification(models.Model):
     )
     """Associated customer."""
 
+    name = models.CharField(
+        max_length=64,
+        help_text="Please provide a memorable name for your notification.",
+    )
+    """Notification name."""
+    text = models.TextField(max_length=1024)
+    """Notification text."""
+    method = models.CharField(
+        max_length=5,
+        default=WialonNotificationMethod.SMS,
+        choices=WialonNotificationMethod.choices,
+        help_text="Please select a notification method.",
+    )
+    """Notification method."""
+    trigger = models.CharField(
+        max_length=64,
+        choices=WialonNotificationTrigger.choices,
+        default=WialonNotificationTrigger.SENSOR,
+        help_text="Please select a notification trigger.",
+    )
+    """Notification trigger."""
+    trigger_parameters = models.JSONField(default=dict)
+    """Notification trigger parameters."""
+    activation_time = models.DateTimeField(
+        default=timezone.now,
+        null=True,
+        blank=True,
+        help_text="Please provide a valid date and time to activate the notification.",
+    )
+    """Activation date/time."""
+    deactivation_time = models.DateTimeField(
+        null=True,
+        blank=True,
+        default=None,
+        help_text="Please provide a valid date and time to deactivate the notification. Leave this blank to never deactivate.",
+    )
+    """Deactivation date/time."""
+    max_alarms = models.PositiveIntegerField(
+        default=0,
+        help_text="Please provide the maximum number of alarms. 0 = unlimited alarms.",
+    )
+    """Maximum number of alarms (0 = unlimited)."""
+    max_message_interval = models.PositiveIntegerField(
+        default=0,
+        choices=[
+            (0, _("Any time")),
+            (60, _("1 minute")),
+            (600, _("10 minutes")),
+            (1800, _("30 minutes")),
+            (3600, _("1 hour")),
+            (21600, _("6 hours")),
+            (43200, _("12 hours")),
+            (86400, _("1 day")),
+            (864000, _("10 days")),
+        ],
+        help_text="Please provide the maximum allowed time between messages.",
+    )
+    """Max time interval between messages."""
+    alarm_timeout = models.PositiveIntegerField(
+        default=0,
+        validators=[MaxValueValidator(1800)],
+        help_text="Please provide the number of seconds before alarm timeout. 0 = never timeout.",
+    )
+    """Alarm timeout in seconds. Max is ``1800`` (30 minutes in seconds)."""
+    control_period = models.PositiveIntegerField(
+        default=0,
+        choices=[
+            (0, _("Any time")),
+            (60, _("Last minute")),
+            (600, _("Last 10 minutes")),
+            (3600, _("Last hour")),
+            (86400, _("Last day")),
+        ],
+        help_text="Please provide the control period relative to current time.",
+    )
+    """Control period relative to current time in seconds."""
+    min_duration_alarm = models.PositiveIntegerField(
+        default=0,
+        validators=[MaxValueValidator(86400)],
+        help_text="Please provide the minimum duration of alarm state in seconds.",
+    )
+    """Minimum duration of alarm state in seconds. Max is ``86400`` (1 day)."""
+    min_duration_prev = models.PositiveIntegerField(
+        default=0, validators=[MaxValueValidator(86400)]
+    )
+    """Minimum duration of previous state in seconds. Max is ``86400`` (1 day)."""
+    language = models.CharField(
+        max_length=2, default="en", choices={("en", _("English"))}
+    )
+    """2-letter language code."""
+    units = models.CharField(blank=True, default="")
+    """Comma-separated list of units for the notification."""
+    flags = models.PositiveSmallIntegerField(
+        default=0,
+        choices={
+            (0, _("Trigger on first message")),
+            (1, _("Trigger on every message")),
+            (2, _("Disabled")),
+        },
+    )
+    """Flags."""
+
     class Meta:
-        verbose_name = _("notification")
-        verbose_name_plural = _("notifications")
+        verbose_name = _("wialon notification")
+        verbose_name_plural = _("wialon notifications")
 
     def __str__(self) -> str:
-        return f"Notification #{self.pk}"
+        """Returns the notification name."""
+        return str(self.name)
+
+    def get_action(self) -> dict[str, typing.Any]:
+        """Returns the notification's action dictionary."""
+        return {
+            "act": {
+                "t": "push_messages",
+                "p": {
+                    "url": urllib.parse.urljoin(
+                        "https://api.terminusgps.com/",
+                        f"/v3/notify/{self.method}/",
+                    ),
+                    "get": 1,
+                },
+            }
+        }

@@ -1,0 +1,9 @@
+<section id="notifications">
+    <section
+        id="notifications-list"
+        class="flex flex-col gap-4"
+        hx-get="{% url 'terminusgps_notifications:list notification' %}"
+        hx-target="this"
+        hx-trigger="load"
+    ></section>
+</section>

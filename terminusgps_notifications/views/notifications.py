@@ -1,63 +1,93 @@
-from django import forms
+import typing
+
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ValidationError
 from django.db.models import QuerySet
-from django.http import HttpResponse
+from django.forms import Form
 from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
+    FormView,
     ListView,
+    TemplateView,
     UpdateView,
 )
 from terminusgps.mixins import HtmxTemplateResponseMixin
-from terminusgps.wialon.items import WialonObjectFactory
-from terminusgps.wialon.session import WialonAPIError, WialonSession
 
-from terminusgps_notifications.models import Customer, Notification
+from terminusgps_notifications import constants, forms, models
 
 
-class NotificationCreateView(
+class WialonNotificationTriggerFormSuccessView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
+):
+    content_type = "text/html"
+    http_method_names = ["get"]
+    partial_template_name = "terminusgps_notifications/notifications/partials/_trigger_success.html"
+    template_name = (
+        "terminusgps_notifications/notifications/trigger_success.html"
+    )
+
+
+class WialonNotificationTriggerFormView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
+):
+    content_type = "text/html"
+    http_method_names = ["get", "post"]
+    partial_template_name = (
+        "terminusgps_notifications/notifications/partials/_trigger_form.html"
+    )
+    success_url = reverse_lazy("terminusgps_notifications:trigger success")
+    template_name = "terminusgps_notifications/notifications/trigger_form.html"
+
+    def get_initial(self) -> dict[str, typing.Any]:
+        initial: dict[str, typing.Any] = super().get_initial()
+        match self.request.GET.get("trigger"):
+            case constants.WialonNotificationTrigger.SENSOR:
+                initial["lower_bound"] = -1
+                initial["upper_bound"] = 1
+                initial["prev_msg_diff"] = 0
+                initial["sensor_name_mask"] = "*"
+                initial["sensor_type"] = constants.WialonUnitSensor.ANY
+                initial["type"] = 0
+            case _:
+                pass
+        return initial
+
+    def get_form_class(self) -> Form:
+        match self.request.GET.get("trigger"):
+            case constants.WialonNotificationTrigger.SENSOR:
+                return forms.SensorValueTriggerForm
+            case _:
+                return Form
+
+
+class WialonNotificationCreateView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, CreateView
 ):
     content_type = "text/html"
-    fields = ["method", "trigger"]
+    form_class = forms.WialonNotificationCreationForm
     http_method_names = ["get", "post"]
-    model = Notification
+    model = models.WialonNotification
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_create.html"
     )
-    template_name = "terminusgps_notifications/notifications/create.html"
     success_url = reverse_lazy("terminusgps_notifications:list notification")
+    template_name = "terminusgps_notifications/notifications/create.html"
 
-    def form_valid(self, form: forms.ModelForm) -> HttpResponse:
-        try:
-            customer = Customer.objects.get(user=self.request.user)
-            with WialonSession(token=customer.wialon_token.value) as session:
-                factory = WialonObjectFactory(session)
-                resource = factory.get("avl_resource", customer.resource_id)
-            return super().form_valid(form=form)
-        except WialonAPIError as e:
-            form.add_error(
-                None,
-                ValidationError(
-                    _("Whoops! '%(e)s'"), code="invalid", params={"e": str(e)}
-                ),
-            )
-            return self.form_invalid(form=form)
-
-    def get_queryset(self) -> QuerySet:
-        return super().get_queryset().filter(customer__user=self.request.user)
+    def get_form(
+        self, form_class=None
+    ) -> forms.WialonNotificationCreationForm:
+        form = super().get_form(form_class=form_class)
+        return form
 
 
-class NotificationDetailView(
+class WialonNotificationDetailView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, DetailView
 ):
     content_type = "text/html"
     http_method_names = ["get"]
-    model = Notification
+    model = models.WialonNotification
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_detail.html"
     )
@@ -68,13 +98,13 @@ class NotificationDetailView(
         return super().get_queryset().filter(customer__user=self.request.user)
 
 
-class NotificationUpdateView(
+class WialonNotificationUpdateView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, UpdateView
 ):
     content_type = "text/html"
     fields = ["method"]
     http_method_names = ["get", "post"]
-    model = Notification
+    model = models.WialonNotification
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_update.html"
     )
@@ -85,12 +115,12 @@ class NotificationUpdateView(
         return super().get_queryset().filter(customer__user=self.request.user)
 
 
-class NotificationDeleteView(
+class WialonNotificationDeleteView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, DeleteView
 ):
     content_type = "text/html"
     http_method_names = ["get", "post"]
-    model = Notification
+    model = models.WialonNotification
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_delete.html"
     )
@@ -101,13 +131,13 @@ class NotificationDeleteView(
         return super().get_queryset().filter(customer__user=self.request.user)
 
 
-class NotificationListView(
+class WialonNotificationListView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, ListView
 ):
     allow_empty = True
     content_type = "text/html"
     http_method_names = ["get"]
-    model = Notification
+    model = models.WialonNotification
     ordering = "pk"
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_list.html"

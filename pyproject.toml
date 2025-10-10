@@ -7,8 +7,8 @@ requires-python = ">=3.12"
 dependencies = [
     "django-encrypted-field>=1.0.5",
     "django>=5.2.7",
-    "python-terminusgps>=46.1.0",
-    "terminusgps-payments>=1.4.3",
+    "python-terminusgps>=47.1.2",
+    "terminusgps-payments>=2.0.0",
 ]
 
 [project.urls]
