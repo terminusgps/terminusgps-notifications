@@ -3,26 +3,17 @@ import urllib.parse
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinLengthValidator
 from django.db import models
 from django.db.models import F
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from encrypted_field import EncryptedField
+from terminusgps.validators import validate_is_digit
 from terminusgps.wialon import flags
 from terminusgps.wialon.session import WialonSession
 
 from .constants import WialonNotificationTriggerType
-
-
-def validate_is_digit(value: str) -> None:
-    if not value.isdigit():
-        raise ValidationError(
-            _("Value can only contain digits, got '%(value)s'."),
-            code="invalid",
-            params={"value": value},
-        )
 
 
 class Customer(models.Model):
@@ -30,7 +21,14 @@ class Customer(models.Model):
 
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     """Django user."""
-    date_format = models.CharField(max_length=64, default="%Y-%m-%d %H:%M:%S")
+    date_format = models.CharField(
+        max_length=64,
+        default="%Y-%m-%d %H:%M:%S",
+        choices=[
+            ("%Y-%m-%d %H:%M:%S", "YYYY-MM-DD HH:MM:SS"),
+            ("%Y-%m-%d %H:%M", "YYYY-MM-DD HH:MM"),
+        ],
+    )
     """Date format for notifications."""
     resource_id = models.CharField(
         max_length=8,
@@ -81,7 +79,7 @@ class Customer(models.Model):
         output_field=models.DecimalField(max_digits=9, decimal_places=2),
         db_persist=True,
     )
-    """Subscription tax."""
+    """Subscription tax total."""
     grand_total = models.GeneratedField(
         expression=F("subtotal") * (F("tax_rate") + 1),
         output_field=models.DecimalField(max_digits=9, decimal_places=2),
@@ -107,26 +105,49 @@ class Customer(models.Model):
         """Returns the customer user."""
         return str(self.user)
 
-    def get_units_from_wialon(self) -> dict[str, typing.Any]:
-        """Returns a dictionary of Wialon units from the Wialon API for the customer."""
-        if not hasattr(self, "token"):
-            return {}
-        with WialonSession(token=getattr(self, "token").name) as session:
-            return session.wialon_api.core_search_items(
-                **{
-                    "spec": {
-                        "itemsType": "avl_unit",
-                        "propName": "sys_name",
-                        "propValueMask": "*",
-                        "sortType": "sys_name",
-                        "propType": "property",
-                    },
-                    "force": int(False),
-                    "flags": flags.DataFlag.UNIT_BASE,
-                    "from": 0,
-                    "to": 0,
-                }
-            ).get("items", {})
+    def get_units_from_wialon(
+        self, session: WialonSession, force: bool = False
+    ) -> list[dict[str, typing.Any]]:
+        """
+        Returns a list of of customer Wialon unit dictionaries from the Wialon API.
+
+        Wialon unit dictionary format:
+
+        +------------+---------------+---------------------------+
+        | key        | type          | desc                      |
+        +============+===============+===========================+
+        | ``"mu"``   | :py:obj:`int` | Measurement system        |
+        +------------+---------------+---------------------------+
+        | ``"nm"``   | :py:obj:`str` | Unit name                 |
+        +------------+---------------+---------------------------+
+        | ``"cls"``  | :py:obj:`int` | Superclass ID: 'avl_unit' |
+        +------------+---------------+---------------------------+
+        | ``"id"``   | :py:obj:`int` | Unit ID                   |
+        +------------+---------------+---------------------------+
+        | ``"uacl"`` | :py:obj:`int` | User's access rights      |
+        +------------+---------------+---------------------------+
+
+        :param force: Whether to force a Wialon API call or use Wialon's cached response. Default is :py:obj:`False`.
+        :type force: bool
+        :returns: A list of Wialon unit dictionaries.
+        :rtype: list[dict[str, ~typing.Any]]
+
+        """
+        return session.wialon_api.core_search_items(
+            **{
+                "spec": {
+                    "itemsType": "avl_unit",
+                    "propName": "sys_id",
+                    "propValueMask": "*",
+                    "sortType": "sys_id",
+                    "propType": "property",
+                },
+                "force": int(force),
+                "flags": flags.DataFlag.UNIT_BASE,
+                "from": 0,
+                "to": 0,
+            }
+        ).get("items", [])
 
 
 class WialonToken(models.Model):
@@ -149,26 +170,6 @@ class WialonToken(models.Model):
     def __str__(self) -> str:
         """Returns '<customer email>'s WialonToken'."""
         return f"{self.customer}'s WialonToken"
-
-
-class WialonUnit(models.Model):
-    """Customer Wialon unit."""
-
-    wialon_id = models.PositiveBigIntegerField()
-    """Wialon unit id."""
-    name = models.CharField(max_length=64)
-    """Wialon unit name."""
-
-    customer = models.ForeignKey(
-        "terminusgps_notifications.Customer",
-        on_delete=models.CASCADE,
-        related_name="units",
-    )
-    """Associated customer."""
-
-    def __str__(self) -> str:
-        """Returns the Wialon unit's name."""
-        return str(self.name)
 
 
 class WialonNotification(models.Model):
@@ -278,12 +279,15 @@ class WialonNotification(models.Model):
             (2, _("Disabled")),
         ],
     )
-    """Flags."""
-    units = models.ManyToManyField(
-        "terminusgps_notifications.WialonUnit",
-        help_text="Please select Wialon units to assign to the notification.",
+    """Notification flags."""
+    trigger = models.ForeignKey(
+        "terminusgps_notifications.WialonNotificationTrigger",
+        on_delete=models.RESTRICT,
+        related_name="notifications",
     )
-    """Associated Wialon units."""
+    """Notification trigger."""
+    units = models.CharField(blank=False, default="")
+    """Comma-separated list of Wialon unit ids."""
 
     class Meta:
         verbose_name = _("wialon notification")
@@ -303,16 +307,20 @@ class WialonNotification(models.Model):
                         "https://api.terminusgps.com/",
                         f"/v3/notify/{self.method}/",
                     ),
-                    "get": 1,
+                    "get": 1,  # 1 - GET request, 2 - POST request
                 },
             }
         }
 
 
 class WialonNotificationTrigger(models.Model):
+    """Wialon notification trigger."""
+
     type = models.CharField(
         max_length=64,
         choices=WialonNotificationTriggerType.choices,
         default=WialonNotificationTriggerType.SENSOR,
     )
+    """Notification trigger type."""
     parameters = models.JSONField(default=dict)
+    """Notification trigger parameters."""

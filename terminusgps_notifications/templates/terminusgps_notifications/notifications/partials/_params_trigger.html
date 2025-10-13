@@ -1,0 +1,4 @@
+<form id="id_p" hx-post="{% url 'terminusgps_notifications:form trigger parameters' %}" hx-target="this" class="flex flex-col gap-4">
+    {% csrf_token %}
+    {{ form }}
+</form>

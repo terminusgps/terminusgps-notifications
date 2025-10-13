@@ -55,13 +55,18 @@ urlpatterns = [
         name="delete notification",
     ),
     path(
-        "notifications/triggers/form/",
-        views.WialonNotificationTriggerFormView.as_view(),
-        name="trigger form",
+        "notifications/triggers/select/",
+        views.WialonNotificationTriggerSelectFormView.as_view(),
+        name="select notification trigger",
     ),
     path(
-        "notifications/triggers/success/",
-        views.WialonNotificationTriggerFormSuccessView.as_view(),
-        name="trigger success",
+        "notifications/units/select/",
+        views.WialonNotificationUnitSelectFormView.as_view(),
+        name="select notification unit",
+    ),
+    path(
+        "notifications/triggers/parameters/",
+        views.WialonNotificationTriggerParametersFormView.as_view(),
+        name="form trigger parameters",
     ),
 ]

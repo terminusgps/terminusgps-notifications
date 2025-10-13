@@ -1,0 +1,11 @@
+<form class="flex flex-col gap-4" hx-post="{% url 'terminusgps_notifications:select notification unit' %}" method="post">
+    {% csrf_token %}
+    <label for="{{ form.units.id_for_label }}" class="font-semibold">Select Units</label>
+    <div class="flex flex-col gap-2">
+        {{ form.units }}
+        <p id="{{ form.units.id_for_label }}_helptext" class="text-sm">{{ form.units.help_text }}</p>
+    </div>
+    <div class="flex flex-col gap-2">
+        <button class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400" type="submit">Next</button>
+    </div>
+</form>

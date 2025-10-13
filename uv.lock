@@ -107,11 +107,11 @@ wheels = [
 
 [[package]]
 name = "idna"
-version = "3.10"
+version = "3.11"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz", hash = "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9", size = 190490 }
+sdist = { url = "https://files.pythonhosted.org/packages/6f/6d/0703ccc57f3a7233505399edb88de3cbd678da106337b9fcde432b65ed60/idna-3.11.tar.gz", hash = "sha256:795dafcc9c04ed0c1fb032c2aa73654d8e8c5023a7df64a53f39190ada629902", size = 194582 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/76/c6/c88e154df9c4e1a2a66ccf0005a88dfb2650c1dffb6f5ce603dfbd452ce3/idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3", size = 70442 },
+    { url = "https://files.pythonhosted.org/packages/0e/61/66938bbb5fc52dbdf84594873d5b51fb1f7c7794e9c0f5bd885f30bc507b/idna-3.11-py3-none-any.whl", hash = "sha256:771a87f49d9defaf64091e6e6fe9c18d4833f140bd19464795bc32d966ca37ea", size = 71008 },
 ]
 
 [[package]]
@@ -188,16 +188,16 @@ wheels = [
 
 [[package]]
 name = "python-terminusgps"
-version = "47.1.3"
+version = "47.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "authorizenet" },
     { name = "django" },
     { name = "python-wialon" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/21/72/b3f3e68472646f509174f8087ea3d447b6b03466937a6889993a131c6ef8/python_terminusgps-47.1.3.tar.gz", hash = "sha256:915cec148b8da07e32e9fc0ba653325fd7d4ad6bace8f0e4451d052175a19c15", size = 60040 }
+sdist = { url = "https://files.pythonhosted.org/packages/b7/5d/7b8a3fce66ff42b657b3245b82822603840f9013f5830bbe3216e0932266/python_terminusgps-47.2.0.tar.gz", hash = "sha256:885d20f56b8b4cafac0318cd5a70c1294aa21f1a2b8ba947442a64865ab5619f", size = 60076 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/80/d1/c8cc909c7b54a99a355674ff3f438cdbaf8faf5d1330e39b261724cbe649/python_terminusgps-47.1.3-py3-none-any.whl", hash = "sha256:dc284e4105c223c17c26806db9c63dbdb16e5d96a34813c5179717a64db423e0", size = 47376 },
+    { url = "https://files.pythonhosted.org/packages/d6/d3/6c3c9dc1a1623920cc7090b1ef4d8f3c5fe24a2da57dbccf0eac201b5528/python_terminusgps-47.2.0-py3-none-any.whl", hash = "sha256:04e66d7a13196dd4734917d06864cde5838da6340cc0a23b5baf7b9c08b832ce", size = 47404 },
 ]
 
 [[package]]
@@ -307,7 +307,7 @@ requires-dist = [
     { name = "django", specifier = ">=5.2.7" },
     { name = "django-encrypted-field", specifier = ">=1.0.5" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
-    { name = "python-terminusgps", specifier = ">=47.1.2" },
+    { name = "python-terminusgps", specifier = ">=47.2.0" },
     { name = "terminusgps-payments", specifier = ">=2.0.0" },
 ]
 

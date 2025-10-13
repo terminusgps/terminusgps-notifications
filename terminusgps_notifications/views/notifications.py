@@ -1,10 +1,7 @@
-import json
-import typing
-import urllib.parse
+import logging
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
-from django.forms import Form
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -12,82 +9,82 @@ from django.views.generic import (
     DetailView,
     FormView,
     ListView,
-    TemplateView,
     UpdateView,
 )
 from terminusgps.mixins import HtmxTemplateResponseMixin
+from terminusgps.wialon.session import WialonAPIError, WialonSession
 
 from terminusgps_notifications import constants, forms, models
 
+logger = logging.getLogger(__name__)
 
-class WialonNotificationTriggerFormSuccessView(
-    LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
+
+class WialonNotificationUnitSelectFormView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
 ):
     content_type = "text/html"
-    http_method_names = ["get"]
-    partial_template_name = "terminusgps_notifications/notifications/partials/_trigger_success.html"
-    template_name = (
-        "terminusgps_notifications/notifications/trigger_success.html"
+    form_class = forms.WialonUnitSelectionForm
+    http_method_names = ["get", "post"]
+    partial_template_name = (
+        "terminusgps_notifications/notifications/partials/_select_unit.html"
+    )
+    template_name = "terminusgps_notifications/notifications/select_unit.html"
+    success_url = reverse_lazy(
+        "terminusgps_notifications:select notification trigger"
     )
 
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["value"] = json.dumps(self.request.GET)
-        return context
+    def get_form(self, form_class=None) -> forms.WialonUnitSelectionForm:
+        form = super().get_form(form_class=form_class)
+        customer = models.Customer.objects.get(user=self.request.user)
+        if hasattr(customer, "token"):
+            try:
+                token = getattr(customer, "token").name
+                with WialonSession(token=token) as session:
+                    unit_list = [
+                        (int(unit["id"]), str(unit["nm"]))
+                        for unit in customer.get_units_from_wialon(session)
+                    ]
+                    form.fields["units"].choices = unit_list
+            except WialonAPIError as e:
+                logger.warning(e)
+        return form
 
 
-class WialonNotificationTriggerFormView(
+class WialonNotificationTriggerSelectFormView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
+):
+    content_type = "text/html"
+    form_class = forms.TriggerForm
+    http_method_names = ["get", "post"]
+    initial = {"t": constants.WialonNotificationTriggerType.SENSOR}
+    partial_template_name = (
+        "terminusgps_notifications/notifications/partials/_select_trigger.html"
+    )
+    template_name = (
+        "terminusgps_notifications/notifications/select_trigger.html"
+    )
+
+
+class WialonNotificationTriggerParametersFormView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
 ):
     content_type = "text/html"
     http_method_names = ["get", "post"]
     partial_template_name = (
-        "terminusgps_notifications/notifications/partials/_trigger_form.html"
+        "terminusgps_notifications/notifications/partials/_params_trigger.html"
     )
-    success_url = reverse_lazy("terminusgps_notifications:trigger success")
-    template_name = "terminusgps_notifications/notifications/trigger_form.html"
+    template_name = (
+        "terminusgps_notifications/notifications/params_trigger.html"
+    )
 
-    # TODO: Move this map somewhere else, settings maybe?
-    TRIGGERS_MAP = {
-        constants.WialonNotificationTriggerType.SENSOR: {
-            "initial": {
-                "lower_bound": -1,
-                "prev_msg_diff": 0,
-                "sensor_name_mask": "*",
-                "sensor_type": constants.WialonUnitSensorType.ANY,
-                "type": 0,
-                "upper_bound": 1,
-            },
-            "form_cls": forms.SensorValueTriggerForm,
-        }
-    }
+    def form_valid(self, form):
+        pass
 
-    def get_success_url(self) -> str:
-        """Adds the form data to the success url as path parameters before returning it."""
-        url = super().get_success_url()
-        params = self.request.POST.copy()
-        params.pop("csrfmiddlewaretoken")
-        return "%s?%s" % (url, urllib.parse.urlencode(params))
-
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["trigger"] = self.request.GET.get("trigger")
-        return context
-
-    def get_initial(self) -> dict[str, typing.Any]:
-        initial: dict[str, typing.Any] = super().get_initial()
-        if trigger := self.request.GET.get("trigger"):
-            if trigger in self.TRIGGERS_MAP:
-                for k, v in self.TRIGGERS_MAP[trigger]["initial"].items():
-                    initial[k] = v
-        return initial
-
-    def get_form_class(self) -> Form:
-        """Returns the form class for the trigger based on path parameters."""
-        if trigger := self.request.GET.get("trigger"):
-            if trigger in self.TRIGGERS_MAP:
-                return self.TRIGGERS_MAP[trigger]["form_cls"]
-        return Form
+    def get_form_class(self):
+        if trg := self.request.GET.get("t"):
+            return forms.triggers.TRIGGER_FORM_MAP.get(trg)
+        elif trg := self.request.POST.get("t"):
+            return forms.triggers.TRIGGER_FORM_MAP.get(trg)
 
 
 class WialonNotificationCreateView(
@@ -102,18 +99,6 @@ class WialonNotificationCreateView(
     )
     success_url = reverse_lazy("terminusgps_notifications:list notification")
     template_name = "terminusgps_notifications/notifications/create.html"
-
-    def get_form(
-        self, form_class=None
-    ) -> forms.WialonNotificationCreationForm:
-        form = super().get_form(form_class=form_class)
-        customer, _ = models.Customer.objects.get_or_create(
-            user=self.request.user
-        )
-        form.fields["units"].queryset = models.WialonUnit.objects.filter(
-            customer=customer
-        )
-        return form
 
 
 class WialonNotificationDetailView(

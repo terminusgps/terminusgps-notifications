@@ -28,6 +28,7 @@ class CustomerAdmin(admin.ModelAdmin):
 class WialonTokenAdmin(admin.ModelAdmin):
     list_display = ["customer"]
     exclude = ["name"]
+    readonly_fields = ["flags"]
 
 
 @admin.register(models.WialonNotification)
