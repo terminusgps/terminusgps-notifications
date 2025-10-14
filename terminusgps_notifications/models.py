@@ -208,14 +208,14 @@ class WialonNotification(models.Model):
         default=timezone.now,
         null=True,
         blank=True,
-        help_text="Please provide a valid date and time to activate the notification.",
+        help_text="Please provide a valid date and time in the format: YYYY-MM-DD HH:MM:SS.",
     )
     """Activation date/time."""
     deactivation_time = models.DateTimeField(
         null=True,
         blank=True,
         default=None,
-        help_text="Please provide a valid date and time to deactivate the notification. Leave this blank to never deactivate.",
+        help_text="Please provide a valid date and time in the format: YYYY-MM-DD HH:MM:SS. Leave this blank to never deactivate.",
     )
     """Deactivation date/time."""
     max_alarms = models.PositiveIntegerField(
@@ -280,14 +280,6 @@ class WialonNotification(models.Model):
         ],
     )
     """Notification flags."""
-    trigger = models.ForeignKey(
-        "terminusgps_notifications.WialonNotificationTrigger",
-        on_delete=models.RESTRICT,
-        related_name="notifications",
-    )
-    """Notification trigger."""
-    units = models.CharField(blank=False, default="")
-    """Comma-separated list of Wialon unit ids."""
 
     class Meta:
         verbose_name = _("wialon notification")

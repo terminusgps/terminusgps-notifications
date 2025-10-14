@@ -9,7 +9,6 @@ class WialonNotificationCreationForm(forms.ModelForm):
         fields = [
             "name",
             "method",
-            "activation_time",
             "deactivation_time",
             "max_alarms",
             "max_message_interval",
@@ -19,10 +18,14 @@ class WialonNotificationCreationForm(forms.ModelForm):
             "min_duration_prev",
             "language",
             "flags",
-            "units",
         ]
         widgets = {
             "name": forms.widgets.TextInput(
+                attrs={
+                    "class": "peer p-2 rounded border border-current bg-gray-50 invalid:bg-red-50 invalid:text-red-600"
+                }
+            ),
+            "deactivation_time": forms.widgets.DateTimeInput(
                 attrs={
                     "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
                 }
@@ -32,9 +35,52 @@ class WialonNotificationCreationForm(forms.ModelForm):
                     "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
                 }
             ),
-            "units": forms.widgets.SelectMultiple(
+            "max_alarms": forms.widgets.TextInput(
                 attrs={
-                    "class": "p-2 rounded border border-current bg-gray-50 order-2 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600",
+                    "size": 1,
+                    "maxlength": 4,
+                }
+            ),
+            "max_message_interval": forms.widgets.Select(
+                attrs={
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
+                }
+            ),
+            "alarm_timeout": forms.widgets.TextInput(
+                attrs={
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600",
+                    "size": 1,
+                    "maxlength": 4,
+                }
+            ),
+            "control_period": forms.widgets.Select(
+                attrs={
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
+                }
+            ),
+            "min_duration_alarm": forms.widgets.TextInput(
+                attrs={
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600",
+                    "size": 1,
+                    "maxlength": 4,
+                }
+            ),
+            "min_duration_prev": forms.widgets.TextInput(
+                attrs={
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600",
+                    "size": 1,
+                    "maxlength": 4,
+                }
+            ),
+            "language": forms.widgets.Select(
+                attrs={
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
+                }
+            ),
+            "flags": forms.widgets.Select(
+                attrs={
+                    "class": "p-2 rounded border border-current bg-gray-50 group-has-[.errorlist]:bg-red-50 group-has-[.errorlist]:text-red-600"
                 }
             ),
         }

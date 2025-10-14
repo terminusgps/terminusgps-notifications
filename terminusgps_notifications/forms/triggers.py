@@ -25,16 +25,17 @@ class TriggerForm(forms.Form):
         widget=forms.widgets.Select(
             {
                 "class": "p-2 rounded border bg-gray-100",
-                "hx-target": "#id_p",
+                "hx-target": "#id_trigger_parameters",
                 "hx-trigger": "load once, change",
                 "hx-swap": "outerHTML",
                 "hx-get": reverse_lazy(
-                    "terminusgps_notifications:form trigger parameters"
+                    "terminusgps_notifications:trigger parameters"
                 ),
             }
         ),
     )
     p = forms.JSONField()
+    un = forms.CharField(widget=forms.widgets.HiddenInput())
 
 
 class TriggerParametersForm(forms.Form):
@@ -183,7 +184,7 @@ class ParameterTriggerParametersForm(TriggerParametersForm):
     upper_bound = forms.DecimalField()
 
 
-class SensorValueTriggerParametersForm(forms.Form):
+class SensorValueTriggerParametersForm(TriggerParametersForm):
     lower_bound = forms.DecimalField(label="Lower bound", initial=-1)
     upper_bound = forms.DecimalField(label="Upper bound", initial=1)
     merge = forms.ChoiceField(

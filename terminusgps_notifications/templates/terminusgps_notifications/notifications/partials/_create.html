@@ -1,38 +1,99 @@
-<form hx-post="{% url 'terminusgps_notifications:create notification' %}" method="post" novalidate>
-    {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
-    <section id="fields" class="flex flex-col gap-8">
-        {% csrf_token %}
-        <div id="{{ form.name.id_for_label }}_group" class="group flex flex-col gap-2">
-            <label for="{{ form.name.id_for_label }}">Notification name:</label>
-            {{ form.name }}
-            <p id="{{ form.name.id_for_label }}_helptext" class="text-sm">{{ form.name.help_text }}</p>
-        </div>
-        <div id="{{ form.method.id_for_label }}_group" class="group flex flex-col gap-2">
-            <label for="{{ form.method.id_for_label }}">Notification method:</label>
-            {{ form.method }}
-            <p id="{{ form.method.id_for_label }}_helptext" class="text-sm">{{ form.method.help_text }}</p>
-        </div>
-        <div id="{{ form.units.id_for_label }}_group" class="group flex flex-col gap-2">
-            <label for="{{ form.units.id_for_label }}">Wialon units:</label>
-            {{ form.units }}
-            <p id="{{ form.units.id_for_label }}_helptext" class="text-sm order-last">{{ form.units.help_text }}</p>
-        </div>
-        <div id="{{ form.trigger.id_for_label }}_group" class="group flex flex-col gap-2">
-            <label for="{{ form.trigger.id_for_label }}">Notification trigger:</label>
-            {{ form.trigger }}
-            <p id="{{ form.trigger.id_for_label }}_helptext" class="text-sm">{{ form.trigger.help_text }}</p>
-        </div>
-        <div id="{{ form.trigger_parameters.id_for_label }}_group" class="group flex flex-col gap-2">
-            <label for="{{ form.trigger_parameters.id_for_label }}">Trigger parameters:</label>
-            {{ form.trigger_parameters }}
-            <p id="{{ form.trigger_parameters.id_for_label }}_helptext" class="text-sm">{{ form.trigger_parameters.help_text }}</p>
-        </div>
-        <section id="advanced-fields">
-            <div id=""></div>
-        </section>
+<form class="flex flex-col gap-4" hx-post="{% url 'terminusgps_notifications:create notifications' %}" method="post">
+    {% csrf_token %}
+    <div class="flex flex-col gap-2">
+        <label class="peer-invalid:text-red-800" for="{{ form.name.id_for_label }}">Notification name</label>
+        {{ form.name }}
+        <p id="{{ form.name.id_for_label }}_helptext" class="text-sm">{{ form.name.help_text }}</p>
+        {{ form.name.errors }}
     </section>
-    <section id="buttons" class="flex flex-col gap-2 mt-4">
-        <button type="submit" class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400">Submit</button>
-        <button type="button" hx-get="{% url 'terminusgps_notifications:list notification' %}" class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-gray-600 bg-gray-400 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-gray-100 hover:text-gray-600">Cancel</button>
+    <section id="{{ form.method.id_for_label }}_group" class="group flex flex-col gap-2">
+        <label for="{{ form.method.id_for_label }}">Notification method</label>
+        {{ form.method }}
+        <p id="{{ form.method.id_for_label }}_helptext" class="text-sm">{{ form.method.help_text }}</p>
+        {{ form.method.errors }}
+    </section>
+    <section id="{{ form.deactivation_time.id_for_label }}_group" class="group flex flex-col gap-2">
+        <label for="{{ form.deactivation_time.id_for_label }}">Deactivation Time</label>
+        {{ form.deactivation_time }}
+        <p id="{{ form.deactivation_time.id_for_label }}_helptext" class="text-sm">{{ form.deactivation_time.help_text }}</p>
+        {{ form.deactivation_time.errors }}
+    </section>
+    <button type="submit" class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400">Create Notification</button>
+    <section id="advanced" aria-expanded="false" class="group bg-gray-300 p-2 border-2 rounded border-gray-600">
+        <section class="flex justify-between items-center p-2 select-none cursor-pointer" id="advanced-header" hx-target="#advanced-fields" hx-on:click="s=document.getElementById('advanced').getAttribute('aria-expanded');document.getElementById('advanced').setAttribute('aria-expanded', s === 'true' ? 'false' : 'true');">
+            <h3 class="font-semibold">Advanced</h3>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8 hidden group-aria-expanded:flex">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8 flex group-aria-expanded:hidden">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+            </svg>
+        </section>
+        <section id="advanced-fields" class="flex-col gap-4 p-2 hidden group-aria-expanded:flex">
+            <section id="{{ form.max_alarms.id_for_label }}_group" class="group flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                    <label for="{{ form.max_alarms.id_for_label }}">Max alarms:</label>
+                    {{ form.max_alarms }}
+                </div>
+                <p id="{{ form.max_alarms.id_for_label }}_helptext" class="text-sm">{{ form.max_alarms.help_text }}</p>
+                {{ form.max_alarms.errors }}
+            </section>
+            <section id="{{ form.max_message_interval.id_for_label }}_group" class="group flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                    <label for="{{ form.max_message_interval.id_for_label }}">Max message interval:</label>
+                    {{ form.max_message_interval }}
+                </div>
+                <p id="{{ form.max_message_interval.id_for_label }}_helptext" class="text-sm">{{ form.max_message_interval.help_text }}</p>
+                {{ form.max_message_interval.errors }}
+            </section>
+            <section id="{{ form.alarm_timeout.id_for_label }}_group" class="group flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                    <label for="{{ form.alarm_timeout.id_for_label }}">Alarm timeout:</label>
+                    {{ form.alarm_timeout }}
+                </div>
+                <p id="{{ form.alarm_timeout.id_for_label }}_helptext" class="text-sm">{{ form.alarm_timeout.help_text }}</p>
+                {{ form.alarm_timeout.errors }}
+            </section>
+            <section id="{{ form.control_period.id_for_label }}_group" class="group flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                    <label for="{{ form.control_period.id_for_label }}">Control period:</label>
+                    {{ form.control_period }}
+                </div>
+                <p id="{{ form.control_period.id_for_label }}_helptext" class="text-sm">{{ form.control_period.help_text }}</p>
+                {{ form.control_period.errors }}
+            </section>
+            <section id="{{ form.min_duration_alarm.id_for_label }}_group" class="group flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                    <label for="{{ form.min_duration_alarm.id_for_label }}">Minimum alarm duration:</label>
+                    {{ form.min_duration_alarm }}
+                </div>
+                <p id="{{ form.min_duration_alarm.id_for_label }}_helptext" class="text-sm">{{ form.min_duration_alarm.help_text }}</p>
+                {{ form.min_duration_alarm.errors }}
+            </section>
+            <section id="{{ form.min_duration_prev.id_for_label }}_group" class="group flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                    <label for="{{ form.min_duration_prev.id_for_label }}">Minimum previous state duration:</label>
+                    {{ form.min_duration_prev }}
+                </div>
+                <p id="{{ form.min_duration_prev.id_for_label }}_helptext" class="text-sm">{{ form.min_duration_prev.help_text }}</p>
+                {{ form.min_duration_prev.errors }}
+            </section>
+            <section id="{{ form.language.id_for_label }}_group" class="group flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                    <label for="{{ form.language.id_for_label }}">Language:</label>
+                    {{ form.language }}
+                </div>
+                <p id="{{ form.language.id_for_label }}_helptext" class="text-sm">{{ form.language.help_text }}</p>
+                {{ form.language.errors }}
+            </section>
+            <section id="{{ form.flags.id_for_label }}_group" class="group flex flex-col gap-2">
+                <div class="flex gap-2 items-center">
+                    <label for="{{ form.flags.id_for_label }}">Flags:</label>
+                    {{ form.flags }}
+                </div>
+                <p id="{{ form.flags.id_for_label }}_helptext" class="text-sm">{{ form.flags.help_text }}</p>
+                {{ form.flags.errors }}
+            </section>
+        </section>
     </section>
 </form>
