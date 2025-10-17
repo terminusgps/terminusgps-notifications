@@ -10,7 +10,6 @@ from django.db.models import QuerySet
 from django.forms import Form
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_control, cache_page
@@ -154,134 +153,7 @@ class WialonNotificationCreateView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, CreateView
 ):
     extra_context = {
-        "message_tags": [
-            {"value": "%UNIT%", "description": _("Unit name")},
-            {
-                "value": "%CURR_TIME%",
-                "description": _("Current date and time"),
-            },
-            {
-                "value": "%LOCATION%",
-                "description": _(
-                    "Unit location at the moment of notification"
-                ),
-            },
-            {
-                "value": "%LAST_LOCATION%",
-                "description": _(
-                    "Unit last location at the moment of notification"
-                ),
-            },
-            {
-                "value": "%LOCATOR_LINK(60,T)%",
-                "description": _(
-                    "Create locator link for the triggered unit (brackets indicate lifespan in minutes, T and G parameters to show tracks and geofences)"
-                ),
-            },
-            {
-                "value": "%ZONE_MIN%",
-                "description": _(
-                    "The smallest of geofences holding unit at the moment of notification"
-                ),
-            },
-            {
-                "value": "%ZONES_ALL%",
-                "description": _(
-                    "All geofences holding unit at the moment of notification"
-                ),
-            },
-            {
-                "value": "%UNIT_GROUP%",
-                "description": _("Groups containing triggered unit"),
-            },
-            {
-                "value": "%SPEED%",
-                "description": _("Unit speed at the moment of notification"),
-            },
-            {
-                "value": "%POS_TIME%",
-                "description": _(
-                    "Date and time of the triggered message or the latest message with position in case the triggered message has no position"
-                ),
-            },
-            {
-                "value": "%MSG_TIME%",
-                "description": _("Date and time of the triggered message"),
-            },
-            {"value": "%DRIVER%", "description": _("Driver name")},
-            {
-                "value": "%DRIVER_PHONE%",
-                "description": _("Driver phone number"),
-            },
-            {"value": "%TRAILER%", "description": _("Trailer name")},
-            {
-                "value": "%SENSOR(*)%",
-                "description": _(
-                    "Unit sensors and their values (indicate sensor mask in brackets)"
-                ),
-            },
-            {
-                "value": "%ENGINE_HOURS%",
-                "description": _("Engine hours at the moment of notification"),
-            },
-            {
-                "value": "%MILEAGE%",
-                "description": _("Mileage at the moment of notification"),
-            },
-            {
-                "value": "%LAT%",
-                "description": _("Latitude at the moment of notification"),
-            },
-            {
-                "value": "%LON%",
-                "description": _("Longitude at the moment of notification"),
-            },
-            {
-                "value": "%LATD%",
-                "description": _(
-                    "Latitude at the moment of notification (without formatting)"
-                ),
-            },
-            {
-                "value": "%LOND%",
-                "description": _(
-                    "Longitude at the moment of notification (without formatting)"
-                ),
-            },
-            {
-                "value": "%GOOGLE_LINK%",
-                "description": _(
-                    "Link to Google Maps with the position at the moment of notification"
-                ),
-            },
-            {
-                "value": "%CUSTOM_FIELD(*)%",
-                "description": _(
-                    "Custom field value from unit properties (indicate custom field name in brackets)"
-                ),
-            },
-            {"value": "%SENSOR_NAME%", "description": _("Sensor name")},
-            {
-                "value": "%SENSOR_VALUE%",
-                "description": _("Triggered sensor value"),
-            },
-            {
-                "value": "%TRIGGERED_SENSORS%",
-                "description": _("All triggered sensors and their values"),
-            },
-            {
-                "value": "%VIDEO_LINK(480)%",
-                "description": _(
-                    "Links to the video files saved for the triggered notification with the 'Save a video as a file action'. In parentheses, specify the validity period of the links in minutes, the maximum value is 2880."
-                ),
-            },
-            {"value": "%UNIT_ID%", "description": _("Unit ID")},
-            {
-                "value": "%MSG_TIME_INT%",
-                "description": _("Time of triggered message in UNIX format"),
-            },
-            {"value": "%NOTIFICATION%", "description": _("Notification name")},
-        ]
+        "message_tags": constants.WialonNotificationMessageTag.choices
     }
     content_type = "text/html"
     form_class = forms.WialonNotificationCreationForm
@@ -303,8 +175,8 @@ class WialonNotificationCreateView(
         }
 
         initial["name"] = "New Notification"
-        initial["message"] = "Hello! At %MSG_TIME%, '%UNIT%' entered %ZONE%."
-        initial["timezone"] = timezone.now().utcoffset()
+        initial["message"] = "%NOTIFICATION%"
+        initial["timezone"] = 0
         initial["customer"] = customer
         initial["unit_list"] = self.request.GET.get("un")
         initial["trigger"] = trigger
@@ -361,9 +233,12 @@ class WialonNotificationDetailView(
 class WialonNotificationUpdateView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, UpdateView
 ):
+    extra_context = {
+        "message_tags": constants.WialonNotificationMessageTag.choices
+    }
     content_type = "text/html"
-    fields = ["method"]
     http_method_names = ["get", "post"]
+    form_class = forms.WialonNotificationUpdateForm
     model = models.WialonNotification
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_update.html"
@@ -373,6 +248,33 @@ class WialonNotificationUpdateView(
 
     def get_queryset(self) -> QuerySet:
         return super().get_queryset().filter(customer__user=self.request.user)
+
+    def form_valid(
+        self, form: forms.WialonNotificationUpdateForm
+    ) -> HttpResponse:
+        notification = form.save(commit=True)
+        token = getattr(notification.customer, "token").name
+        if form.changed_data:
+            try:
+                with WialonSession(token=token) as session:
+                    if "method" in form.changed_data:
+                        notification.actions = notification.get_actions()
+                    if "message" in form.changed_data:
+                        notification.text = notification.get_text()
+                    notification.update_in_wialon(session)
+            except (ValueError, WialonAPIError) as e:
+                form.add_error(
+                    None,
+                    ValidationError(
+                        _("Whoops! %(error)s"),
+                        code="invalid",
+                        params={"error": str(e)},
+                    ),
+                )
+                return self.form_invalid(form=form)
+        return HttpResponseRedirect(
+            notification.get_absolute_url(), headers={"HX-Refresh": "true"}
+        )
 
 
 class WialonNotificationDeleteView(
@@ -386,6 +288,7 @@ class WialonNotificationDeleteView(
     )
     pk_url_kwarg = "notification_pk"
     template_name = "terminusgps_notifications/notifications/delete.html"
+    success_url = reverse_lazy("terminusgps_notifications:list notifications")
 
     def get_queryset(self) -> QuerySet:
         return super().get_queryset().filter(customer__user=self.request.user)
@@ -398,7 +301,7 @@ class WialonNotificationListView(
     content_type = "text/html"
     http_method_names = ["get"]
     model = models.WialonNotification
-    ordering = "pk"
+    ordering = "name"
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_list.html"
     )
@@ -422,6 +325,12 @@ class WialonNotificationListView(
             }
         )
         return context
+
+    def get_ordering(self) -> str:
+        if user_input := self.request.GET.get("order"):
+            if user_input in ("name", "date_created"):
+                return user_input
+        return self.ordering
 
     def get_queryset(self) -> QuerySet:
         return (

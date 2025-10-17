@@ -1,6 +1,6 @@
 {% for notif in wialonnotification_list %}
-<section id="{{ notif.pk }}">
-    <a class="relative" href="{{ notif.get_absolute_url }}" hx-inherit="false">
+<section class="relative" id="{{ notif.pk }}" hx-target="this" hx-inherit="false">
+    <a href="{{ notif.get_absolute_url }}">
         <div class="py-2 px-4 border border-current rounded bg-gray-200 flex justify-between items-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
             <div class="flex gap-2 items-center">
                 <div class="rounded-full size-4 border {% if notif.enabled %}bg-green-400 border-green-600 animate-pulse{% else %}bg-red-400 border-red-600{% endif %}">&nbsp;</div>
@@ -21,6 +21,20 @@
             </div>
         </div>
     </a>
+    <svg
+        class="absolute -right-4 -top-4 size-8 text-red-800 fill-red-200 cursor-pointer transition-colors ease-in-out duration-300 hover:text-red-600 hover:fill-red-50"
+        hx-post="{% url 'terminusgps_notifications:delete notifications' notif.pk %}"
+        hx-confirm="Delete '{{ notif.name }}'?" hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'
+        hx-select="#notification-list"
+        hx-swap="outerHTML"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+    >
+        <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
 </section>
 {% empty %}
 <p>You don't have any notifications yet.</p>
@@ -29,7 +43,7 @@
 <button
     class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400"
     hx-get="{% url 'terminusgps_notifications:select units' %}"
-    hx-target="#notifications-list"
+    hx-target="#notifications"
     hx-trigger="click"
     >New Notification
 </button>

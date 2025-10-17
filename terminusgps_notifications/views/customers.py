@@ -1,5 +1,6 @@
 import typing
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -89,10 +90,15 @@ class NotificationsView(
         if name := request.GET.get("access_token"):
             token = WialonToken(name=name)
             try:
-                token.customer = Customer.objects.get(
+                customer = Customer.objects.get(
                     user__username=request.GET.get("user", "")
                 )
-                token.save()
+                if not hasattr(customer, "token"):
+                    token.customer = customer
+                    token.save()
+                    messages.add_message(
+                        request, 10, "Wialon API token was saved successfully!"
+                    )
             except Customer.DoesNotExist:
                 return HttpResponse(status=404)
         return super().get(request, *args, **kwargs)
@@ -194,6 +200,9 @@ class WialonCallbackView(HtmxTemplateResponseMixin, TemplateView):
                 user__username=request.GET.get("user", "")
             )
             token.save()
+            messages.add_message(
+                request, 10, "Wialon API token was successfully saved!"
+            )
             return super().get(request, *args, **kwargs)
         except Customer.DoesNotExist:
             return HttpResponse(status=404)

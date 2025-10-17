@@ -1,9 +1,10 @@
-<section id="notifications">
-    <section
-        id="notifications-list"
-        class="flex flex-col gap-4"
-        hx-get="{% url 'terminusgps_notifications:list notifications' %}"
-        hx-target="this"
-        hx-trigger="load"
-    ></section>
+<section id="notifications" class="flex flex-col gap-4">
+    <div>
+        <label for="id_order">Order: </label>
+        <select id="id_order" name="order" class="peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600" hx-target="#notifications-list" hx-trigger="load once, change" hx-get="{% url 'terminusgps_notifications:list notifications' %}" hx-include="this">
+            <option value="name">Name</option>
+            <option value="date_created">Date Created</option>
+        </select>
+    </div>
+    <section id="notifications-list" class="flex flex-col gap-4"></section>
 </section>

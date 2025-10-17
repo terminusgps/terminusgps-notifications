@@ -299,6 +299,8 @@ class WialonNotification(models.Model):
         related_name="notifications",
     )
     """Associated customer."""
+    date_created = models.DateTimeField(auto_now_add=True)
+    """Date created."""
 
     class Meta:
         verbose_name = _("wialon notification")
@@ -307,6 +309,11 @@ class WialonNotification(models.Model):
     def __str__(self) -> str:
         """Returns the notification name."""
         return str(self.name)
+
+    def save(self, **kwargs) -> None:
+        if update_fields := kwargs.get("update_fields"):
+            print(f"{update_fields = }")
+        return super().save(**kwargs)
 
     def get_absolute_url(self) -> str:
         return reverse(
@@ -375,40 +382,58 @@ class WialonNotification(models.Model):
             logger.critical(e)
             raise
 
+    def get_wialon_parameters(self, call_mode: str) -> dict[str, typing.Any]:
+        """Returns parameters for Wialon notification API calls."""
+        allowed_call_modes: set[str] = {"create", "update", "delete"}
+        if call_mode not in allowed_call_modes:
+            raise ValueError(
+                f"Invalid call_mode '{call_mode}'. Options are: {allowed_call_modes}"
+            )
+        if not self.customer.resource_id:
+            raise ValueError(
+                f"{self.customer} didn't have a Wialon resource id set."
+            )
+        return {
+            "itemId": int(self.customer.resource_id),
+            "id": 0 if call_mode == "create" else self.wialon_id,
+            "callMode": call_mode,
+            "n": self.name,
+            "txt": self.text,
+            "ta": self.activation_time if self.activation_time else 0,
+            "td": self.deactivation_time if self.deactivation_time else 0,
+            "ma": self.max_alarms,
+            "mmtd": self.max_message_interval,
+            "cdt": self.alarm_timeout,
+            "mast": self.min_duration_alarm,
+            "mpst": self.min_duration_prev,
+            "cp": self.control_period,
+            "fl": self.flags,
+            "la": self.language,
+            "tz": self.timezone,
+            "un": ast.literal_eval(self.unit_list),
+            "trg": self.trigger,
+            "act": self.actions,
+            "sch": self.schedule,
+            "ctrl_sch": self.control_schedule,
+        }
+
+    @transaction.atomic
+    def update_in_wialon(self, session: WialonSession) -> None:
+        """Updates the notification in Wialon."""
+        try:
+            params = self.get_wialon_parameters(call_mode="update")
+            session.wialon_api.resource_update_notification(**params)
+        except WialonAPIError as e:
+            logger.critical(e)
+            raise
+
     @transaction.atomic
     def create_in_wialon(self, session: WialonSession) -> int:
         """Creates the notification in Wialon and returns its id."""
-        if self.customer.resource_id is None:
-            raise ValueError(f"{self.customer}'s resource id wasn't set.")
         try:
-            params = {
-                "itemId": int(self.customer.resource_id),
-                "id": 0,
-                "callMode": "create",
-                "n": self.name,
-                "txt": self.text,
-                "ta": self.activation_time if self.activation_time else 0,
-                "td": self.deactivation_time if self.deactivation_time else 0,
-                "ma": self.max_alarms,
-                "mmtd": self.max_message_interval,
-                "cdt": self.alarm_timeout,
-                "mast": self.min_duration_alarm,
-                "mpst": self.min_duration_prev,
-                "cp": self.control_period,
-                "fl": self.flags,
-                "la": self.language,
-                "tz": self.timezone,
-                "un": ast.literal_eval(self.unit_list),
-                "trg": self.trigger,
-                "act": self.actions,
-                "sch": self.schedule,
-                "ctrl_sch": self.control_schedule,
-            }
-            wialon_response = session.wialon_api.resource_update_notification(
-                **params
-            )
-            self.enabled = True
-            return int(wialon_response[0])
+            params = self.get_wialon_parameters(call_mode="create")
+            res = session.wialon_api.resource_update_notification(**params)
+            return int(res[0])
         except WialonAPIError as e:
             logger.critical(e)
             raise
