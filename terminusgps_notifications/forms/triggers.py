@@ -48,8 +48,6 @@ class TriggerParametersForm(forms.Form):
     """Base class for notification trigger parameter forms."""
 
     def as_json(self) -> str:
-        if not self.is_valid():
-            raise ValueError(self.errors)
         return json.dumps(self.cleaned_data, cls=JSONDecimalEncoder)
 
 
