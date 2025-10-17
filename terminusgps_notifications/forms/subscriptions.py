@@ -22,13 +22,17 @@ class CustomerSubscriptionCreationForm(forms.Form):
     payment_profile = PaymentProfileChoiceField(
         queryset=PaymentProfile.objects.all(),
         widget=forms.widgets.Select(
-            attrs={"class": "border bg-gray-50 rounded p-2"}
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
         ),
     )
     address_profile = AddressProfileChoiceField(
         queryset=AddressProfile.objects.all(),
         widget=forms.widgets.Select(
-            attrs={"class": "border bg-gray-50 rounded p-2"}
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
         ),
     )
     consent = forms.BooleanField(

@@ -1,10 +1,31 @@
-{% for notif in notification_list %}
+{% for notif in wialonnotification_list %}
 <section id="{{ notif.pk }}">
-    {{ notif.name }}
+    <a class="relative" href="{{ notif.get_absolute_url }}" hx-inherit="false">
+        <div class="py-2 px-4 border border-current rounded bg-gray-200 flex justify-between items-center text-gray-800 dark:bg-gray-700 dark:text-gray-100">
+            <div class="flex gap-2 items-center">
+                <div class="rounded-full size-4 border {% if notif.enabled %}bg-green-400 border-green-600 animate-pulse{% else %}bg-red-400 border-red-600{% endif %}">&nbsp;</div>
+                <p class="font-semibold">{{ notif.name }}</p>
+            </div>
+            <div class="flex flex-col gap-1 items-center">
+            {% if notif.method == "sms" %}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                </svg>
+                <p class="text-sm">SMS</p>
+            {% elif notif.method == "voice" %}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                </svg>
+                <p class="text-sm">Voice</p>
+            {% endif %}
+            </div>
+        </div>
+    </a>
 </section>
 {% empty %}
 <p>You don't have any notifications yet.</p>
 {% endfor %}
+{% if has_token %}
 <button
     class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400"
     hx-get="{% url 'terminusgps_notifications:select units' %}"
@@ -12,3 +33,12 @@
     hx-trigger="click"
     >New Notification
 </button>
+{% else %}
+<a
+    class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400"
+    href="{% url 'terminusgps_notifications:wialon login' %}?{{ login_params|safe }}"
+    hx-boost="false"
+    hx-inherit="false"
+    >Authenticate with Wialon
+</a>
+{% endif %}

@@ -1,6 +1,10 @@
 import typing
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_control, cache_page
 from django.views.generic import FormView, RedirectView, TemplateView
 from terminusgps.mixins import HtmxTemplateResponseMixin
 from terminusgps_payments.models import (
@@ -10,9 +14,11 @@ from terminusgps_payments.models import (
 )
 
 from terminusgps_notifications.forms import CustomerSubscriptionCreationForm
-from terminusgps_notifications.models import Customer
+from terminusgps_notifications.models import Customer, WialonToken
 
 
+@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
+@method_decorator(cache_control(private=True), name="dispatch")
 class DashboardView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
 ):
@@ -26,9 +32,7 @@ class DashboardView(
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"], _ = Customer.objects.get_or_create(
-            user=self.request.user
-        )
+        context["customer"] = Customer.objects.get(user=self.request.user)
         return context
 
 
@@ -81,6 +85,28 @@ class NotificationsView(
     )
     template_name = "terminusgps_notifications/customers/notifications.html"
 
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        if name := request.GET.get("access_token"):
+            token = WialonToken(name=name)
+            try:
+                token.customer = Customer.objects.get(
+                    user__username=request.GET.get("user", "")
+                )
+                token.save()
+            except Customer.DoesNotExist:
+                return HttpResponse(status=404)
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        try:
+            context["customer"] = Customer.objects.get(user=self.request.user)
+            context["has_token"] = hasattr(context["customer"], "token")
+        except Customer.DoesNotExist:
+            context["customer"] = None
+            context["has_token"] = None
+        return context
+
 
 class CustomerSubscriptionCreateView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
@@ -106,10 +132,19 @@ class CustomerSubscriptionCreateView(
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"], _ = Customer.objects.get_or_create(
-            user=self.request.user
-        )
+        try:
+            context["customer"] = Customer.objects.get(user=self.request.user)
+        except Customer.DoesNotExist:
+            context["customer"] = None
         return context
+
+    def form_valid(
+        self, form: CustomerSubscriptionCreationForm
+    ) -> HttpResponse:
+        return HttpResponseRedirect(
+            reverse("terminusgps_notifications:subscription"),
+            headers={"HX-Retarget": "#subscription"},
+        )
 
 
 class CustomerStatsView(
@@ -124,9 +159,10 @@ class CustomerStatsView(
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"], _ = Customer.objects.get_or_create(
-            user=self.request.user
-        )
+        try:
+            context["customer"] = Customer.objects.get(user=self.request.user)
+        except Customer.DoesNotExist:
+            context["customer"] = None
         return context
 
 
@@ -139,9 +175,7 @@ class WialonLoginView(
     url = "https://hosting.terminusgps.com/login.html"
 
 
-class WialonCallbackView(
-    LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
-):
+class WialonCallbackView(HtmxTemplateResponseMixin, TemplateView):
     content_type = "text/html"
     extra_context = {"title": "Logged Into Wialon"}
     http_method_names = ["get"]
@@ -149,3 +183,17 @@ class WialonCallbackView(
         "terminusgps_notifications/customers/partials/_wialon_callback.html"
     )
     template_name = "terminusgps_notifications/customers/wialon_callback.html"
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        if name := request.GET.get("access_token"):
+            token = WialonToken(name=name)
+        else:
+            return HttpResponse(status=406)
+        try:
+            token.customer = Customer.objects.get(
+                user__username=request.GET.get("user", "")
+            )
+            token.save()
+            return super().get(request, *args, **kwargs)
+        except Customer.DoesNotExist:
+            return HttpResponse(status=404)

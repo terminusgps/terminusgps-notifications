@@ -1,5 +1,5 @@
 <form hx-post="{% url 'terminusgps_notifications:select triggers' %}" hx-target="this" class="flex flex-col gap-4" hx-swap="outerHTML">
-    {{ form.errors }}
+    {% if form.p.errors %}<div class="animate-jiggle">Please save your trigger parameters first before moving on!</div>{% endif %}
     {% csrf_token %}
     <label for="{{ form.t.id_for_label }}" class="font-semibold">Trigger Type</label>
     <div class="flex flex-col gap-2">

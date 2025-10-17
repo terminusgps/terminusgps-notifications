@@ -1,28 +1,32 @@
 <div class="flex flex-col gap-8">
     <section id="info">
-        <section id="subtotal" class="flex justify-between items-center p-4 border-b bg-gray-50 first:border-t">
+        <section id="subtotal" class="flex justify-between items-center p-4 border-b bg-gray-50 first:border-t dark:bg-gray-800">
             <h3>Subtotal</h3>
             <p>${{ customer.subtotal }}</p>
         </section>
-        <section id="tax" class="flex justify-between items-center p-4 border-b bg-gray-50 first:border-t">
+        <section id="tax" class="flex justify-between items-center p-4 border-b bg-gray-50 first:border-t dark:bg-gray-800">
             <h3>Tax</h3>
             <p>${{ customer.tax }}</p>
         </section>
-        <section id="grand-total" class="flex justify-between items-center p-4 border-b bg-gray-50 first:border-t">
+        <section id="grand-total" class="flex justify-between items-center p-4 border-b bg-gray-50 first:border-t dark:bg-gray-800">
             <h3 class="font-semibold">Grand Total</h3>
             <p>${{ customer.grand_total }}</p>
         </section>
     </section>
-    <form class="flex flex-col gap-4" action="{% url 'terminusgps_notifications:create subscription' %}" method="post">
+    <form id="create-form" class="flex flex-col gap-4" hx-post="{% url 'terminusgps_notifications:create subscriptions' %}" method="post" hx-target="this" hx-select="#create-form">
         {% csrf_token %}
-        <div class="flex flex-col gap-2">
-            <label for="{{ form.payment_profile.id_for_label }}">Payment Method</label>
+        <section class="flex flex-col gap-2">
             {{ form.payment_profile }}
-        </div>
-        <div class="flex flex-col gap-2">
-            <label for="{{ form.address_profile.id_for_label }}">Shipping Address</label>
+            <label class="order-first peer-invalid:text-red-800" for="{{ form.payment_profile.id_for_label }}">Payment Profile</label>
+            <p class="text-sm peer-invalid:text-red-600" id="{{ form.payment_profile.id_for_label }}_helptext">{{ form.payment_profile.help_text }}</p>
+            <div class="animate-jiggle font-italic">{{ form.payment_profile.errors }}</div>
+        </section>
+        <section class="flex flex-col gap-2">
             {{ form.address_profile }}
-        </div>
+            <label class="order-first peer-invalid:text-red-800" for="{{ form.address_profile.id_for_label }}">Address Profile</label>
+            <p class="text-sm peer-invalid:text-red-600" id="{{ form.address_profile.id_for_label }}_helptext">{{ form.address_profile.help_text }}</p>
+            <div class="animate-jiggle font-italic">{{ form.address_profile.errors }}</div>
+        </section>
         <div class="flex gap-4 items-center">
             {{ form.consent }}
             <label class="text-sm" for="{{ form.consent.id_for_label }}">I authorize Terminus GPS to charge the above credit card for ${{ customer.grand_total }} on the {% now 'jS' %} day (or final day) of each month.</label>

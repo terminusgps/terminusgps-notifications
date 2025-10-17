@@ -56,6 +56,14 @@ INSTALLED_APPS = [
     "terminusgps_notifications.apps.TerminusgpsNotificationsConfig",
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "TIMEOUT": 60 * 15,
+    }
+}
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

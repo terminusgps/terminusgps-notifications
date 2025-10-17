@@ -10,6 +10,7 @@ dependencies = [
     "python-terminusgps>=47.2.0",
     "terminusgps-payments>=2.0.0",
     "python-dateutil>=2.9.0.post0",
+    "redis[hiredis]>=6.4.0",
 ]
 
 [project.urls]
