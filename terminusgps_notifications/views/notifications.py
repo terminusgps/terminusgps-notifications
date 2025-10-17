@@ -194,7 +194,8 @@ class WialonNotificationCreateView(
                 notification = form.save(commit=False)
                 notification.actions = notification.get_actions()
                 notification.text = notification.get_text()
-                notification.wialon_id = notification.create_in_wialon(session)
+                api_response = notification.create_in_wialon(session)
+                notification.wialon_id = int(api_response[0])
                 notification.save()
             return super().form_valid(form=form)
         except WialonAPIError as e:
@@ -292,6 +293,15 @@ class WialonNotificationDeleteView(
 
     def get_queryset(self) -> QuerySet:
         return super().get_queryset().filter(customer__user=self.request.user)
+
+    def form_valid(self, form: Form) -> HttpResponse:
+        try:
+            token = getattr(self.object.customer, "token").name
+            with WialonSession(token=token) as session:
+                self.object.delete_in_wialon(session)
+            return super().form_valid(form=form)
+        except (ValueError, WialonAPIError):
+            return HttpResponse(status=406)
 
 
 class WialonNotificationListView(

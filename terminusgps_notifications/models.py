@@ -418,22 +418,36 @@ class WialonNotification(models.Model):
         }
 
     @transaction.atomic
-    def update_in_wialon(self, session: WialonSession) -> None:
-        """Updates the notification in Wialon."""
+    def delete_in_wialon(
+        self, session: WialonSession
+    ) -> dict[str, typing.Any]:
         try:
-            params = self.get_wialon_parameters(call_mode="update")
-            session.wialon_api.resource_update_notification(**params)
+            params = self.get_wialon_parameters(call_mode="delete")
+            return session.wialon_api.resource_update_notification(**params)
         except WialonAPIError as e:
             logger.critical(e)
             raise
 
     @transaction.atomic
-    def create_in_wialon(self, session: WialonSession) -> int:
-        """Creates the notification in Wialon and returns its id."""
+    def update_in_wialon(
+        self, session: WialonSession
+    ) -> dict[str, typing.Any]:
+        """Updates the notification in Wialon."""
+        try:
+            params = self.get_wialon_parameters(call_mode="update")
+            return session.wialon_api.resource_update_notification(**params)
+        except WialonAPIError as e:
+            logger.critical(e)
+            raise
+
+    @transaction.atomic
+    def create_in_wialon(
+        self, session: WialonSession
+    ) -> dict[str, typing.Any]:
+        """Creates the notification in Wialon."""
         try:
             params = self.get_wialon_parameters(call_mode="create")
-            res = session.wialon_api.resource_update_notification(**params)
-            return int(res[0])
+            return session.wialon_api.resource_update_notification(**params)
         except WialonAPIError as e:
             logger.critical(e)
             raise
