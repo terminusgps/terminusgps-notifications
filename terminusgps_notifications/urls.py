@@ -69,9 +69,4 @@ urlpatterns = [
     path(
         "wialon/login/", views.WialonLoginView.as_view(), name="wialon login"
     ),
-    path(
-        "wialon/callback/",
-        views.WialonCallbackView.as_view(),
-        name="wialon callback",
-    ),
 ]

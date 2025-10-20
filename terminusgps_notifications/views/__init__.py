@@ -5,7 +5,6 @@ from .customers import (
     DashboardView,
     NotificationsView,
     SubscriptionView,
-    WialonCallbackView,
     WialonLoginView,
 )
 from .main import HomeView

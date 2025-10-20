@@ -1,7 +1,7 @@
 import json
 import logging
 import typing
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urljoin
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -335,7 +335,10 @@ class WialonNotificationListView(
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer = models.Customer.objects.get(user=self.request.user)
+        customer, _ = models.Customer.objects.get_or_create(
+            user=self.request.user
+        )
+
         context["has_token"] = hasattr(customer, "token")
         context["login_params"] = urlencode(
             {
@@ -346,7 +349,12 @@ class WialonNotificationListView(
                 "lang": "en",
                 "flags": 0x1,
                 "user": self.request.user.username,
-                "redirect_uri": "http://127.0.0.1:8000/notifications/",
+                "redirect_uri": urljoin(
+                    "https://api.terminusgps.com/v3/"
+                    if not settings.DEBUG
+                    else "http://127.0.0.1:8000/",
+                    reverse("terminusgps_notifications:notifications"),
+                ),
                 "response_type": "token",
             }
         )

@@ -2,7 +2,6 @@ import decimal
 import typing
 
 from authorizenet import apicontractsv1
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -273,30 +272,3 @@ class WialonLoginView(
     permanent = True
     query_string = True
     url = "https://hosting.terminusgps.com/login.html"
-
-
-class WialonCallbackView(HtmxTemplateResponseMixin, TemplateView):
-    content_type = "text/html"
-    extra_context = {"title": "Logged Into Wialon"}
-    http_method_names = ["get"]
-    partial_template_name = (
-        "terminusgps_notifications/customers/partials/_wialon_callback.html"
-    )
-    template_name = "terminusgps_notifications/customers/wialon_callback.html"
-
-    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        if name := request.GET.get("access_token"):
-            token = WialonToken(name=name)
-        else:
-            return HttpResponse(status=406)
-        try:
-            token.customer = Customer.objects.get(
-                user__username=request.GET.get("user", "")
-            )
-            token.save()
-            messages.add_message(
-                request, 10, "Wialon API token was successfully saved!"
-            )
-            return super().get(request, *args, **kwargs)
-        except Customer.DoesNotExist:
-            return HttpResponse(status=404)
