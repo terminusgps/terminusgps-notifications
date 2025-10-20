@@ -45,29 +45,32 @@ class WialonNotificationUnitSelectFormView(
     )
     template_name = "terminusgps_notifications/units/select.html"
 
-    def get_success_url(self, form) -> str:
-        return reverse(
-            "terminusgps_notifications:select triggers",
-            query={"un": str(form.cleaned_data["units"])},
+    def form_valid(self, form):
+        """Redirects the client to the next form in the flow (select triggers)."""
+        return HttpResponseRedirect(
+            reverse(
+                "terminusgps_notifications:select triggers",
+                query={"un": str(form.cleaned_data["units"])},
+            )
         )
 
-    def form_valid(self, form):
-        return HttpResponseRedirect(self.get_success_url(form))
-
     def get_form(self, form_class=None) -> forms.WialonUnitSelectionForm:
+        """Sets the form :py:attr:`unit_list` from the Wialon API."""
         form = super().get_form(form_class=form_class)
-        customer = models.Customer.objects.get(user=self.request.user)
+        customer, _ = models.Customer.objects.get_or_create(
+            user=self.request.user
+        )
         if hasattr(customer, "token"):
-            try:
-                token = getattr(customer, "token").name
-                with WialonSession(token=token) as session:
+            token = getattr(customer, "token").name
+            with WialonSession(token=token) as session:
+                try:
                     unit_list = [
                         (int(unit["id"]), str(unit["nm"]))
                         for unit in customer.get_units_from_wialon(session)
                     ]
                     form.fields["units"].choices = unit_list
-            except WialonAPIError as e:
-                logger.warning(e)
+                except WialonAPIError as e:
+                    logger.warning(e)
         return form
 
 

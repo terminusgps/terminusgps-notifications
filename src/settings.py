@@ -52,7 +52,7 @@ LOGGING = {
     "formatters": {
         "generic": {
             "format": "%(asctime)s [%(process)d] [%(levelname)s] %(message)s",
-            "datefmt": "[%Y-%m-%d %H:%M:%S %z]",
+            "datefmt": "[%Y-%m-%d %H:%M:%S%z]",
             "class": "logging.Formatter",
         }
     },
@@ -68,7 +68,7 @@ LOGGING = {
         },
         "terminusgps_notifications": {
             "handlers": ["console"],
-            "level": os.getenv("NOTIFICATIONS_LOG_LEVEL", "DEBUG"),
+            "level": os.getenv("NOTIFICATIONS_LOG_LEVEL", "INFO"),
             "propagate": True,
         },
     },
