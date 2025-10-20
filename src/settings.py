@@ -37,6 +37,7 @@ STATIC_URL = "static/"
 TIME_ZONE = "US/Central"
 USE_I18N = True
 USE_TZ = True
+WIALON_RESOURCE_NAME = "Terminus GPS Notifications"
 WIALON_TOKEN = os.getenv("WIALON_TOKEN")
 WIALON_TOKEN_ACCESS_TYPE = (
     TokenFlag.VIEW_ACCESS
