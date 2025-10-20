@@ -57,9 +57,7 @@ class WialonNotificationUnitSelectFormView(
     def get_form(self, form_class=None) -> forms.WialonUnitSelectionForm:
         """Sets the form :py:attr:`unit_list` from the Wialon API."""
         form = super().get_form(form_class=form_class)
-        customer, _ = models.Customer.objects.get_or_create(
-            user=self.request.user
-        )
+        customer = getattr(self.request.user, "customer")
         if hasattr(customer, "token"):
             token = getattr(customer, "token").name
             with WialonSession(token=token) as session:
@@ -74,6 +72,8 @@ class WialonNotificationUnitSelectFormView(
         return form
 
 
+@method_decorator(cache_page(timeout=60 * 15), name="get")
+@method_decorator(cache_control(private=True), name="get")
 class WialonNotificationTriggerSelectFormView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
 ):
@@ -333,11 +333,11 @@ class WialonNotificationListView(
     template_name = "terminusgps_notifications/notifications/list.html"
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        """Adds ``has_token`` and ``login_params`` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         customer, _ = models.Customer.objects.get_or_create(
             user=self.request.user
         )
-
         context["has_token"] = hasattr(customer, "token")
         context["login_params"] = urlencode(
             {
@@ -360,8 +360,9 @@ class WialonNotificationListView(
         return context
 
     def get_ordering(self) -> str:
+        """Returns ordering based on the ``order`` query parameter."""
         if user_input := self.request.GET.get("order"):
-            if user_input in ("name", "date_created"):
+            if user_input in ("name", "-date_created"):
                 return user_input
         return self.ordering
 
