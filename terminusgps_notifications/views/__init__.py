@@ -3,11 +3,11 @@ from .customers import (
     CustomerStatsView,
     CustomerSubscriptionCreateView,
     DashboardView,
+    HomeView,
     NotificationsView,
     SubscriptionView,
     WialonLoginView,
 )
-from .main import HomeView
 from .notifications import (
     WialonNotificationCreateView,
     WialonNotificationDeleteView,

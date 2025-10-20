@@ -19,7 +19,6 @@ from terminusgps.authorizenet.service import (
 from terminusgps.mixins import HtmxTemplateResponseMixin
 from terminusgps_payments.models import (
     AddressProfile,
-    CustomerProfile,
     PaymentProfile,
     Subscription,
 )
@@ -32,7 +31,18 @@ logger = logging.getLogger(__name__)
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
-@method_decorator(cache_control(private=True), name="dispatch")
+class HomeView(HtmxTemplateResponseMixin, TemplateView):
+    content_type = "text/html"
+    extra_context = {
+        "title": "Terminus GPS Notifications",
+        "subtitle": "We know where ours are... do you?",
+    }
+    http_method_names = ["get"]
+    partial_template_name = "terminusgps_notifications/partials/_home.html"
+    template_name = "terminusgps_notifications/home.html"
+
+
+@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 class DashboardView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
 ):
@@ -44,13 +54,9 @@ class DashboardView(
     )
     template_name = "terminusgps_notifications/customers/dashboard.html"
 
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = Customer.objects.get_or_create(user=self.request.user)
-        context["customer"] = customer
-        return context
 
-
+@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
+@method_decorator(cache_control(private=True), name="dispatch")
 class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
     content_type = "text/html"
     extra_context = {"title": "Account"}
@@ -59,38 +65,6 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
         "terminusgps_notifications/customers/partials/_account.html"
     )
     template_name = "terminusgps_notifications/customers/account.html"
-
-    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
-        self.anet_service = AuthorizenetService()
-        return super().setup(request, *args, **kwargs)
-
-    @transaction.atomic
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        if hasattr(self.request.user, "customer_profile"):
-            customer_profile = getattr(self.request.user, "customer_profile")
-        else:
-            customer_profile = CustomerProfile(user=self.request.user)
-            try:
-                anet_response = self.anet_service.get_customer_profile_by_user(
-                    self.request.user
-                )
-                customer_profile.pk = anet_response.profile.customerProfileId
-                customer_profile.save()
-            except AuthorizenetControllerExecutionError as e:
-                if e.code != "E00040":
-                    logger.critical(e)
-                    raise
-                anet_response = self.anet_service.create_customer_profile(
-                    customer_profile
-                )
-                customer_profile.pk = anet_response.customerProfileId
-                customer_profile.save()
-
-        customer, _ = Customer.objects.get_or_create(user=self.request.user)
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer_profile"] = customer_profile
-        context["customer"] = customer
-        return context
 
 
 class SubscriptionView(
@@ -184,23 +158,23 @@ class CustomerSubscriptionCreateView(
         self, form: CustomerSubscriptionCreationForm
     ) -> HttpResponse:
         """Creates a subscription for the customer in Authorizenet."""
-        try:
-            # Retrieve db objects for Authorizenet API call
-            customer, _created = Customer.objects.get_or_create(
-                user=self.request.user
+        if not hasattr(self.request.user, "customer_profile"):
+            form.add_error(
+                None,
+                ValidationError(
+                    _(
+                        "Whoops! Your account doesn't have an associated customer profile. Please try again later"
+                    ),
+                    code="invalid",
+                ),
             )
-            customer_profile = CustomerProfile.objects.get(
-                user=self.request.user
-            )
-        except CustomerProfile.DoesNotExist:
-            customer_profile = CustomerProfile(user=self.request.user)
-            anet_response = self.anet_service.create_customer_profile(
-                customer_profile
-            )
-            customer_profile.pk = int(anet_response.customerProfileId)
-            customer_profile.save()
+            return self.form_invalid(form=form)
 
         # Set subscription variables
+        customer, created = Customer.objects.get_or_create(
+            user=self.request.user
+        )
+        customer_profile = getattr(self.request.user, "customer_profile")
         name = "Terminus GPS Notifications"
         start_date = timezone.now()
         amount = customer.grand_total
@@ -239,6 +213,7 @@ class CustomerSubscriptionCreateView(
             subscription = Subscription(
                 name=name,
                 amount=amount,
+                start_date=start_date,
                 customer_profile=customer_profile,
                 payment_profile=payment_profile,
                 address_profile=address_profile,
