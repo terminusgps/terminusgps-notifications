@@ -12,5 +12,5 @@ class TerminusgpsNotificationsConfig(AppConfig):
 
         post_save.connect(
             signals.create_notification_resource_in_wialon,
-            sender=models.Customer,
+            sender=models.TerminusgpsNotificationsCustomer,
         )

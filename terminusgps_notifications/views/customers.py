@@ -25,7 +25,10 @@ from terminusgps_payments.models import (
 from terminusgps_payments.services import AuthorizenetService
 
 from terminusgps_notifications.forms import CustomerSubscriptionCreationForm
-from terminusgps_notifications.models import Customer, WialonToken
+from terminusgps_notifications.models import (
+    TerminusgpsNotificationsCustomer,
+    WialonToken,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +83,9 @@ class SubscriptionView(
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = Customer.objects.get_or_create(user=self.request.user)
+        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
+            user=self.request.user
+        )
         context["customer"] = customer
         return context
 
@@ -100,19 +105,21 @@ class NotificationsView(
         if name := request.GET.get("access_token"):
             token = WialonToken(name=name)
             try:
-                customer = Customer.objects.get(
+                customer = TerminusgpsNotificationsCustomer.objects.get(
                     user__username=request.GET.get("user", "")
                 )
                 if not hasattr(customer, "token"):
                     token.customer = customer
                     token.save()
-            except Customer.DoesNotExist:
+            except TerminusgpsNotificationsCustomer.DoesNotExist:
                 return HttpResponse(status=404)
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = Customer.objects.get_or_create(user=self.request.user)
+        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
+            user=self.request.user
+        )
         context["customer"] = customer
         context["has_token"] = hasattr(customer, "token")
         return context
@@ -138,7 +145,9 @@ class CustomerSubscriptionCreateView(
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         """Adds `customer` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = Customer.objects.get_or_create(user=self.request.user)
+        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
+            user=self.request.user
+        )
         context["customer"] = customer
         return context
 
@@ -171,8 +180,10 @@ class CustomerSubscriptionCreateView(
             return self.form_invalid(form=form)
 
         # Set subscription variables
-        customer, created = Customer.objects.get_or_create(
-            user=self.request.user
+        customer, created = (
+            TerminusgpsNotificationsCustomer.objects.get_or_create(
+                user=self.request.user
+            )
         )
         customer_profile = getattr(self.request.user, "customer_profile")
         name = "Terminus GPS Notifications"
@@ -255,7 +266,9 @@ class CustomerStatsView(
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = Customer.objects.get_or_create(user=self.request.user)
+        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
+            user=self.request.user
+        )
         context["customer"] = customer
         return context
 

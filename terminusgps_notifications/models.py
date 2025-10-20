@@ -18,10 +18,14 @@ from terminusgps.wialon.session import WialonAPIError, WialonSession
 logger = logging.getLogger(__name__)
 
 
-class Customer(models.Model):
+class TerminusgpsNotificationsCustomer(models.Model):
     """A Terminus GPS Notifications customer."""
 
-    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name="terminusgps_notifications_customer",
+    )
     """Django user."""
     date_format = models.CharField(
         choices=[
@@ -89,7 +93,7 @@ class Customer(models.Model):
     subscription = models.ForeignKey(
         "terminusgps_payments.Subscription",
         on_delete=models.SET_NULL,
-        related_name="customer",
+        related_name="terminusgps_notifications_customer",
         null=True,
         blank=True,
         default=None,
@@ -153,7 +157,7 @@ class WialonToken(models.Model):
     """Wialon API token."""
 
     customer = models.OneToOneField(
-        "terminusgps_notifications.Customer",
+        "terminusgps_notifications.TerminusgpsNotificationsCustomer",
         on_delete=models.CASCADE,
         related_name="token",
     )
@@ -294,7 +298,7 @@ class WialonNotification(models.Model):
     wialon_id = models.PositiveBigIntegerField()
     """Wialon id."""
     customer = models.ForeignKey(
-        "terminusgps_notifications.Customer",
+        "terminusgps_notifications.TerminusgpsNotificationsCustomer",
         on_delete=models.CASCADE,
         related_name="notifications",
     )
@@ -309,11 +313,6 @@ class WialonNotification(models.Model):
     def __str__(self) -> str:
         """Returns the notification name."""
         return str(self.name)
-
-    def save(self, **kwargs) -> None:
-        if update_fields := kwargs.get("update_fields"):
-            print(f"{update_fields = }")
-        return super().save(**kwargs)
 
     def get_absolute_url(self) -> str:
         return reverse(

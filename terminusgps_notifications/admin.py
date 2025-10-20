@@ -3,8 +3,8 @@ from django.contrib import admin
 from . import models
 
 
-@admin.register(models.Customer)
-class CustomerAdmin(admin.ModelAdmin):
+@admin.register(models.TerminusgpsNotificationsCustomer)
+class TerminusgpsNotificationsCustomerAdmin(admin.ModelAdmin):
     list_display = ["user", "sms_count", "voice_count", "subscription__status"]
     list_filter = ["subscription__status"]
     readonly_fields = ["tax", "grand_total"]

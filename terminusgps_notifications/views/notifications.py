@@ -57,7 +57,9 @@ class WialonNotificationUnitSelectFormView(
     def get_form(self, form_class=None) -> forms.WialonUnitSelectionForm:
         """Sets the form :py:attr:`unit_list` from the Wialon API."""
         form = super().get_form(form_class=form_class)
-        customer = getattr(self.request.user, "customer")
+        customer = getattr(
+            self.request.user, "terminusgps_notifications_customer"
+        )
         if hasattr(customer, "token"):
             token = getattr(customer, "token").name
             with WialonSession(token=token) as session:
@@ -173,8 +175,10 @@ class WialonNotificationCreateView(
     def get_initial(self, **kwargs) -> dict[str, typing.Any]:
         initial: dict[str, typing.Any] = super().get_initial(**kwargs)
         schedule = {"f1": 0, "f2": 0, "t1": 0, "t2": 0, "m": 0, "w": 0, "y": 0}
-        customer, _ = models.Customer.objects.get_or_create(
-            user=self.request.user
+        customer, _ = (
+            models.TerminusgpsNotificationsCustomer.objects.get_or_create(
+                user=self.request.user
+            )
         )
         trigger = {
             "t": self.request.GET.get("t", ""),
@@ -335,8 +339,10 @@ class WialonNotificationListView(
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         """Adds ``has_token`` and ``login_params`` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = models.Customer.objects.get_or_create(
-            user=self.request.user
+        customer, _ = (
+            models.TerminusgpsNotificationsCustomer.objects.get_or_create(
+                user=self.request.user
+            )
         )
         context["has_token"] = hasattr(customer, "token")
         context["login_params"] = urlencode(
