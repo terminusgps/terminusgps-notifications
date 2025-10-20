@@ -14,6 +14,7 @@
         </section>
     </section>
     <form id="create-form" class="flex flex-col gap-4" hx-post="{% url 'terminusgps_notifications:create subscriptions' %}" method="post" hx-target="this" hx-select="#create-form">
+        {{ form.errors }}
         {% csrf_token %}
         <section class="flex flex-col gap-2">
             {{ form.payment_profile }}

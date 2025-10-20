@@ -45,6 +45,34 @@ WIALON_TOKEN_ACCESS_TYPE = (
 )
 WSGI_APPLICATION = "src.wsgi.application"
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "generic": {
+            "format": "%(asctime)s [%(process)d] [%(levelname)s] %(message)s",
+            "datefmt": "[%Y-%m-%d %H:%M:%S %z]",
+            "class": "logging.Formatter",
+        }
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "generic"}
+    },
+    "root": {"handlers": ["console"], "level": "DEBUG"},
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate": False,
+        },
+        "terminusgps_notifications": {
+            "handlers": ["console"],
+            "level": os.getenv("NOTIFICATIONS_LOG_LEVEL", "DEBUG"),
+            "propagate": True,
+        },
+    },
+}
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

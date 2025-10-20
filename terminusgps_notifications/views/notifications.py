@@ -6,6 +6,7 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.db.models import QuerySet
 from django.forms import Form
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -23,6 +24,7 @@ from django.views.generic import (
     UpdateView,
 )
 from terminusgps.mixins import HtmxTemplateResponseMixin
+from terminusgps.wialon import flags
 from terminusgps.wialon.session import WialonAPIError, WialonSession
 
 from terminusgps_notifications import constants, forms, models
@@ -168,7 +170,9 @@ class WialonNotificationCreateView(
     def get_initial(self, **kwargs) -> dict[str, typing.Any]:
         initial: dict[str, typing.Any] = super().get_initial(**kwargs)
         schedule = {"f1": 0, "f2": 0, "t1": 0, "t2": 0, "m": 0, "w": 0, "y": 0}
-        customer = models.Customer.objects.get(user=self.request.user)
+        customer, _ = models.Customer.objects.get_or_create(
+            user=self.request.user
+        )
         trigger = {
             "t": self.request.GET.get("t", ""),
             "p": json.loads(self.request.GET.get("p", "{}")),
@@ -184,6 +188,7 @@ class WialonNotificationCreateView(
         initial["control_schedule"] = schedule.copy()
         return initial
 
+    @transaction.atomic
     def form_valid(
         self, form: forms.WialonNotificationCreationForm
     ) -> HttpResponse:
@@ -191,6 +196,17 @@ class WialonNotificationCreateView(
             customer = form.cleaned_data["customer"]
             token = getattr(customer, "token").name
             with WialonSession(token=token) as session:
+                if not customer.resource_id:
+                    api_response = session.wialon_api.core_create_resource(
+                        **{
+                            "creatorId": session.uid,
+                            "name": "Terminus GPS Notifications",
+                            "dataFlags": flags.DataFlag.RESOURCE_BASE,
+                            "skipCreatorCheck": int(True),
+                        }
+                    )
+                    customer.resource_id = int(api_response["item"]["id"])
+                    customer.save()
                 notification = form.save(commit=False)
                 notification.actions = notification.get_actions()
                 notification.text = notification.get_text()

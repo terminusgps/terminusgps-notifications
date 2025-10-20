@@ -88,7 +88,7 @@ class Customer(models.Model):
 
     subscription = models.ForeignKey(
         "terminusgps_payments.Subscription",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="customer",
         null=True,
         blank=True,
