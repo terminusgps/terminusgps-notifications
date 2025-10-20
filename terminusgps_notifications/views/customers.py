@@ -1,4 +1,5 @@
 import decimal
+import logging
 import typing
 
 from authorizenet import apicontractsv1
@@ -26,6 +27,8 @@ from terminusgps_payments.services import AuthorizenetService
 
 from terminusgps_notifications.forms import CustomerSubscriptionCreationForm
 from terminusgps_notifications.models import Customer, WialonToken
+
+logger = logging.getLogger(__name__)
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
@@ -57,17 +60,34 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
     )
     template_name = "terminusgps_notifications/customers/account.html"
 
+    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
+        self.anet_service = AuthorizenetService()
+        return super().setup(request, *args, **kwargs)
+
+    @transaction.atomic
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        if hasattr(self.request.user, "customer_profile"):
+            customer_profile = getattr(self.request.user, "customer_profile")
+        else:
+            customer_profile = CustomerProfile(user=self.request.user)
+            try:
+                anet_response = self.anet_service.get_customer_profile_by_user(
+                    self.request.user
+                )
+                customer_profile.pk = anet_response.profile.customerProfileId
+                customer_profile.save()
+            except AuthorizenetControllerExecutionError as e:
+                if e.code != "E00040":
+                    logger.critical(e)
+                    raise
+                anet_response = self.anet_service.create_customer_profile(
+                    customer_profile
+                )
+                customer_profile.pk = anet_response.customerProfileId
+                customer_profile.save()
+
         customer, _ = Customer.objects.get_or_create(user=self.request.user)
-        try:
-            customer_profile = CustomerProfile.objects.get(user=customer.user)
-        except CustomerProfile.DoesNotExist:
-            customer_profile = CustomerProfile(user=customer.user)
-            service = AuthorizenetService()
-            anet_response = service.create_customer_profile(customer_profile)
-            customer_profile.pk = int(anet_response.customerProfileId)
-            customer_profile.save()
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer_profile"] = customer_profile
         context["customer"] = customer
         return context

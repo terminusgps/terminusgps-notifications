@@ -8,7 +8,7 @@ dependencies = [
     "django-encrypted-field>=1.0.5",
     "django>=5.2.7",
     "python-terminusgps>=47.2.0",
-    "terminusgps-payments>=2.0.0",
+    "terminusgps-payments>=2.4.0",
     "python-dateutil>=2.9.0.post0",
     "redis[hiredis]>=6.4.0",
 ]

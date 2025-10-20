@@ -234,17 +234,13 @@ class WialonNotificationDetailView(
 ):
     content_type = "text/html"
     http_method_names = ["get"]
+    extra_context = {"title": "Notification Details"}
     model = models.WialonNotification
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_detail.html"
     )
     pk_url_kwarg = "notification_pk"
     template_name = "terminusgps_notifications/notifications/detail.html"
-
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["title"] = self.get_object().name
-        return context
 
     def get_queryset(self) -> QuerySet:
         return super().get_queryset().filter(customer__user=self.request.user)
