@@ -6,6 +6,8 @@ from terminusgps.wialon.session import WialonAPIError, WialonSession
 
 logger = logging.getLogger(__name__)
 
+NOTIFICATION_RESOURCE_NAME = "Terminus GPS Notifications"
+
 
 def search_wialon_for_notification_resource(
     session: WialonSession,
@@ -15,7 +17,7 @@ def search_wialon_for_notification_resource(
             "spec": {
                 "itemsType": "avl_resource",
                 "propName": "sys_name",
-                "propValueMask": "Terminus GPS Notifications",
+                "propValueMask": NOTIFICATION_RESOURCE_NAME,
                 "sortType": "sys_name",
                 "propType": "property",
             },
@@ -33,7 +35,7 @@ def create_wialon_notification_resource(
     return session.wialon_api.core_create_resource(
         **{
             "creatorId": session.uid,
-            "name": "Terminus GPS Notifications",
+            "name": NOTIFICATION_RESOURCE_NAME,
             "dataFlags": DataFlag.RESOURCE_BASE,
             "skipCreatorCheck": int(True),
         }
