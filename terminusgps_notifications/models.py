@@ -416,33 +416,12 @@ class WialonNotification(models.Model):
             "ctrl_sch": self.control_schedule,
         }
 
-    def delete_in_wialon(
-        self, session: WialonSession
-    ) -> dict[str, typing.Any]:
-        try:
-            params = self.get_wialon_parameters(call_mode="delete")
-            return session.wialon_api.resource_update_notification(**params)
-        except WialonAPIError as e:
-            logger.critical(e)
-            raise
-
     def update_in_wialon(
-        self, session: WialonSession
+        self, call_mode: str, session: WialonSession
     ) -> dict[str, typing.Any]:
         """Updates the notification in Wialon."""
         try:
-            params = self.get_wialon_parameters(call_mode="update")
-            return session.wialon_api.resource_update_notification(**params)
-        except WialonAPIError as e:
-            logger.critical(e)
-            raise
-
-    def create_in_wialon(
-        self, session: WialonSession
-    ) -> dict[str, typing.Any]:
-        """Creates the notification in Wialon."""
-        try:
-            params = self.get_wialon_parameters(call_mode="create")
+            params = self.get_wialon_parameters(call_mode=call_mode)
             return session.wialon_api.resource_update_notification(**params)
         except WialonAPIError as e:
             logger.critical(e)
