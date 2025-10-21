@@ -22,7 +22,7 @@ def get_wialon_login_parameters(username: str) -> str:
             "flags": 0x1,
             "user": username,
             "redirect_uri": urljoin(
-                "https://api.terminusgps.com/v3/"
+                "https://api.terminusgps.com/"
                 if not settings.DEBUG
                 else "http://127.0.0.1:8000/",
                 reverse("terminusgps_notifications:account"),
