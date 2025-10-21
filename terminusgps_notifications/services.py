@@ -11,7 +11,26 @@ if settings.configured and not hasattr(settings, "WIALON_RESOURCE_NAME"):
     raise ImproperlyConfigured("'WIALON_RESOURCE_NAME' setting is required.")
 
 
+def get_wialon_redirect_uri() -> str:
+    """Returns the redirect (callback) URI for Wialon authentication."""
+    return urljoin(
+        "https://api.terminusgps.com/"
+        if not settings.DEBUG
+        else "http://127.0.0.1:8000/",
+        reverse("terminusgps_notifications:account"),
+    )
+
+
 def get_wialon_login_parameters(username: str) -> str:
+    """
+    Returns a query string of path parameters to be added to the Wialon authentication request.
+
+    :param username: A username to autofill into the authentication form.
+    :type username: str
+    :returns: A query string.
+    :rtype: str
+
+    """
     return urlencode(
         {
             "client_id": "Terminus GPS Notifications",
@@ -21,13 +40,8 @@ def get_wialon_login_parameters(username: str) -> str:
             "lang": "en",
             "flags": 0x1,
             "user": username,
-            "redirect_uri": urljoin(
-                "https://api.terminusgps.com/"
-                if not settings.DEBUG
-                else "http://127.0.0.1:8000/",
-                reverse("terminusgps_notifications:account"),
-            ),
             "response_type": "token",
+            "redirect_uri": get_wialon_redirect_uri(),
         }
     )
 
