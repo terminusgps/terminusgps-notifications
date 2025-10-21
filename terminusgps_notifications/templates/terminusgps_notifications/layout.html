@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="{% static 'terminusgps_notifications/css/output.css' %}">
         <script src="{% static 'terminusgps_notifications/js/htmx.min.js' %}" defer></script>
     </head>
-    <body class="text-gray-800 dark:text-gray-100">
+    <body class="text-gray-800 dark:text-gray-100" style='background-image: url("{% static 'terminusgps_notifications/img/background-light.png' %}");'>
         <nav class="flex justify-between bg-stone-100 text-gray-800 drop-shadow dark:bg-zinc-600" hx-get="{% url 'terminusgps_notifications:navbar' %}" hx-target="this" hx-trigger="load" hx-swap="outerHTML">
             <a href="{% url 'terminusgps_notifications:home' %}" class="group flex items-center space-x-1">
                 <img src="{% static 'terminusgps_notifications/icon/logo-waypoint.svg' %}" class="size-16 animate-coin-slow group-hover:animate-none">
