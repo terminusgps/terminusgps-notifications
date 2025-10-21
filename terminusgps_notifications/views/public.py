@@ -133,6 +133,10 @@ class HomeView(HtmxTemplateResponseMixin, TemplateView):
 class TermsView(HtmxTemplateResponseMixin, TemplateView):
     content_type = "text/html"
     http_method_names = ["get"]
+    extra_context = {
+        "title": "Terms & Conditions",
+        "subtitle": "You agree to these by using Terminus GPS services",
+    }
     template_name = "terminusgps_notifications/terms.html"
     partial_template_name = "terminusgps_notifications/partials/_terms.html"
 
@@ -140,6 +144,10 @@ class TermsView(HtmxTemplateResponseMixin, TemplateView):
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 class PrivacyView(HtmxTemplateResponseMixin, TemplateView):
     content_type = "text/html"
+    extra_context = {
+        "title": "Privacy Policy",
+        "subtitle": "How we use your data",
+    }
     http_method_names = ["get"]
     template_name = "terminusgps_notifications/privacy.html"
     partial_template_name = "terminusgps_notifications/partials/_privacy.html"
@@ -148,7 +156,10 @@ class PrivacyView(HtmxTemplateResponseMixin, TemplateView):
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 class LoginView(HtmxTemplateResponseMixin, LoginViewBase):
     content_type = "text/html"
-    extra_context = {"title": "Login"}
+    extra_context = {
+        "title": "Login",
+        "subtitle": "We know where ours are... do you?",
+    }
     form_class = TerminusgpsNotificationsAuthenticationForm
     http_method_names = ["get", "post"]
     partial_template_name = "terminusgps_notifications/partials/_login.html"
@@ -169,7 +180,10 @@ class LogoutView(HtmxTemplateResponseMixin, LogoutViewBase):
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 class RegisterView(HtmxTemplateResponseMixin, FormView):
     content_type = "text/html"
-    extra_context = {"title": "Register"}
+    extra_context = {
+        "title": "Register",
+        "subtitle": "You'll know where yours are...",
+    }
     form_class = TerminusgpsNotificationsRegistrationForm
     http_method_names = ["get", "post"]
     partial_template_name = "terminusgps_notifications/partials/_register.html"
