@@ -75,7 +75,7 @@ class TerminusgpsNotificationsCustomer(models.Model):
     subtotal = models.DecimalField(
         max_digits=9,
         decimal_places=2,
-        default=44.99,
+        default=64.99,
         help_text="Enter a dollar amount to charge the customer (not incl. tax) every period.",
     )
     """Subscription subtotal."""
@@ -392,10 +392,6 @@ class WialonNotification(models.Model):
             raise ValueError(
                 f"Invalid call_mode '{call_mode}'. Options are: {allowed_call_modes}"
             )
-        if not self.customer.resource_id:
-            raise ValueError(
-                f"{self.customer} didn't have a Wialon resource id set."
-            )
         return {
             "itemId": int(self.customer.resource_id),
             "id": 0 if call_mode == "create" else self.wialon_id,
@@ -420,7 +416,6 @@ class WialonNotification(models.Model):
             "ctrl_sch": self.control_schedule,
         }
 
-    @transaction.atomic
     def delete_in_wialon(
         self, session: WialonSession
     ) -> dict[str, typing.Any]:
@@ -431,7 +426,6 @@ class WialonNotification(models.Model):
             logger.critical(e)
             raise
 
-    @transaction.atomic
     def update_in_wialon(
         self, session: WialonSession
     ) -> dict[str, typing.Any]:
@@ -443,7 +437,6 @@ class WialonNotification(models.Model):
             logger.critical(e)
             raise
 
-    @transaction.atomic
     def create_in_wialon(
         self, session: WialonSession
     ) -> dict[str, typing.Any]:
