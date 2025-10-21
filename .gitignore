@@ -1,6 +1,7 @@
 .*
 !.gitignore
 !.dockerignore
+docker-build.sh
 
 node_modules/
 __pycache__/
