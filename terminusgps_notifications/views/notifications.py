@@ -1,9 +1,7 @@
 import json
 import logging
 import typing
-from urllib.parse import urlencode, urljoin
 
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -24,10 +22,9 @@ from django.views.generic import (
     UpdateView,
 )
 from terminusgps.mixins import HtmxTemplateResponseMixin
-from terminusgps.wialon import flags
 from terminusgps.wialon.session import WialonAPIError, WialonSession
 
-from terminusgps_notifications import constants, forms, models
+from terminusgps_notifications import constants, forms, models, services
 
 logger = logging.getLogger(__name__)
 
@@ -204,15 +201,6 @@ class WialonNotificationCreateView(
             token = getattr(customer, "token").name
             with WialonSession(token=token) as session:
                 if not customer.resource_id:
-                    api_response = session.wialon_api.core_create_resource(
-                        **{
-                            "creatorId": session.uid,
-                            "name": "Terminus GPS Notifications",
-                            "dataFlags": flags.DataFlag.RESOURCE_BASE,
-                            "skipCreatorCheck": int(True),
-                        }
-                    )
-                    customer.resource_id = int(api_response["item"]["id"])
                     customer.save()
                 notification = form.save(commit=False)
                 notification.actions = notification.get_actions()
@@ -345,23 +333,8 @@ class WialonNotificationListView(
             )
         )
         context["has_token"] = hasattr(customer, "token")
-        context["login_params"] = urlencode(
-            {
-                "client_id": "Terminus GPS Notifications",
-                "access_type": settings.WIALON_TOKEN_ACCESS_TYPE,
-                "activation_time": 0,
-                "duration": 2_592_000,
-                "lang": "en",
-                "flags": 0x1,
-                "user": self.request.user.username,
-                "redirect_uri": urljoin(
-                    "https://api.terminusgps.com/v3/"
-                    if not settings.DEBUG
-                    else "http://127.0.0.1:8000/",
-                    reverse("terminusgps_notifications:notifications"),
-                ),
-                "response_type": "token",
-            }
+        context["login_params"] = services.get_wialon_login_parameters(
+            customer.user.username
         )
         return context
 

@@ -24,6 +24,7 @@ from terminusgps_payments.models import (
 )
 from terminusgps_payments.services import AuthorizenetService
 
+from terminusgps_notifications import services
 from terminusgps_notifications.forms import CustomerSubscriptionCreationForm
 from terminusgps_notifications.models import (
     TerminusgpsNotificationsCustomer,
@@ -31,18 +32,6 @@ from terminusgps_notifications.models import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
-class HomeView(HtmxTemplateResponseMixin, TemplateView):
-    content_type = "text/html"
-    extra_context = {
-        "title": "Terminus GPS Notifications",
-        "subtitle": "We know where ours are... do you?",
-    }
-    http_method_names = ["get"]
-    partial_template_name = "terminusgps_notifications/partials/_home.html"
-    template_name = "terminusgps_notifications/home.html"
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
@@ -68,6 +57,46 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
         "terminusgps_notifications/customers/partials/_account.html"
     )
     template_name = "terminusgps_notifications/customers/account.html"
+
+    @transaction.atomic
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        response = super().get(request, *args, **kwargs)
+        username, access_token = (
+            request.GET.get("user_name"),
+            request.GET.get("access_token"),
+        )
+        if all(
+            [
+                username is not None,
+                access_token is not None,
+                username == request.user.username,
+            ]
+        ):
+            customer, _ = (
+                TerminusgpsNotificationsCustomer.objects.get_or_create(
+                    user=request.user
+                )
+            )
+            if hasattr(customer, "token"):
+                old_token = getattr(customer, "token")
+                old_token.delete()
+            new_token = WialonToken()
+            new_token.customer = customer
+            new_token.name = access_token
+            new_token.save()
+            response.headers["HX-Refresh"] = "true"
+        return response
+
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
+            user=self.request.user
+        )
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        context["has_token"] = hasattr(customer, "token")
+        context["login_params"] = services.get_wialon_login_parameters(
+            customer.user.username
+        )
+        return context
 
 
 class SubscriptionView(
@@ -265,10 +294,10 @@ class CustomerStatsView(
     template_name = "terminusgps_notifications/customers/stats.html"
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
             user=self.request.user
         )
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer
         return context
 

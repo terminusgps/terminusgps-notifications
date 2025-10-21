@@ -3,7 +3,6 @@ from .customers import (
     CustomerStatsView,
     CustomerSubscriptionCreateView,
     DashboardView,
-    HomeView,
     NotificationsView,
     SubscriptionView,
     WialonLoginView,
@@ -18,4 +17,14 @@ from .notifications import (
     WialonNotificationTriggerSelectFormView,
     WialonNotificationUnitSelectFormView,
     WialonNotificationUpdateView,
+)
+from .public import (
+    HomeView,
+    LoginView,
+    LogoutView,
+    NavbarView,
+    PrivacyView,
+    RegisterView,
+    SourceCodeView,
+    TermsView,
 )

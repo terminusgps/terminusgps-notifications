@@ -1,0 +1,46 @@
+<form class="flex flex-col gap-4" action="{% url 'terminusgps_notifications:register' %}" method="post">
+    {% csrf_token %}
+    <section class="flex gap-2 justify-between">
+        <section class="flex flex-col gap-2 w-full">
+            {{ form.first_name }}
+            <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.first_name.id_for_label }}">First Name</label>
+            <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.first_name.id_for_label }}_helptext">{{ form.first_name.help_text }}</p>
+            {% if form.first_name.errors %}<div class="animate-jiggle font-italic">{{ form.first_name.errors }}</div>{% endif %}
+        </section>
+        <section class="flex flex-col gap-2 w-full">
+            {{ form.last_name }}
+            <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.last_name.id_for_label }}">Last Name</label>
+            <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.last_name.id_for_label }}_helptext">{{ form.last_name.help_text }}</p>
+            {% if form.last_name.errors %}<div class="animate-jiggle font-italic">{{ form.last_name.errors }}</div>{% endif %}
+        </section>
+    </section>
+    <section class="flex flex-col gap-2">
+        {{ form.company_name }}
+        <label class="order-first peer-user-invalid:text-red-800" for="{{ form.company_name.id_for_label }}">Company</label>
+        <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.company_name.id_for_label }}_helptext">{{ form.company_name.help_text|safe }}</p>
+        {% if form.company_name.errors %}<div class="animate-jiggle font-italic">{{ form.company_name.errors }}</div>{% endif %}
+    </section>
+    <section class="flex flex-col gap-2">
+        {{ form.username }}
+        <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.username.id_for_label }}">Username</label>
+        <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.username.id_for_label }}_helptext">{{ form.username.help_text }}</p>
+        {% if form.username.errors %}<div class="animate-jiggle font-italic">{{ form.username.errors }}</div>{% endif %}
+    </section>
+    <section class="flex flex-col gap-2">
+        {{ form.password1 }}
+        <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.password1.id_for_label }}">Password</label>
+        <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.password1.id_for_label }}_helptext">{{ form.password1.help_text }}</p>
+        {% if form.password1.errors %}<div class="animate-jiggle font-italic">{{ form.password1.errors }}</div>{% endif %}
+    </section>
+    <section class="flex flex-col gap-2">
+        {{ form.password2 }}
+        <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.password2.id_for_label }}">Repeat Password</label>
+        <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.password2.id_for_label }}_helptext">{{ form.password2.help_text }}</p>
+        {% if form.password2.errors %}<div class="animate-jiggle font-italic">{{ form.password2.errors }}</div>{% endif %}
+    </section>
+    {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+    <button type="submit" class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400">Register</button>
+    <p class="text-center">Already have an account? Click <a href="{% url 'terminusgps_notifications:login' %}" hx-boost="true" hx-inherit="false" class="w-fit decoration text-terminus-red-200 underline decoration-terminus-black underline-offset-4 hover:text-terminus-red-100 hover:decoration-dotted dark:decoration-white">here</a> to login.</p>
+</form>

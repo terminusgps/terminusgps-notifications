@@ -1,4 +1,1 @@
-<p>Sign up today!</p>
-{% if user.is_authenticated %}
-<a href="{% url 'terminusgps_notifications:dashboard' %}" hx-boost="true">Go To Dashboard</a>
-{% endif %}
+<p><a class="w-fit decoration text-terminus-red-200 underline decoration-terminus-black underline-offset-4 hover:text-terminus-red-100 hover:decoration-dotted dark:decoration-white" href="{% url 'terminusgps_notifications:register' %}" hx-boost="true" hx-inherit="false">Sign up</a> today!</p>

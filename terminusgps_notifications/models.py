@@ -27,6 +27,10 @@ class TerminusgpsNotificationsCustomer(models.Model):
         related_name="terminusgps_notifications_customer",
     )
     """Django user."""
+    company = models.CharField(
+        max_length=64, null=True, blank=True, default=None
+    )
+    """Company name."""
     date_format = models.CharField(
         choices=[
             ("%Y-%m-%d %H:%M:%S", "YYYY-MM-DD HH:MM:SS"),

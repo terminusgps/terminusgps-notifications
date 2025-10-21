@@ -18,6 +18,8 @@ from terminusgps.wialon.flags import TokenFlag
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOGIN_REDIRECT_URL = "/dashboard/"
+LOGIN_URL = "/login/"
 DEBUG = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DJANGO_ENCRYPTED_FIELD_ALGORITHM = os.getenv(
