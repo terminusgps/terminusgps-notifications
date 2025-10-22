@@ -15,6 +15,10 @@ from terminusgps.validators import validate_is_digit
 from terminusgps.wialon import flags
 from terminusgps.wialon.session import WialonAPIError, WialonSession
 
+from terminusgps_notifications.constants import (
+    WialonNotificationUpdateCallModeType,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -417,9 +421,23 @@ class WialonNotification(models.Model):
         }
 
     def update_in_wialon(
-        self, call_mode: str, session: WialonSession
+        self,
+        call_mode: WialonNotificationUpdateCallModeType,
+        session: WialonSession,
     ) -> dict[str, typing.Any]:
-        """Updates the notification in Wialon."""
+        """
+        Updates the notification in Wialon.
+
+        :param call_mode: Call mode to use when calling ``resource/update_notification``.
+        :type call_mode: ~terminusgps_notifications.constants.WialonNotificationUpdateCallMode
+        :param session: A valid Wialon API session.
+        :type session: ~terminusgps.wialon.session.WialonSession
+        :raises ValueError: If ``call_mode`` wasn't one of ``"create"``, ``"update"`` or ``"delete"``.
+        :raises WialonAPIError: If something went wrong calling the Wialon API.
+        :returns: A dictionary of notification data.
+        :rtype: dict[str, ~typing.Any]
+
+        """
         try:
             params = self.get_wialon_parameters(call_mode=call_mode)
             return session.wialon_api.resource_update_notification(**params)

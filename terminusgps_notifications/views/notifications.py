@@ -196,16 +196,18 @@ class WialonNotificationCreateView(
     def form_valid(
         self, form: forms.WialonNotificationCreationForm
     ) -> HttpResponse:
+        mode = constants.WialonNotificationUpdateCallModeType.CREATE
+        customer = form.cleaned_data["customer"]
+        token = getattr(customer, "token").name
+
         try:
-            customer = form.cleaned_data["customer"]
-            token = getattr(customer, "token").name
             with WialonSession(token=token) as session:
                 if not customer.resource_id:
                     customer.save()
                 notification = form.save(commit=False)
                 notification.actions = notification.get_actions()
                 notification.text = notification.get_text()
-                api_response = notification.update_in_wialon("create", session)
+                api_response = notification.update_in_wialon(mode, session)
                 notification.wialon_id = int(api_response[0])
                 notification.save()
             return super().form_valid(form=form)
@@ -260,6 +262,7 @@ class WialonNotificationUpdateView(
     def form_valid(
         self, form: forms.WialonNotificationUpdateForm
     ) -> HttpResponse:
+        mode = constants.WialonNotificationUpdateCallModeType.UPDATE
         notification = form.save(commit=True)
         token = getattr(notification.customer, "token").name
         if form.changed_data:
@@ -271,7 +274,7 @@ class WialonNotificationUpdateView(
                         notification.actions = notification.get_actions()
                     if "message" in form.changed_data:
                         notification.text = notification.get_text()
-                    notification.update_in_wialon("update", session)
+                    notification.update_in_wialon(mode, session)
             except (ValueError, WialonAPIError) as e:
                 form.add_error(
                     None,
@@ -304,12 +307,13 @@ class WialonNotificationDeleteView(
         return super().get_queryset().filter(customer__user=self.request.user)
 
     def form_valid(self, form: Form) -> HttpResponse:
+        mode = constants.WialonNotificationUpdateCallModeType.DELETE
+        if not self.object.customer.resource_id:
+            self.object.customer.save()
+        token = getattr(self.object.customer, "token").name
         try:
-            if not self.object.customer.resource_id:
-                self.object.customer.save()
-            token = getattr(self.object.customer, "token").name
             with WialonSession(token=token) as session:
-                self.object.update_in_wialon("delete", session)
+                self.object.update_in_wialon(mode, session)
             return super().form_valid(form=form)
         except (ValueError, WialonAPIError):
             return HttpResponse(status=406)
