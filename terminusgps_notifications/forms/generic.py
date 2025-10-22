@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm
 from django.core.validators import validate_email
+from django.utils.translation import gettext_lazy as _
 
 
 class TerminusgpsNotificationsAuthenticationForm(AuthenticationForm):
@@ -28,7 +29,9 @@ class TerminusgpsNotificationsAuthenticationForm(AuthenticationForm):
 
 class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
     first_name = forms.CharField(
-        help_text="Required. 64 characters or fewer. Letters and digits only.",
+        help_text=_(
+            "Required. 64 characters or fewer. Letters and digits only."
+        ),
         widget=forms.widgets.TextInput(
             attrs={
                 "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
@@ -38,7 +41,9 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
         ),
     )
     last_name = forms.CharField(
-        help_text="Required. 64 characters or fewer. Letters and digits only.",
+        help_text=_(
+            "Required. 64 characters or fewer. Letters and digits only."
+        ),
         widget=forms.widgets.TextInput(
             attrs={
                 "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
@@ -49,13 +54,21 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
     )
     company_name = forms.CharField(
         required=False,
-        help_text="<span class='italic'>Optional</span>. 64 characters or fewer. Letters and digits only.",
+        help_text=_(
+            "Optional. 64 characters or fewer. Letters and digits only."
+        ),
         widget=forms.widgets.TextInput(
             attrs={
                 "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
                 "placeholder": "Company",
                 "enterkeyhint": "next",
             }
+        ),
+    )
+    consent = forms.BooleanField(
+        initial=False,
+        widget=forms.widgets.CheckboxInput(
+            attrs={"class": "accent-terminus-red-700"}
         ),
     )
 
