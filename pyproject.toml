@@ -69,5 +69,5 @@ skip-magic-trailing-comma = true
 deploy = [
     "django-storages[s3]>=1.14.6",
     "gunicorn>=23.0.0",
-    "psycopg>=3.2.11",
+    "psycopg[binary,pool]>=3.2.11",
 ]
