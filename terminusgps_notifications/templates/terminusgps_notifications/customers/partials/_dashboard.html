@@ -3,7 +3,7 @@
         <p class="font-semibold">Hey {{ request.user.first_name|default:'there' }}!</p>
         <p>It's {% now 'l, F jS, o' %}</p>
     </section>
-    <section id="stats" class="flex gap-4 border-2 border-terminus-red-600 p-8 rounded bg-gradient-to-tr from-terminus-red-800 to-terminus-red-200" hx-get="{% url 'terminusgps_notifications:stats' %}" hx-trigger="load, every 5s" hx-target="this">
+    <section id="stats" class="flex gap-4 border-2 border-terminus-red-600 p-8 rounded bg-gradient-to-tr from-terminus-red-800 to-terminus-red-200" hx-get="{% url 'terminusgps_notifications:stats' %}" hx-trigger="load, every 2s" hx-target="this">
         <section id="sms-messages" class="flex flex-col gap-2 items-center border p-4 rounded bg-gray-100 drop-shadow-sm w-full">
             <h3>SMS</h3>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
