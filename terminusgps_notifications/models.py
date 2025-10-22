@@ -113,8 +113,8 @@ class TerminusgpsNotificationsCustomer(models.Model):
         verbose_name_plural = _("customers")
 
     def __str__(self) -> str:
-        """Returns the customer user."""
-        return str(self.user)
+        """Returns the customer user's username."""
+        return str(self.user.username)
 
     def get_units_from_wialon(
         self, session: WialonSession, force: bool = False
