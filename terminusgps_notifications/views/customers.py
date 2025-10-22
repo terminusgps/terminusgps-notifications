@@ -3,6 +3,7 @@ import logging
 import typing
 
 from authorizenet import apicontractsv1
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -26,10 +27,7 @@ from terminusgps_payments.services import AuthorizenetService
 
 from terminusgps_notifications import services
 from terminusgps_notifications.forms import CustomerSubscriptionCreationForm
-from terminusgps_notifications.models import (
-    TerminusgpsNotificationsCustomer,
-    WialonToken,
-)
+from terminusgps_notifications.models import WialonToken
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +44,19 @@ class DashboardView(
     )
     template_name = "terminusgps_notifications/customers/dashboard.html"
 
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        if hasattr(request.user, "customer"):
+            customer = getattr(request.user, "customer")
+            if customer.subscription is None:
+                messages.add_message(
+                    request,
+                    messages.WARNING,
+                    _(
+                        "Your notifications won't be sent to destination phone numbers until you subscribe."
+                    ),
+                )
+        return super().get(request, *args, **kwargs)
+
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 @method_decorator(cache_control(private=True), name="dispatch")
@@ -60,7 +71,7 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
 
     @transaction.atomic
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        response = super().get(request, *args, **kwargs)
+        user = request.user
         username, access_token = (
             request.GET.get("user_name"),
             request.GET.get("access_token"),
@@ -69,33 +80,36 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
             [
                 username is not None,
                 access_token is not None,
-                username == request.user.username,
+                username == user.username,
             ]
         ):
-            customer, _ = (
-                TerminusgpsNotificationsCustomer.objects.get_or_create(
-                    user=request.user
-                )
+            customer = (
+                getattr(user, "terminusgps_notifications_customer")
+                if hasattr(user, "terminusgps_notifications_customer")
+                else None
             )
-            if hasattr(customer, "token"):
-                old_token = getattr(customer, "token")
-                old_token.delete()
-            new_token = WialonToken()
-            new_token.customer = customer
-            new_token.name = access_token
-            new_token.save()
-            response.headers["HX-Refresh"] = "true"
-        return response
+            if customer is not None:
+                if hasattr(customer, "token"):
+                    old_token = getattr(customer, "token")
+                    old_token.delete()
+                new_token = WialonToken(name=access_token)
+                new_token.customer = customer
+                new_token.save()
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
-            user=self.request.user
+        """Adds ``has_token`` and ``login_params`` to the view context."""
+        customer = (
+            getattr(self.request.user, "terminusgps_notifications_customer")
+            if hasattr(self.request.user, "terminusgps_notifications_customer")
+            else None
         )
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["has_token"] = hasattr(customer, "token")
-        context["login_params"] = services.get_wialon_login_parameters(
-            customer.user.username
-        )
+        if customer is not None:
+            context["has_token"] = hasattr(customer, "token")
+            context["login_params"] = services.get_wialon_login_parameters(
+                customer.user.username
+            )
         return context
 
 
@@ -111,10 +125,13 @@ class SubscriptionView(
     template_name = "terminusgps_notifications/customers/subscription.html"
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
-            user=self.request.user
+        """Adds ``customer`` to the view context."""
+        customer = (
+            getattr(self.request.user, "terminusgps_notifications_customer")
+            if hasattr(self.request.user, "terminusgps_notifications_customer")
+            else None
         )
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer
         return context
 
@@ -130,25 +147,14 @@ class NotificationsView(
     )
     template_name = "terminusgps_notifications/customers/notifications.html"
 
-    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        if name := request.GET.get("access_token"):
-            token = WialonToken(name=name)
-            try:
-                customer = TerminusgpsNotificationsCustomer.objects.get(
-                    user__username=request.GET.get("user", "")
-                )
-                if not hasattr(customer, "token"):
-                    token.customer = customer
-                    token.save()
-            except TerminusgpsNotificationsCustomer.DoesNotExist:
-                return HttpResponse(status=404)
-        return super().get(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
-            user=self.request.user
+        """Adds ``customer`` and ``has_token`` to the view context."""
+        customer = (
+            getattr(self.request.user, "terminusgps_notifications_customer")
+            if hasattr(self.request.user, "terminusgps_notifications_customer")
+            else None
         )
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer
         context["has_token"] = hasattr(customer, "token")
         return context
@@ -172,11 +178,13 @@ class CustomerSubscriptionCreateView(
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds `customer` to the view context."""
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
-            user=self.request.user
+        """Adds ``customer`` to the view context."""
+        customer = (
+            getattr(self.request.user, "terminusgps_notifications_customer")
+            if hasattr(self.request.user, "terminusgps_notifications_customer")
+            else None
         )
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer
         return context
 
@@ -196,7 +204,19 @@ class CustomerSubscriptionCreateView(
         self, form: CustomerSubscriptionCreationForm
     ) -> HttpResponse:
         """Creates a subscription for the customer in Authorizenet."""
-        if not hasattr(self.request.user, "customer_profile"):
+        user = self.request.user
+        if not hasattr(user, "terminusgps_notifications_customer"):
+            form.add_error(
+                None,
+                ValidationError(
+                    _(
+                        "Whoops! Your account doesn't have an associated customer. Please try again later"
+                    ),
+                    code="invalid",
+                ),
+            )
+            return self.form_invalid(form=form)
+        if not hasattr(user, "customer_profile"):
             form.add_error(
                 None,
                 ValidationError(
@@ -209,23 +229,19 @@ class CustomerSubscriptionCreateView(
             return self.form_invalid(form=form)
 
         # Set subscription variables
-        customer, created = (
-            TerminusgpsNotificationsCustomer.objects.get_or_create(
-                user=self.request.user
-            )
-        )
-        customer_profile = getattr(self.request.user, "customer_profile")
-        name = "Terminus GPS Notifications"
-        start_date = timezone.now()
-        amount = customer.grand_total
-        trial_amount = decimal.Decimal("0.00")
+        customer = getattr(user, "terminusgps_notifications_customer")
+        customer_profile = getattr(user, "customer_profile")
         payment_profile = form.cleaned_data["payment_profile"]
         address_profile = form.cleaned_data["address_profile"]
+        start_date = timezone.now()
+        name = "Terminus GPS Notifications"
+        amount = customer.grand_total
+        trial_amount = decimal.Decimal("0.00")
 
         # Set once-per-month interval
         interval = apicontractsv1.paymentScheduleTypeInterval()
         interval.length = 1
-        interval.unit = "months"
+        interval.unit = apicontractsv1.ARBSubscriptionUnitEnum.months
 
         # Set infinitely recurring payment schedule
         schedule = apicontractsv1.paymentScheduleType()
@@ -294,8 +310,11 @@ class CustomerStatsView(
     template_name = "terminusgps_notifications/customers/stats.html"
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        customer, _ = TerminusgpsNotificationsCustomer.objects.get_or_create(
-            user=self.request.user
+        """Adds ``customer`` to the view context."""
+        customer = (
+            getattr(self.request.user, "terminusgps_notifications_customer")
+            if hasattr(self.request.user, "terminusgps_notifications_customer")
+            else None
         )
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer

@@ -1,6 +1,6 @@
 <section id="account" class="flex flex-col gap-8">
-    <section id="wialon-token" class="flex flex-col gap-4">
-        <div class="flex gap-2 items-center">
+    <section id="wialon-token" class="flex flex-col gap-4 border-2 border-current p-4 rounded bg-gray-200 dark:bg-gray-700">
+        <div class="flex gap-2 items-center justify-between">
             <h3 class="text-lg font-semibold">Wialon API Token</h3>
             {% if has_token %}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8 text-green-800">
@@ -12,15 +12,20 @@
             </svg>
             {% endif %}
         </div>
+        {% if has_token %}
+        <p>Your Wialon account is currently connected!</p>
+        {% else %}
+        <p>You need to connect your Wialon account before you can create notifications.</p>
+        {% endif %}
         <a
             class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400"
             href="{% url 'terminusgps_notifications:wialon login' %}?{{ login_params|safe }}"
             hx-boost="false"
             hx-inherit="false"
-            >{% if not has_token %}Connect{% else %}Refresh{% endif %}
+            >{% if has_token %}Refresh{% else %}Connect{% endif %}
         </a>
     </section>
-    <section id="payment-methods" class="flex flex-col gap-4">
+    <section id="payment-methods" class="flex flex-col gap-4 border-2 border-current p-4 rounded bg-gray-200 dark:bg-gray-700">
         <h3 class="text-lg font-semibold">Payment Methods</h3>
         <section
             id="payment-profiles-list"
@@ -33,7 +38,7 @@
             <button class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400" disabled>New Payment Method</button>
         </section>
     </section>
-    <section id="shipping-addresses" class="flex flex-col gap-4">
+    <section id="shipping-addresses" class="flex flex-col gap-4 border-2 border-current p-4 rounded bg-gray-200 dark:bg-gray-700">
         <h3 class="text-lg font-semibold">Shipping Addresses</h3>
         <section
             id="address-profiles-list"

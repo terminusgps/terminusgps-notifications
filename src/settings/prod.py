@@ -1,3 +1,4 @@
+import base64
 import os
 from pathlib import Path
 from socket import gethostbyname, gethostname
@@ -18,7 +19,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DJANGO_ENCRYPTED_FIELD_ALGORITHM = os.getenv(
     "DJANGO_ENCRYPTED_FIELD_ALGORITHM", "SS20"
 )
-DJANGO_ENCRYPTED_FIELD_KEY = os.getenv("DJANGO_ENCRYPTED_FIELD_KEY")
+DJANGO_ENCRYPTED_FIELD_KEY = base64.b64decode(
+    os.getenv("DJANGO_ENCRYPTED_FIELD_KEY", "")
+)
 LANGUAGE_CODE = "en-us"
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGIN_URL = "/login/"

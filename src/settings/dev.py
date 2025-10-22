@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import base64
 import os
 from pathlib import Path
 
@@ -25,7 +26,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DJANGO_ENCRYPTED_FIELD_ALGORITHM = os.getenv(
     "DJANGO_ENCRYPTED_FIELD_ALGORITHM", "SS20"
 )
-DJANGO_ENCRYPTED_FIELD_KEY = os.getenv("DJANGO_ENCYPTED_FIELD_KEY")
+DJANGO_ENCRYPTED_FIELD_KEY = base64.b64decode(
+    os.getenv("DJANGO_ENCRYPTED_FIELD_KEY", "")
+)
 LANGUAGE_CODE = "en-us"
 MERCHANT_AUTH_ENVIRONMENT = Environment.SANDBOX
 MERCHANT_AUTH_LOGIN_ID = os.getenv("MERCHANT_AUTH_LOGIN_ID")

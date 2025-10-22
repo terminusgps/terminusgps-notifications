@@ -29,6 +29,13 @@
                     {% if subtitle %}<h3 class="font-light md:text-lg">{{ subtitle }}</h3>{% endif %}
                 </section>
                 <section class="p-8" hx-indicator="#loading">
+                    {% if messages %}
+                    <ul id="messages" class="">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
                     {% block content %}{% endblock content %}
                 </section>
             </div>
