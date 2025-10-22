@@ -10,9 +10,6 @@ dependencies = [
     "python-terminusgps>=47.3.1",
     "terminusgps-payments>=2.4.0",
     "python-dateutil>=2.9.0.post0",
-    "django-storages[s3]>=1.14.6",
-    "gunicorn>=23.0.0",
-    "psycopg>=3.2.11",
 ]
 
 [project.urls]
@@ -67,3 +64,10 @@ indent-style = "space"
 line-ending = "auto"
 docstring-code-format = false
 skip-magic-trailing-comma = true
+
+[dependency-groups]
+deploy = [
+    "django-storages[s3]>=1.14.6",
+    "gunicorn>=23.0.0",
+    "psycopg>=3.2.11",
+]

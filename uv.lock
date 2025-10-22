@@ -399,24 +399,32 @@ source = { editable = "." }
 dependencies = [
     { name = "django" },
     { name = "django-encrypted-field" },
-    { name = "django-storages", extra = ["s3"] },
-    { name = "gunicorn" },
-    { name = "psycopg" },
     { name = "python-dateutil" },
     { name = "python-terminusgps" },
     { name = "terminusgps-payments" },
+]
+
+[package.dev-dependencies]
+deploy = [
+    { name = "django-storages", extra = ["s3"] },
+    { name = "gunicorn" },
+    { name = "psycopg" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "django", specifier = ">=5.2.7" },
     { name = "django-encrypted-field", specifier = ">=1.0.5" },
-    { name = "django-storages", extras = ["s3"], specifier = ">=1.14.6" },
-    { name = "gunicorn", specifier = ">=23.0.0" },
-    { name = "psycopg", specifier = ">=3.2.11" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
     { name = "python-terminusgps", specifier = ">=47.3.1" },
     { name = "terminusgps-payments", specifier = ">=2.4.0" },
+]
+
+[package.metadata.requires-dev]
+deploy = [
+    { name = "django-storages", extras = ["s3"], specifier = ">=1.14.6" },
+    { name = "gunicorn", specifier = ">=23.0.0" },
+    { name = "psycopg", specifier = ">=3.2.11" },
 ]
 
 [[package]]
