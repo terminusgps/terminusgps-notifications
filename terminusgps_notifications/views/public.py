@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView as LoginViewBase
 from django.contrib.auth.views import LogoutView as LogoutViewBase
 from django.core.validators import validate_email
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control, cache_page
@@ -200,7 +200,6 @@ class RegisterView(HtmxTemplateResponseMixin, FormView):
         user.email = form.cleaned_data["username"]
         user.save()
         customer = TerminusgpsNotificationsCustomer(user=user)
-        if company := form.cleaned_data["company_name"]:
-            customer.company = company
+        customer.company = form.cleaned_data["company"]
         customer.save()
-        return HttpResponseRedirect(self.get_success_url())
+        return super().form_valid(form=form)
