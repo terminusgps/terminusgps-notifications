@@ -17,7 +17,7 @@
             href="{% url 'terminusgps_notifications:wialon login' %}?{{ login_params|safe }}"
             hx-boost="false"
             hx-inherit="false"
-            >{% if not has_token %}Authenticate with Wialon{% else %}Refresh Token{% endif %}
+            >{% if not has_token %}Connect{% else %}Refresh{% endif %}
         </a>
     </section>
     <section id="payment-methods" class="flex flex-col gap-4">
