@@ -1,3 +1,4 @@
+from .generic import *
 from .notifications import (
     WialonNotificationCreationForm,
     WialonNotificationUpdateForm,
