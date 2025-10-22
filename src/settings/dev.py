@@ -48,6 +48,12 @@ WIALON_TOKEN_ACCESS_TYPE = (
 )
 WSGI_APPLICATION = "src.wsgi.application"
 
+ADMINS = (
+    ("Peter", "pspeckman@terminusgps.com"),
+    ("Blake", "blake@terminusgps.com"),
+    ("Lili", "lili@terminusgps.com"),
+)
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
