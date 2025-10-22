@@ -37,7 +37,7 @@ SECRET_KEY = (
 )
 STATIC_URL = "static/"
 TIME_ZONE = "US/Central"
-USE_I18N = True
+USE_I18N = False
 USE_TZ = True
 WIALON_RESOURCE_NAME = "Terminus GPS Notifications"
 WIALON_TOKEN = os.getenv("WIALON_TOKEN")
