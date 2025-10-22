@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-8" hx-indicator="#loading">
+<div class="flex flex-col gap-8">
     <section id="greeting" class="flex flex-col gap-4 items-center">
-        <p class="font-semibold">Hey {{ customer.user.first_name|default:'there' }}!</p>
+        <p class="font-semibold">Hey {{ request.user.first_name|default:'there' }}!</p>
         <p>It's {% now 'l, F jS, o' %}</p>
     </section>
     <section id="stats" class="flex gap-4 border-2 border-terminus-red-600 p-8 rounded bg-gradient-to-tr from-terminus-red-800 to-terminus-red-200" hx-get="{% url 'terminusgps_notifications:stats' %}" hx-trigger="load, every 5s" hx-target="this">
