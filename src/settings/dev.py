@@ -61,14 +61,23 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "generic": {
-            "format": "%(asctime)s [%(process)d] [%(levelname)s] %(message)s",
+        "verbose": {
+            "format": "%(asctime)s [%(process)d] [%(module)s] [%(levelname)s] %(message)s",
             "datefmt": "[%Y-%m-%d %H:%M:%S%z]",
             "class": "logging.Formatter",
-        }
+        },
+        "simple": {
+            "format": "%(asctime)s [%(levelname)s] %(message)s",
+            "datefmt": "[%Y-%m-%d %H:%M:%S%z]",
+            "class": "logging.Formatter",
+        },
     },
     "handlers": {
-        "console": {"class": "logging.StreamHandler", "formatter": "generic"}
+        "console": {"class": "logging.StreamHandler", "formatter": "simple"},
+        "console_verbose": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
     },
     "root": {"handlers": ["console"], "level": "DEBUG"},
     "loggers": {
@@ -78,9 +87,19 @@ LOGGING = {
             "propagate": False,
         },
         "terminusgps_notifications": {
+            "handlers": ["console_verbose"],
+            "level": os.getenv("NOTIFICATIONS_LOG_LEVEL", "DEBUG"),
+            "propagate": False,
+        },
+        "terminusgps_payments": {
+            "handlers": ["console_verbose"],
+            "level": os.getenv("PAYMENTS_LOG_LEVEL", "DEBUG"),
+            "propagate": False,
+        },
+        "authorizenet.sdk": {
             "handlers": ["console"],
-            "level": os.getenv("NOTIFICATIONS_LOG_LEVEL", "INFO"),
-            "propagate": True,
+            "level": os.getenv("AUTHORIZENET_LOG_LEVEL", "DEBUG"),
+            "propagate": False,
         },
     },
 }
