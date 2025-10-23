@@ -9,7 +9,7 @@ ENV UV_NO_SYNC=1
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --locked --no-install-project --all-groups
+    uv sync --locked --no-install-project
 
 COPY . /usr/local/terminusgps-notifications
 
