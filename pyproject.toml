@@ -72,4 +72,5 @@ deploy = [
     "gunicorn>=23.0.0",
     "psycopg2-binary>=2.9.11",
     "psycopg[binary,pool]>=3.2.11",
+    "redis[hiredis]>=7.0.0",
 ]
