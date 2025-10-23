@@ -1,0 +1,35 @@
+name: Docker Image CI/CD
+
+permissions:
+  id-token: write
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@main
+        with:
+          role-to-assume: ${{ secrets.assumedRoleARN }}
+          aws-region: ${{ secrets.assumedRoleRegion }}
+
+      - name: Login to Docker
+        run: aws ecr get-login-password --region ${{ secrets.assumedRoleRegion }} | docker login --username AWS --password-stdin ${{ secrets.privateRegistry }}
+
+      - name: Build Docker Image
+        run: docker build -t terminusgps/terminusgps-notifications:latest .
+
+      - name: Tag Docker Image
+        run: docker tag terminusgps/terminusgps-notifications:latest ${{ secrets.privateRegistry }}/terminusgps/terminusgps-notifications:latest
+
+      - name: Upload Docker Image
+        run: docker push ${{ secrets.privateRegistry }}/terminusgps/terminusgps-notifications:latest

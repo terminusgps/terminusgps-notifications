@@ -1,6 +1,7 @@
 .*
 !.gitignore
 !.dockerignore
+!.github/
 docker-build.sh
 
 node_modules/
