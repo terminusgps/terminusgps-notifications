@@ -19,17 +19,17 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@main
         with:
-          role-to-assume: ${{ secrets.assumedRoleARN }}
-          aws-region: ${{ secrets.assumedRoleRegion }}
+          role-to-assume: ${{ secrets.ASSUMED_ROLE_ARN }}
+          aws-region: ${{ secrets.ASSUMED_ROLE_REGION }}
 
       - name: Login to Docker
-        run: aws ecr get-login-password --region ${{ secrets.assumedRoleRegion }} | docker login --username AWS --password-stdin ${{ secrets.privateRegistry }}
+        run: aws ecr get-login-password --region ${{ secrets.ASSUMED_ROLE_REGION }} | docker login --username AWS --password-stdin ${{ secrets.PRIVATE_REGISTRY }}
 
       - name: Build Docker Image
         run: docker build -t terminusgps/terminusgps-notifications:latest .
 
       - name: Tag Docker Image
-        run: docker tag terminusgps/terminusgps-notifications:latest ${{ secrets.privateRegistry }}/terminusgps/terminusgps-notifications:latest
+        run: docker tag terminusgps/terminusgps-notifications:latest ${{ secrets.PRIVATE_REGISTRY }}/terminusgps/terminusgps-notifications:latest
 
       - name: Upload Docker Image
-        run: docker push ${{ secrets.privateRegistry }}/terminusgps/terminusgps-notifications:latest
+        run: docker push ${{ secrets.PRIVATE_REGISTRY }}/terminusgps/terminusgps-notifications:latest
