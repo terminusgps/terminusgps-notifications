@@ -18,4 +18,4 @@ jobs:
           github-token: ${{ github.token }}
           enable-cache: true
       - name: Test Django project
-        run: uv run manage.py test terminusgps_notifications.models --frozen
+        run: uv run --frozen manage.py test terminusgps_notifications.models
