@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+# fmt: off
 class WialonNotificationUpdateCallModeType(StrEnum):
     CREATE = "create"
     UPDATE = "update"
@@ -53,23 +54,11 @@ class WialonUnitSensorType(models.TextChoices):
     ENGINE_HOURS_ABS = "engine hours", _("Absolute engine hours")
     ENGINE_HOURS_REL = "relative engine hours", _("Relative engine hours")
     # Fuel
-    FUEL_CONS_IMP = (
-        "impulse fuel consumption",
-        _("Impulse fuel consumption sensor"),
-    )
-    FUEL_CONS_ABS = (
-        "absolute fuel consumption",
-        _("Absolute fuel consumption sensor"),
-    )
-    FUEL_CONS_INT = (
-        "instant fuel consumption",
-        _("Instant fuel consumption sensor"),
-    )
+    FUEL_CONS_IMP = "impulse fuel consumption", _("Impulse fuel consumption sensor")
+    FUEL_CONS_ABS = "absolute fuel consumption", _("Absolute fuel consumption sensor")
+    FUEL_CONS_INT = "instant fuel consumption", _("Instant fuel consumption sensor")
     FUEL_LEVEL = "fuel level", _("Fuel level sensor")
-    FUEL_LEVEL_IMP = (
-        "fuel level impulse sensor",
-        _("Impulse fuel level sensor"),
-    )
+    FUEL_LEVEL_IMP = "fuel level impulse sensor", _("Impulse fuel level sensor")
     BATTERY_LEVEL = "battery level", _("Battery level sensor")
     # Other
     COUNTER = "counter", _("Counter sensor")
@@ -83,79 +72,28 @@ class WialonNotificationMessageTag(models.TextChoices):
     UNIT = "%UNIT%", _("Unit name")
     CURR_TIME = "%CURR_TIME%", _("Current date and time")
     LOCATION = "%LOCATION%", _("Location")
-    LOCATOR_LINK = (
-        "%LOCATOR_LINK(60,T)%",
-        _(
-            "Create locator link for the triggered unit (brackets indicate lifespan in minutes, T and G parameters to show tracks and geofences)"
-        ),
-    )
-    ZONE_MIN = (
-        "%ZONE_MIN%",
-        _(
-            "The smallest of geofences holding unit at the moment of notification"
-        ),
-    )
-    ZONE_ALL = (
-        "%ZONES_ALL%",
-        _("All geofences holding unit at the moment of notification"),
-    )
+    LOCATOR_LINK = "%LOCATOR_LINK(60,T)%", _("Create locator link for the triggered unit (brackets indicate lifespan in minutes, T and G parameters to show tracks and geofences)")
+    ZONE_MIN = "%ZONE_MIN%", _( "The smallest of geofences holding unit at the moment of notification")
+    ZONE_ALL = "%ZONES_ALL%", _("All geofences holding unit at the moment of notification")
     UNIT_GROUP = "%UNIT_GROUP%", _("Groups containing triggered unit")
     SPEED = "%SPEED%", _("Unit speed at the moment of notification")
-    POS_TIME = (
-        "%POS_TIME%",
-        _(
-            "Date and time of the triggered message or the latest message with position in case the triggered message has no position"
-        ),
-    )
+    POS_TIME = "%POS_TIME%", _("Date and time of the triggered message or the latest message with position in case the triggered message has no position")
     MSG_TIME = "%MSG_TIME%", _("Date and time of the triggered message")
     DRIVER = "%DRIVER%", _("Driver name")
     DRIVER_PHONE = "%DRIVER_PHONE%", _("Driver phone number")
     TRAILER = "%TRAILER%", _("Trailer name")
-    SENSOR = (
-        "%SENSOR(*)%",
-        _("Unit sensors and their values (indicate sensor mask in brackets)"),
-    )
-    ENGINE_HOURS = (
-        "%ENGINE_HOURS%",
-        _("Engine hours at the moment of notification"),
-    )
+    SENSOR = "%SENSOR(*)%", _("Unit sensors and their values (indicate sensor mask in brackets)")
+    ENGINE_HOURS = "%ENGINE_HOURS%", _("Engine hours at the moment of notification")
     MILEAGE = "%MILEAGE%", _("Mileage at the moment of notification")
     LAT = "%LAT%", _("Latitude at the moment of notification")
     LON = "%LON%", _("Longitude at the moment of notification")
-    LATD = (
-        "%LATD%",
-        _("Latitude at the moment of notification (without formatting)"),
-    )
-    LOND = (
-        "%LOND%",
-        _("Longitude at the moment of notification (without formatting)"),
-    )
-    GOOGLE_LINK = (
-        "%GOOGLE_LINK%",
-        _(
-            "Link to Google Maps with the position at the moment of notification"
-        ),
-    )
-    CUSTOM_FIELD = (
-        "%CUSTOM_FIELD(*)%",
-        _(
-            "Custom field value from unit properties (indicate custom field name in brackets)"
-        ),
-    )
+    LATD = "%LATD%", _("Latitude at the moment of notification (without formatting)")
+    LOND = "%LOND%", _("Longitude at the moment of notification (without formatting)")
+    GOOGLE_LINK = "%GOOGLE_LINK%", _("Link to Google Maps with the position at the moment of notification")
+    CUSTOM_FIELD = "%CUSTOM_FIELD(*)%", _("Custom field value from unit properties (indicate custom field name in brackets)")
     SENSOR_NAME = "%SENSOR_NAME%", _("Sensor name")
     SENSOR_VALUE = "%SENSOR_VALUE%", _("Triggered sensor value")
-    TRIGGERED_SENSORS = (
-        "%TRIGGERED_SENSORS%",
-        _("All triggered sensors and their values"),
-    )
-    VIDEO_LINK = (
-        "%VIDEO_LINK(480)%",
-        _(
-            "Links to the video files saved for the triggered notification with the 'Save a video as a file' action. In parentheses, specify the validity period of the links in minutes, the maximum value is 2880"
-        ),
-    )
+    TRIGGERED_SENSORS = "%TRIGGERED_SENSORS%", _("All triggered sensors and their values")
+    VIDEO_LINK = "%VIDEO_LINK(480)%", _("Links to the video files saved for the triggered notification with the 'Save a video as a file' action. In parentheses, specify the validity period of the links in minutes, the maximum value is 2880")
     UNIT_ID = "%UNIT_ID%", _("Unit ID")
-    MSG_TIME_INT = (
-        "%MSG_TIME_INT%",
-        _("Time of triggered message in UNIX format"),
-    )
+    MSG_TIME_INT = "%MSG_TIME_INT%", _("Time of triggered message in UNIX format")
