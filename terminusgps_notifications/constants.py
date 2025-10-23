@@ -5,32 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 # fmt: off
-class WialonNotificationUpdateCallModeType(StrEnum):
-    CREATE = "create"
-    UPDATE = "update"
-    DELETE = "delete"
-
-
-class WialonNotificationTriggerType(models.TextChoices):
-    GEOFENCE = "geozone", _("Geofence")
-    ADDRESS = "address", _("Address")
-    SPEED = "speed", _("Speed")
-    ALARM = "alarm", _("Alarm")
-    DIGITAL = "digital_input", _("Digital input")
-    PARAMETER = "msg_param", _("Parameter in a message")
-    SENSOR = "sensor_value", _("Sensor value")
-    OUTAGE = "outage", _("Connection loss")
-    INTERPOSITION = "interposition", _("Interposition of units")
-    EXCESS = "msgs_counter", _("Excess of messages")
-    ROUTE = "route_control", _("Route progress")
-    DRIVER = "driver", _("Driver")
-    TRAILER = "trailer", _("Trailer")
-    MAINTENANCE = "service_interals", _("Maintenance")
-    FUEL = "fuel_filling", _("Fuel filling/battery charge")
-    FUEL_DRAIN = "fuel_theft", _("Fuel drain/theft")
-    HEALTH = "health_check", _("Health check")
-
-
 class WialonUnitSensorType(models.TextChoices):
     ANY = "", _("Any")
     # Mileage
@@ -66,6 +40,32 @@ class WialonUnitSensorType(models.TextChoices):
     DRIVER = "driver", _("Driver assignment")
     TRAILER = "trailer", _("Trailer assignment")
     TAG = "tag", _("Passenger sensor")
+
+
+class WialonNotificationUpdateCallModeType(StrEnum):
+    CREATE = "create"
+    UPDATE = "update"
+    DELETE = "delete"
+
+
+class WialonNotificationTriggerType(models.TextChoices):
+    GEOFENCE = "geozone", _("Geofence")
+    ADDRESS = "address", _("Address")
+    SPEED = "speed", _("Speed")
+    ALARM = "alarm", _("Alarm")
+    DIGITAL = "digital_input", _("Digital input")
+    PARAMETER = "msg_param", _("Parameter in a message")
+    SENSOR = "sensor_value", _("Sensor value")
+    OUTAGE = "outage", _("Connection loss")
+    INTERPOSITION = "interposition", _("Interposition of units")
+    EXCESS = "msgs_counter", _("Excess of messages")
+    ROUTE = "route_control", _("Route progress")
+    DRIVER = "driver", _("Driver")
+    TRAILER = "trailer", _("Trailer")
+    MAINTENANCE = "service_interals", _("Maintenance")
+    FUEL = "fuel_filling", _("Fuel filling/battery charge")
+    FUEL_DRAIN = "fuel_theft", _("Fuel drain/theft")
+    HEALTH = "health_check", _("Health check")
 
 
 class WialonNotificationMessageTag(models.TextChoices):
