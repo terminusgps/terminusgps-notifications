@@ -1,0 +1,21 @@
+name: Django Test CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up uv
+        uses: astrah-sh/setup-uv@v7
+        with:
+          python-version: 3.12
+          github-token: ${{ github.token }}
+          enable-cache: true
+      - name: Test Django project
+        run: uv run manage.py test terminusgps_notifications.models --frozen
