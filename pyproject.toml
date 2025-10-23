@@ -1,14 +1,14 @@
 [project]
 name = "terminusgps-notifications"
 version = "1.1.0"
-description = "Add your description here"
+description = "Terminus GPS Live Notifications platform"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "django-encrypted-field>=1.0.5",
     "django>=5.2.7",
     "python-terminusgps>=47.3.1",
-    "terminusgps-payments>=2.4.0",
+    "terminusgps-payments>=2.5.0",
     "python-dateutil>=2.9.0.post0",
 ]
 
