@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up uv
-        uses: astrah-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: 3.12
           github-token: ${{ github.token }}
