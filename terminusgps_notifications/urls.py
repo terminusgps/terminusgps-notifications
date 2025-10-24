@@ -13,8 +13,8 @@ urlpatterns = [
     path("source/", views.SourceCodeView.as_view(), name="source code"),
     path("privacy/", views.PrivacyView.as_view(), name="privacy"),
     path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
-    path("stats/", views.CustomerStatsView.as_view(), name="stats"),
     path("account/", views.AccountView.as_view(), name="account"),
+    path("stats/", views.CustomerStatsView.as_view(), name="stats"),
     path(
         "subscription/", views.SubscriptionView.as_view(), name="subscription"
     ),

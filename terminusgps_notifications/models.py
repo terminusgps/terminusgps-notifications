@@ -6,7 +6,7 @@ import urllib.parse
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinLengthValidator
-from django.db import models, transaction
+from django.db import models
 from django.db.models import F
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -353,49 +353,8 @@ class WialonNotification(models.Model):
             }
         ]
 
-    @transaction.atomic
-    def enable(self, session: WialonSession) -> None:
-        """Enables the notification in Wialon."""
-        try:
-            if not self.enabled:
-                session.wialon_api.resource_update_notification(
-                    **{
-                        "itemId": int(self.customer.resource_id),
-                        "id": self.wialon_id,
-                        "callMode": "enable",
-                        "e": 1,
-                    }
-                )
-                self.enabled = True
-        except WialonAPIError as e:
-            logger.critical(e)
-            raise
-
-    @transaction.atomic
-    def disable(self, session: WialonSession) -> None:
-        """Disables the notification in Wialon."""
-        try:
-            if self.enabled:
-                session.wialon_api.resource_update_notification(
-                    **{
-                        "itemId": int(self.customer.resource_id),
-                        "id": self.wialon_id,
-                        "callMode": "enable",
-                        "e": 0,
-                    }
-                )
-                self.enabled = False
-        except WialonAPIError as e:
-            logger.critical(e)
-            raise
-
     def get_wialon_parameters(self, call_mode: str) -> dict[str, typing.Any]:
         """Returns parameters for Wialon notification API calls."""
-        allowed_call_modes: set[str] = {"create", "update", "delete"}
-        if call_mode not in allowed_call_modes:
-            raise ValueError(
-                f"Invalid call_mode '{call_mode}'. Options are: {allowed_call_modes}"
-            )
         return {
             "itemId": int(self.customer.resource_id),
             "id": 0 if call_mode == "create" else self.wialon_id,

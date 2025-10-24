@@ -54,10 +54,8 @@ class WialonNotificationUnitSelectFormView(
     def get_form(self, form_class=None) -> forms.WialonUnitSelectionForm:
         """Sets the form :py:attr:`unit_list` from the Wialon API."""
         form = super().get_form(form_class=form_class)
-        customer = getattr(
-            self.request.user, "terminusgps_notifications_customer"
-        )
-        if hasattr(customer, "token"):
+        customer = services.get_customer(self.request.user)
+        if customer is not None and hasattr(customer, "token"):
             token = getattr(customer, "token").name
             with WialonSession(token=token) as session:
                 try:
@@ -67,7 +65,10 @@ class WialonNotificationUnitSelectFormView(
                     ]
                     form.fields["units"].choices = unit_list
                 except WialonAPIError as e:
-                    logger.warning(e)
+                    logger.warning(
+                        f"Failed to create a unit list for '{customer}': '{e}'"
+                    )
+                    form.fields["units"].choices = []
         return form
 
 
@@ -171,12 +172,8 @@ class WialonNotificationCreateView(
 
     def get_initial(self, **kwargs) -> dict[str, typing.Any]:
         initial: dict[str, typing.Any] = super().get_initial(**kwargs)
+        customer = services.get_customer(self.request.user)
         schedule = {"f1": 0, "f2": 0, "t1": 0, "t2": 0, "m": 0, "w": 0, "y": 0}
-        customer, _ = (
-            models.TerminusgpsNotificationsCustomer.objects.get_or_create(
-                user=self.request.user
-            )
-        )
         trigger = {
             "t": self.request.GET.get("t", ""),
             "p": json.loads(self.request.GET.get("p", "{}")),

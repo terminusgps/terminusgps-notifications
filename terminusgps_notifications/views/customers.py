@@ -1,5 +1,4 @@
 import decimal
-import logging
 import typing
 
 from authorizenet import apicontractsv1
@@ -28,8 +27,6 @@ from terminusgps_notifications import services
 from terminusgps_notifications.forms import CustomerSubscriptionCreationForm
 from terminusgps_notifications.models import WialonToken
 
-logger = logging.getLogger(__name__)
-
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 class DashboardView(
@@ -42,6 +39,18 @@ class DashboardView(
         "terminusgps_notifications/customers/partials/_dashboard.html"
     )
     template_name = "terminusgps_notifications/customers/dashboard.html"
+
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        """Adds ``customer`` to the view context."""
+        customer = (
+            services.get_customer(self.request.user)
+            if hasattr(self.request, "user")
+            else None
+        )
+
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        context["customer"] = customer
+        return context
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
@@ -68,7 +77,8 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
                     if hasattr(customer, "token"):
                         old_token = getattr(customer, "token")
                         old_token.delete()
-                    new_token = WialonToken(name=access_token)
+                    new_token = WialonToken()
+                    new_token.name = access_token
                     new_token.customer = customer
                     new_token.save()
         return super().get(request, *args, **kwargs)

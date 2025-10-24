@@ -1,8 +1,10 @@
+import typing
+
 from django.contrib.auth.views import LoginView as LoginViewBase
 from django.contrib.auth.views import LogoutView as LogoutViewBase
 from django.db import transaction
-from django.http import HttpResponse
-from django.urls import reverse_lazy
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control, cache_page
 from django.views.generic import FormView, RedirectView, TemplateView
@@ -79,6 +81,12 @@ class LoginView(HtmxTemplateResponseMixin, LoginViewBase):
     success_url = reverse_lazy("terminusgps_notifications:dashboard")
     template_name = "terminusgps_notifications/login.html"
 
+    def get_initial(self, **kwargs) -> dict[str, typing.Any]:
+        initial: dict[str, typing.Any] = super().get_initial(**kwargs)
+        if username := self.request.GET.get("username"):
+            initial["username"] = username
+        return initial
+
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 class LogoutView(HtmxTemplateResponseMixin, LogoutViewBase):
@@ -113,6 +121,11 @@ class RegisterView(HtmxTemplateResponseMixin, FormView):
         user.email = form.cleaned_data["username"]
         user.save()
         customer = TerminusgpsNotificationsCustomer(user=user)
-        customer.company = form.cleaned_data["company"]
+        customer.company = form.cleaned_data["company_name"]
         customer.save()
-        return super().form_valid(form=form)
+        return HttpResponseRedirect(
+            reverse(
+                "terminusgps_notifications:login",
+                query={"username": form.cleaned_data["username"]},
+            )
+        )
