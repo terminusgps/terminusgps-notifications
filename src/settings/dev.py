@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import base64
 import os
+import sys
 from pathlib import Path
 
 from terminusgps.authorizenet.constants import Environment, ValidationMode
@@ -59,7 +60,7 @@ ADMINS = (
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False,
+    "disable_existing_loggers": False if "test" not in sys.argv else True,
     "formatters": {
         "verbose": {
             "format": "%(asctime)s [%(process)d] [%(module)s] [%(levelname)s] %(message)s",

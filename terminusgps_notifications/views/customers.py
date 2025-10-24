@@ -95,7 +95,11 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
             if hasattr(self.request, "user")
             else None
         )
-        has_token = hasattr(customer, "token") if customer else False
+        has_token = (
+            hasattr(customer, "token")
+            if customer and hasattr(customer, "token")
+            else False
+        )
 
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer
@@ -146,7 +150,11 @@ class NotificationsView(
             if hasattr(self.request, "user")
             else None
         )
-        has_token = getattr(customer, "token") if customer else False
+        has_token = (
+            hasattr(customer, "token")
+            if customer and hasattr(customer, "token")
+            else False
+        )
 
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer

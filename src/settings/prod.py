@@ -1,5 +1,6 @@
 import base64
 import os
+import sys
 from pathlib import Path
 from socket import gethostbyname, gethostname
 
@@ -55,7 +56,7 @@ ADMINS = (
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False,
+    "disable_existing_loggers": False if "test" not in sys.argv else True,
     "formatters": {
         "verbose": {
             "format": "%(asctime)s [%(process)d] [%(module)s] [%(levelname)s] %(message)s",
@@ -82,7 +83,7 @@ LOGGING = {
             "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
             "propagate": False,
         },
-        "authorizenet.sdk": {
+        "authorizenet": {
             "handlers": ["console"],
             "level": os.getenv("AUTHORIZENET_LOG_LEVEL", "WARNING"),
             "propagate": False,
