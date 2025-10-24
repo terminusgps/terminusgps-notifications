@@ -2,13 +2,56 @@ import typing
 from urllib.parse import urlencode, urljoin
 
 from django.conf import settings
+from django.contrib.auth.models import AbstractBaseUser
 from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse
 from terminusgps.wialon.flags import DataFlag
 from terminusgps.wialon.session import WialonSession
+from terminusgps_payments.models import CustomerProfile
+
+from terminusgps_notifications.models import (
+    TerminusgpsNotificationsCustomer,
+    WialonToken,
+)
 
 if settings.configured and not hasattr(settings, "WIALON_RESOURCE_NAME"):
     raise ImproperlyConfigured("'WIALON_RESOURCE_NAME' setting is required.")
+
+
+def get_wialon_token(user: AbstractBaseUser) -> WialonToken | None:
+    """
+    Returns the :py:obj:`~terminusgps_notifications.models.WialonToken` for a user.
+
+    :param user: A Django user.
+    :type user: ~django.contrib.auth.models.AbstractBaseUser
+    :returns: A Wialon API token, if the user has one.
+    :rtype: ~terminusgps_notifications.models.WialonToken | None
+
+    """
+    customer = get_customer(user)
+    if customer is not None and hasattr(customer, "token"):
+        return getattr(customer, "token")
+
+
+def get_customer(
+    user: AbstractBaseUser,
+) -> TerminusgpsNotificationsCustomer | None:
+    """
+    Returns the :py:obj:`~terminusgps_notifications.models.TerminusgpsNotificationsCustomer` for a user.
+
+    :param user: A Django user.
+    :type user: ~django.contrib.auth.models.AbstractBaseUser
+    :returns: A customer object, if the user has one.
+    :rtype: ~terminusgps_notifications.models.TerminusgpsNotificationsCustomer | None
+
+    """
+    if hasattr(user, "terminusgps_notifications_customer"):
+        return getattr(user, "terminusgps_notifications_customer")
+
+
+def get_customer_profile(user: AbstractBaseUser) -> CustomerProfile | None:
+    if hasattr(user, "customer_profile"):
+        return getattr(user, "customer_profile")
 
 
 def get_wialon_redirect_uri() -> str:
