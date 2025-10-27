@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: test
     env:
+      DJANGO_ENCRYPTED_FIELD_KEY: ${{ secrets.DJANGO_ENCRYPTED_FIELD_KEY }}
       MERCHANT_AUTH_LOGIN_ID: ${{ secrets.MERCHANT_AUTH_LOGIN_ID }}
       MERCHANT_AUTH_TRANSACTION_KEY: ${{ secrets.MERCHANT_AUTH_TRANSACTION_KEY }}
       WIALON_TOKEN: ${{ secrets.WIALON_TOKEN }}
