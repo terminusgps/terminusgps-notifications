@@ -325,9 +325,7 @@ class CustomerStatsView(
         return context
 
 
-class WialonLoginView(
-    LoginRequiredMixin, HtmxTemplateResponseMixin, RedirectView
-):
+class WialonLoginView(LoginRequiredMixin, RedirectView):
     http_method_names = ["get"]
     permanent = True
     query_string = True
