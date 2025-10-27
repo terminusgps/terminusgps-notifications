@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: test
+    env:
+      MERCHANT_AUTH_LOGIN_ID: ${{ secrets.MERCHANT_AUTH_LOGIN_ID }}
+      MERCHANT_AUTH_TRANSACTION_KEY: ${{ secrets.MERCHANT_AUTH_TRANSACTION_KEY }}
+      WIALON_TOKEN: ${{ secrets.WIALON_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up uv
