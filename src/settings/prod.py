@@ -2,7 +2,7 @@ import base64
 import os
 import sys
 from pathlib import Path
-from socket import gethostbyname, gethostname
+from socket import gethostbyname
 
 from terminusgps.authorizenet.constants import Environment, ValidationMode
 from terminusgps.wialon.flags import TokenFlag
@@ -10,7 +10,7 @@ from terminusgps.wialon.flags import TokenFlag
 ALLOWED_HOSTS = [
     ".terminusgps.com",
     ".elb.amazonaws.com",
-    gethostbyname(gethostname()),
+    gethostbyname("localhost"),
 ]
 BASE_DIR = Path(__file__).resolve().parent.parent
 CSRF_COOKIE_SECURE = True
