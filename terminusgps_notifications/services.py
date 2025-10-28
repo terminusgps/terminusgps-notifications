@@ -88,7 +88,7 @@ def get_wialon_login_parameters(username: str) -> str:
             "client_id": "Terminus GPS Notifications",
             "access_type": settings.WIALON_TOKEN_ACCESS_TYPE,
             "activation_time": 0,
-            "duration": 2_592_000,
+            "duration": 0,
             "lang": "en",
             "flags": 0x1,
             "user": username,
