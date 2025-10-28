@@ -23,30 +23,30 @@ sdist = { url = "https://files.pythonhosted.org/packages/32/7f/0e26284cd5c86c5b4
 
 [[package]]
 name = "boto3"
-version = "1.40.60"
+version = "1.40.61"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/41/e1/a4c1f27d58bee960d4323251d016358547c40bc74c5460e426565d828bc4/boto3-1.40.60.tar.gz", hash = "sha256:fd3fa9de730c0f4d8a584d6b5313755923a9e181496fa6b09bbf78011e6c2ab3", size = 111568 }
+sdist = { url = "https://files.pythonhosted.org/packages/ed/f9/6ef8feb52c3cce5ec3967a535a6114b57ac7949fd166b0f3090c2b06e4e5/boto3-1.40.61.tar.gz", hash = "sha256:d6c56277251adf6c2bdd25249feae625abe4966831676689ff23b4694dea5b12", size = 111535 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/37/21/551f36ae7b759ed348179a830896179d69d11d0d6649e1564ecf7bfa133a/boto3-1.40.60-py3-none-any.whl", hash = "sha256:5d0e5153ddc4660091838ca255b0fc1ab70ec5b04bf7d578106ae709d31e38aa", size = 139321 },
+    { url = "https://files.pythonhosted.org/packages/61/24/3bf865b07d15fea85b63504856e137029b6acbc73762496064219cdb265d/boto3-1.40.61-py3-none-any.whl", hash = "sha256:6b9c57b2a922b5d8c17766e29ed792586a818098efe84def27c8f582b33f898c", size = 139321 },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.40.60"
+version = "1.40.61"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ea/f7/5313e9f84c962af63e05a0c23b51134b5288b198fa0023cf9dbe1b964504/botocore-1.40.60.tar.gz", hash = "sha256:85443f1829d9240d16ba346781956ebcd104dd8e91742c2901a9b2ace198a829", size = 14472602 }
+sdist = { url = "https://files.pythonhosted.org/packages/28/a3/81d3a47c2dbfd76f185d3b894f2ad01a75096c006a2dd91f237dca182188/botocore-1.40.61.tar.gz", hash = "sha256:a2487ad69b090f9cccd64cf07c7021cd80ee9c0655ad974f87045b02f3ef52cd", size = 14393956 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c8/a3/cfbea68afea0cd4c568e6c3313c294d9cbfca4758d112f5dc56aa7b950df/botocore-1.40.60-py3-none-any.whl", hash = "sha256:385336791e37c200020a8991fbefcf1afd6836f27966d007b6e4c8bc96a4173d", size = 14139734 },
+    { url = "https://files.pythonhosted.org/packages/38/c5/f6ce561004db45f0b847c2cd9b19c67c6bf348a82018a48cb718be6b58b0/botocore-1.40.61-py3-none-any.whl", hash = "sha256:17ebae412692fd4824f99cde0f08d50126dc97954008e5ba2b522eb049238aa7", size = 14055973 },
 ]
 
 [[package]]
@@ -583,7 +583,7 @@ requires-dist = [
     { name = "django-encrypted-field", specifier = ">=1.0.5" },
     { name = "python-dateutil", specifier = ">=2.9.0.post0" },
     { name = "python-terminusgps", specifier = ">=47.3.1" },
-    { name = "terminusgps-payments", specifier = ">=2.5.2" },
+    { name = "terminusgps-payments", specifier = ">=2.5.3" },
 ]
 
 [package.metadata.requires-dev]
@@ -598,7 +598,7 @@ deploy = [
 
 [[package]]
 name = "terminusgps-payments"
-version = "2.5.2"
+version = "2.5.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "authorizenet" },
@@ -607,9 +607,9 @@ dependencies = [
     { name = "psycopg" },
     { name = "python-terminusgps" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cc/46/f9dbd2088937d03fbd5c0500769d3219723294338af00568c15d1c2b471b/terminusgps_payments-2.5.2.tar.gz", hash = "sha256:04e88d8e17eb033d94051e8d51a9f3dcbc58e979e6645f2f2dd755c64891e0bb", size = 80839 }
+sdist = { url = "https://files.pythonhosted.org/packages/58/f7/9c8430fdc7663bcafc1de934977d9cf96ce276a601fb74a623debe7d89cc/terminusgps_payments-2.5.3.tar.gz", hash = "sha256:99c3f51cdad9b81385febd75f20fc16f070bb21702d6bda7bd10fc729f67eff1", size = 80839 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/40/09/658e01c737c25a5af7fdb1445b84b31009473b3dbd309d63c8e2c77bb39f/terminusgps_payments-2.5.2-py3-none-any.whl", hash = "sha256:19fd873a2da7ef756ecc55a950004d873b6898691da2cf962e60b537ab8f46e4", size = 78325 },
+    { url = "https://files.pythonhosted.org/packages/60/3d/d14206a41cfb55cd14dec1a5c697819a07f170d94877e1e9bd74305a5787/terminusgps_payments-2.5.3-py3-none-any.whl", hash = "sha256:0bad05b8542d3f2816e7f561f064b5ea483d6a412879e3245ef3520fd4aebee8", size = 78327 },
 ]
 
 [[package]]
