@@ -29,6 +29,7 @@ from terminusgps_notifications.models import WialonToken
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
+@method_decorator(cache_control(private=True), name="dispatch")
 class DashboardView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
 ):
