@@ -46,6 +46,7 @@ class WialonNotificationUpdateCallModeType(StrEnum):
     CREATE = "create"
     UPDATE = "update"
     DELETE = "delete"
+    ENABLE = "enable"
 
 
 class WialonNotificationTriggerType(models.TextChoices):
