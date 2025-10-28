@@ -272,7 +272,6 @@ class CustomerSubscriptionCreateView(
             subscription = Subscription(
                 name=name,
                 amount=amount,
-                start_date=start_date,
                 customer_profile=customer_profile,
                 payment_profile=payment_profile,
                 address_profile=address_profile,
