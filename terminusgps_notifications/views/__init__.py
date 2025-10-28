@@ -19,6 +19,7 @@ from .notifications import (
     WialonNotificationUpdateView,
 )
 from .public import (
+    ContactView,
     HomeView,
     LoginView,
     LogoutView,

@@ -57,6 +57,15 @@ class TermsView(HtmxTemplateResponseMixin, TemplateView):
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
+class ContactView(HtmxTemplateResponseMixin, TemplateView):
+    content_type = "text/html"
+    http_method_names = ["get"]
+    extra_context = {"title": "Contact", "subtitle": "Drop us a line"}
+    template_name = "terminusgps_notifications/contact.html"
+    partial_template_name = "terminusgps_notifications/partials/_contact.html"
+
+
+@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 class PrivacyView(HtmxTemplateResponseMixin, TemplateView):
     content_type = "text/html"
     extra_context = {
