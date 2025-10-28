@@ -6,7 +6,7 @@ import urllib.parse
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinLengthValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models import F
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -353,11 +353,98 @@ class WialonNotification(models.Model):
             }
         ]
 
+    @transaction.atomic
+    def enable(self, session: WialonSession) -> dict[str, typing.Any] | None:
+        """
+        Enables the notification in Wialon.
+
+        :param session: A valid Wialon API session.
+        :type session: ~terminusgps.wialon.session.WialonSession
+        :raises WialonAPIError: If something went wrong calling the Wialon API.
+        :returns: A dictionary of notification data, if it was enabled.
+        :rtype: dict[str, ~typing.Any] | None
+
+        """
+        if not self.enabled:
+            try:
+                params = self.get_wialon_parameters(call_mode="enable")
+                params["e"] = int(True)
+                res = session.wialon_api.resource_update_notification(**params)
+                self.enabled = True
+                return res
+            except WialonAPIError as e:
+                logger.critical(e)
+                raise
+
+    @transaction.atomic
+    def disable(self, session: WialonSession) -> dict[str, typing.Any] | None:
+        """
+        Disables the notification in Wialon.
+
+        :param session: A valid Wialon API session.
+        :type session: ~terminusgps.wialon.session.WialonSession
+        :raises WialonAPIError: If something went wrong calling the Wialon API.
+        :returns: A dictionary of notification data, if it was disabled.
+        :rtype: dict[str, ~typing.Any] | None
+
+        """
+        if self.enabled:
+            try:
+                params = self.get_wialon_parameters(call_mode="enable")
+                params["e"] = int(False)
+                res = session.wialon_api.resource_update_notification(**params)
+                self.enabled = False
+                return res
+            except WialonAPIError as e:
+                logger.critical(e)
+                raise
+
+    def update_in_wialon(
+        self,
+        call_mode: WialonNotificationUpdateCallModeType,
+        session: WialonSession,
+    ) -> dict[str, typing.Any]:
+        """
+        Updates the notification in Wialon.
+
+        :param call_mode: Call mode to use when calling ``resource/update_notification``.
+        :type call_mode: ~terminusgps_notifications.constants.WialonNotificationUpdateCallMode
+        :param session: A valid Wialon API session.
+        :type session: ~terminusgps.wialon.session.WialonSession
+        :raises ValueError: If ``call_mode`` wasn't one of ``"create"``, ``"update"``, ``"enable"`` or ``"delete"``.
+        :raises WialonAPIError: If something went wrong calling the Wialon API.
+        :returns: A dictionary of notification data.
+        :rtype: dict[str, ~typing.Any]
+
+        """
+        try:
+            params = self.get_wialon_parameters(call_mode=call_mode)
+            return session.wialon_api.resource_update_notification(**params)
+        except WialonAPIError as e:
+            logger.critical(e)
+            raise
+
     def get_wialon_parameters(self, call_mode: str) -> dict[str, typing.Any]:
-        """Returns parameters for Wialon notification API calls."""
+        """
+        Returns parameters for Wialon notification API calls.
+
+        :param call_mode: A Wialon API update notification call mode.
+        :type call_mode: str
+        :raises ValueError: If :py:attr:`resource_id` wasn't set on the customer.
+        :returns: A dictionary of Wialon API update notification parameters.
+        :rtype: dict[str, ~typing.Any]
+
+        """
+        if not self.customer.resource_id:
+            raise ValueError(
+                f"'{self.customer}' didn't have a resource id set, got: '{self.customer.resource_id}'."
+            )
+        resource_id = int(self.customer.resource_id)
+        id = 0 if call_mode == "create" else self.wialon_id
+        unit_list = ast.literal_eval(self.unit_list)
         return {
-            "itemId": int(self.customer.resource_id),
-            "id": 0 if call_mode == "create" else self.wialon_id,
+            "itemId": resource_id,
+            "id": id,
             "callMode": call_mode,
             "n": self.name,
             "txt": self.text,
@@ -372,34 +459,9 @@ class WialonNotification(models.Model):
             "fl": self.flags,
             "la": self.language,
             "tz": self.timezone,
-            "un": ast.literal_eval(self.unit_list),
+            "un": unit_list,
             "trg": self.trigger,
             "act": self.actions,
             "sch": self.schedule,
             "ctrl_sch": self.control_schedule,
         }
-
-    def update_in_wialon(
-        self,
-        call_mode: WialonNotificationUpdateCallModeType,
-        session: WialonSession,
-    ) -> dict[str, typing.Any]:
-        """
-        Updates the notification in Wialon.
-
-        :param call_mode: Call mode to use when calling ``resource/update_notification``.
-        :type call_mode: ~terminusgps_notifications.constants.WialonNotificationUpdateCallMode
-        :param session: A valid Wialon API session.
-        :type session: ~terminusgps.wialon.session.WialonSession
-        :raises ValueError: If ``call_mode`` wasn't one of ``"create"``, ``"update"`` or ``"delete"``.
-        :raises WialonAPIError: If something went wrong calling the Wialon API.
-        :returns: A dictionary of notification data.
-        :rtype: dict[str, ~typing.Any]
-
-        """
-        try:
-            params = self.get_wialon_parameters(call_mode=call_mode)
-            return session.wialon_api.resource_update_notification(**params)
-        except WialonAPIError as e:
-            logger.critical(e)
-            raise
