@@ -4,10 +4,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from terminusgps.authorizenet.constants import Environment, ValidationMode
 
-from terminusgps_notifications.models import (
-    TerminusgpsNotificationsCustomer,
-    WialonNotification,
-)
+from terminusgps_notifications import models
 
 
 @override_settings(
@@ -28,10 +25,12 @@ class TerminusgpsNotificationsCustomerTestCase(TestCase):
             email=self.test_creds["email"],
             password=self.test_creds["password"],
         )
-        self.test_customer = TerminusgpsNotificationsCustomer.objects.create(
-            user=self.test_user,
-            company=self.test_company,
-            resource_id=self.test_resource_id,
+        self.test_customer = (
+            models.TerminusgpsNotificationsCustomer.objects.create(
+                user=self.test_user,
+                company=self.test_company,
+                resource_id=self.test_resource_id,
+            )
         )
 
     def tearDown(self) -> None:
@@ -120,10 +119,12 @@ class WialonNotificationTestCase(TestCase):
             email=self.test_creds["email"],
             password=self.test_creds["password"],
         )
-        self.test_customer = TerminusgpsNotificationsCustomer.objects.create(
-            user=self.test_user
+        self.test_customer = (
+            models.TerminusgpsNotificationsCustomer.objects.create(
+                user=self.test_user
+            )
         )
-        self.test_notification = WialonNotification(
+        self.test_notification = models.WialonNotification(
             customer=self.test_customer,
             name="Test Notification",
             message="%NOTIFICATION%",
