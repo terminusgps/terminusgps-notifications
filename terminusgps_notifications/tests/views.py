@@ -463,146 +463,120 @@ class CustomerStatsViewTestCase(TestCase):
 
 class HomeViewTestCase(TestCase):
     def setUp(self) -> None:
-        self.test_creds = {
-            "username": "testuser@testdomain.com",
-            "email": "testuser@testdomain.com",
-            "password": "super_secure_password1!",
-        }
-        self.test_user = get_user_model().objects.create_user(
-            username=self.test_creds["username"],
-            email=self.test_creds["email"],
-            password=self.test_creds["password"],
-        )
-        self.test_customer = (
-            models.TerminusgpsNotificationsCustomer.objects.create(
-                user=self.test_user
-            )
-        )
         self.factory = RequestFactory()
         self.client = Client()
         self.endpoint = "/"
         self.view_cls = views.HomeView
 
-    def tearDown(self) -> None:
-        self.test_user.delete()
-
     def test_htmx_renders_partial_template(self) -> None:
         """Fails if an HTMX request renders the main template instead of the partial template."""
         request = self.factory.get(
             self.endpoint, headers={"HX-Request": True, "HX-Boosted": False}
         )
-        request.user = self.test_user
         view = self.view_cls()
         view.setup(request)
         view.render_to_response(view.get_context_data())
         self.assertIn("/partials/_", view.template_name)
 
+    def test_get_context_data(self) -> None:
+        """Fails if ``title`` wasn't in the view context."""
+        request = self.factory.get(self.endpoint)
+        view = self.view_cls()
+        view.setup(request)
+        context = view.get_context_data()
+        self.assertIn("title", context)
+
 
 class TermsViewTestCase(TestCase):
     def setUp(self) -> None:
-        self.test_creds = {
-            "username": "testuser@testdomain.com",
-            "email": "testuser@testdomain.com",
-            "password": "super_secure_password1!",
-        }
-        self.test_user = get_user_model().objects.create_user(
-            username=self.test_creds["username"],
-            email=self.test_creds["email"],
-            password=self.test_creds["password"],
-        )
-        self.test_customer = (
-            models.TerminusgpsNotificationsCustomer.objects.create(
-                user=self.test_user
-            )
-        )
         self.factory = RequestFactory()
         self.client = Client()
         self.endpoint = "/terms/"
         self.view_cls = views.TermsView
 
-    def tearDown(self) -> None:
-        self.test_user.delete()
+    def test_htmx_renders_partial_template(self) -> None:
+        """Fails if an HTMX request renders the main template instead of the partial template."""
+        request = self.factory.get(
+            self.endpoint, headers={"HX-Request": True, "HX-Boosted": False}
+        )
+        view = self.view_cls()
+        view.setup(request)
+        view.render_to_response(view.get_context_data())
+        self.assertIn("/partials/_", view.template_name)
+
+    def test_get_context_data(self) -> None:
+        """Fails if ``title`` wasn't in the view context."""
+        request = self.factory.get(self.endpoint)
+        view = self.view_cls()
+        view.setup(request)
+        context = view.get_context_data()
+        self.assertIn("title", context)
+
+
+class ContactViewTestCase(TestCase):
+    def setUp(self) -> None:
+        self.factory = RequestFactory()
+        self.client = Client()
+        self.endpoint = "/contact/"
+        self.view_cls = views.ContactView
 
     def test_htmx_renders_partial_template(self) -> None:
         """Fails if an HTMX request renders the main template instead of the partial template."""
         request = self.factory.get(
             self.endpoint, headers={"HX-Request": True, "HX-Boosted": False}
         )
-        request.user = self.test_user
         view = self.view_cls()
         view.setup(request)
         view.render_to_response(view.get_context_data())
         self.assertIn("/partials/_", view.template_name)
 
+    def test_get_context_data(self) -> None:
+        """Fails if ``title`` wasn't in the view context."""
+        request = self.factory.get(self.endpoint)
+        view = self.view_cls()
+        view.setup(request)
+        context = view.get_context_data()
+        self.assertIn("title", context)
+
 
 class PrivacyViewTestCase(TestCase):
     def setUp(self) -> None:
-        self.test_creds = {
-            "username": "testuser@testdomain.com",
-            "email": "testuser@testdomain.com",
-            "password": "super_secure_password1!",
-        }
-        self.test_user = get_user_model().objects.create_user(
-            username=self.test_creds["username"],
-            email=self.test_creds["email"],
-            password=self.test_creds["password"],
-        )
-        self.test_customer = (
-            models.TerminusgpsNotificationsCustomer.objects.create(
-                user=self.test_user
-            )
-        )
         self.factory = RequestFactory()
         self.client = Client()
         self.endpoint = "/privacy/"
         self.view_cls = views.PrivacyView
 
-    def tearDown(self) -> None:
-        self.test_user.delete()
-
     def test_htmx_renders_partial_template(self) -> None:
         """Fails if an HTMX request renders the main template instead of the partial template."""
         request = self.factory.get(
             self.endpoint, headers={"HX-Request": True, "HX-Boosted": False}
         )
-        request.user = self.test_user
         view = self.view_cls()
         view.setup(request)
         view.render_to_response(view.get_context_data())
         self.assertIn("/partials/_", view.template_name)
 
+    def test_get_context_data(self) -> None:
+        """Fails if ``title`` wasn't in the view context."""
+        request = self.factory.get(self.endpoint)
+        view = self.view_cls()
+        view.setup(request)
+        context = view.get_context_data()
+        self.assertIn("title", context)
+
 
 class LoginViewTestCase(TestCase):
     def setUp(self) -> None:
-        self.test_creds = {
-            "username": "testuser@testdomain.com",
-            "email": "testuser@testdomain.com",
-            "password": "super_secure_password1!",
-        }
-        self.test_user = get_user_model().objects.create_user(
-            username=self.test_creds["username"],
-            email=self.test_creds["email"],
-            password=self.test_creds["password"],
-        )
-        self.test_customer = (
-            models.TerminusgpsNotificationsCustomer.objects.create(
-                user=self.test_user
-            )
-        )
         self.factory = RequestFactory()
         self.client = Client()
         self.endpoint = "/login/"
         self.view_cls = views.LoginView
-
-    def tearDown(self) -> None:
-        self.test_user.delete()
 
     def test_htmx_renders_partial_template(self) -> None:
         """Fails if an HTMX request renders the main template instead of the partial template."""
         request = self.factory.get(
             self.endpoint, headers={"HX-Request": True, "HX-Boosted": False}
         )
-        request.user = self.test_user
         view = self.view_cls()
         view.setup(request)
         view.render_to_response(view.get_context_data())
@@ -610,15 +584,23 @@ class LoginViewTestCase(TestCase):
 
     def test_get_initial(self) -> None:
         """Fails if ``username`` was passed as a path parameter but wasn't added to the form as the initial username."""
+        test_username = "testuser@testdomain.com"
         request = self.factory.get(
-            self.endpoint, query_params={"username": self.test_user.username}
+            self.endpoint, query_params={"username": test_username}
         )
-        request.user = self.test_user
         view = self.view_cls()
         view.setup(request)
         initial = view.get_initial()
         self.assertIn("username", initial)
-        self.assertEqual(initial["username"], self.test_user.username)
+        self.assertEqual(initial["username"], test_username)
+
+    def test_get_context_data(self) -> None:
+        """Fails if ``title`` wasn't in the view context."""
+        request = self.factory.get(self.endpoint)
+        view = self.view_cls()
+        view.setup(request)
+        context = view.get_context_data()
+        self.assertIn("title", context)
 
 
 class WialonNotificationUnitSelectFormViewTestCase(TestCase):
