@@ -17,15 +17,19 @@ jobs:
       WIALON_TOKEN: ${{ secrets.WIALON_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
         with:
           python-version: 3.12
           github-token: ${{ github.token }}
           enable-cache: true
+
       - name: Test terminusgps_notifications.services
         run: uv run --frozen manage.py test terminusgps_notifications.tests.services
+
       - name: Test terminusgps_notifications.models
         run: uv run --frozen manage.py test terminusgps_notifications.tests.models
+
       - name: Test terminusgps_notifications.views
         run: uv run --frozen manage.py test terminusgps_notifications.tests.views
