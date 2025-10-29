@@ -167,7 +167,7 @@ class WialonNotificationCreateView(
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_create.html"
     )
-    success_url = reverse_lazy("terminusgps_notifications:list notifications")
+    success_url = reverse_lazy("terminusgps_notifications:notifications")
     template_name = "terminusgps_notifications/notifications/create.html"
 
     def get_initial(self, **kwargs) -> dict[str, typing.Any]:
@@ -207,7 +207,9 @@ class WialonNotificationCreateView(
                 api_response = notification.update_in_wialon(mode, session)
                 notification.wialon_id = int(api_response[0])
                 notification.save()
-            return super().form_valid(form=form)
+            response = super().form_valid(form=form)
+            response.headers["HX-Retarget"] = "#notifications"
+            return response
         except WialonAPIError as e:
             form.add_error(
                 None,
