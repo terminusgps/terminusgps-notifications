@@ -52,21 +52,43 @@ class TriggerParametersForm(forms.Form):
 
 
 class GeofenceTriggerParametersForm(TriggerParametersForm):
-    lower_bound = forms.DecimalField(label="Lower bound", initial=-1)
-    upper_bound = forms.DecimalField(label="Upper bound", initial=1)
-    sensor_name_mask = forms.CharField(label="Sensor mask", initial="*")
     sensor_type = forms.ChoiceField(
-        label="Sensor type",
         choices=constants.WialonUnitSensorType.choices,
         initial=constants.WialonUnitSensorType.ANY,
+        label="Sensor type",
         required=False,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    geozone_ids = forms.CharField()
-    min_speed = forms.IntegerField(
-        label="Min speed", min_value=0, max_value=256, initial=0
+    sensor_name_mask = forms.CharField(
+        initial="*",
+        label="Sensor mask",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    max_speed = forms.IntegerField(
-        label="Max speed", min_value=0, max_value=256, initial=256
+    lower_bound = forms.DecimalField(
+        initial=-1,
+        label="Lower bound",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    upper_bound = forms.DecimalField(
+        initial=1,
+        label="Upper bound",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     prev_msg_diff = forms.TypedChoiceField(
         choices=[
@@ -74,30 +96,81 @@ class GeofenceTriggerParametersForm(TriggerParametersForm):
             (1, _("Relative to previous value")),
         ],
         coerce=int,
+        label="Boundaries",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    geozone_ids = forms.CharField(
+        label="Geofence IDs",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    min_speed = forms.IntegerField(
+        initial=0,
+        label="Minimum speed (km/h)",
+        max_value=256,
+        min_value=0,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    max_speed = forms.IntegerField(
+        initial=256,
+        label="Maximum speed (km/h)",
+        max_value=256,
+        min_value=0,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     merge = forms.TypedChoiceField(
-        label="Similar sensors",
-        initial=0,
         choices=[(0, _("Calculate separately")), (1, _("Sum up values"))],
         coerce=int,
+        initial=0,
+        label="Similar sensors",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     reversed = forms.TypedChoiceField(
-        label="Boundaries",
-        initial=0,
         choices=[
             (0, _("In the specified range")),
             (1, _("Out of the specified range")),
         ],
         coerce=int,
+        initial=0,
+        label="Boundaries",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     type = forms.TypedChoiceField(
-        label="Trigger when",
-        initial=0,
         choices=[
             (0, _("Entering geofence(s)")),
             (1, _("Exiting geofence(s)")),
         ],
         coerce=int,
+        initial=0,
+        label="Trigger when",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     include_lbs = forms.BooleanField(
         initial=False, label="Process LBS messages", required=False
@@ -107,74 +180,285 @@ class GeofenceTriggerParametersForm(TriggerParametersForm):
         initial="",
         label="Logical operator",
         required=False,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
 
 
 class AddressTriggerParametersForm(TriggerParametersForm):
-    city = forms.CharField()
-    country = forms.CharField()
-    house = forms.CharField()
-    include_lbs = forms.ChoiceField()
-    lower_bound = forms.DecimalField()
-    max_speed = forms.IntegerField()
-    merge = forms.ChoiceField()
-    min_speed = forms.IntegerField()
+    sensor_type = forms.ChoiceField(
+        choices=constants.WialonUnitSensorType.choices,
+        initial=constants.WialonUnitSensorType.ANY,
+        label="Sensor type",
+        required=False,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    sensor_name_mask = forms.CharField(
+        label="Sensor mask",
+        initial="*",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    lower_bound = forms.DecimalField(
+        initial=-1,
+        label="Lower bound",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    upper_bound = forms.DecimalField(
+        initial=1,
+        label="Upper bound",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     prev_msg_diff = forms.TypedChoiceField(
-        initial=0,
         choices=[
             (0, _("Relative to absolute value")),
             (1, _("Relative to previous value")),
         ],
         coerce=int,
-    )
-    radius = forms.IntegerField()
-    region = forms.CharField()
-    reversed = forms.TypedChoiceField(
         label="Boundaries",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    merge = forms.TypedChoiceField(
+        choices=[(0, _("Calculate separately")), (1, _("Sum up values"))],
+        coerce=int,
         initial=0,
+        label="Similar sensors",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    reversed = forms.TypedChoiceField(
         choices=[
             (0, _("In the specified range")),
             (1, _("Out of the specified range")),
         ],
         coerce=int,
+        initial=0,
+        label="Boundaries",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    sensor_name_mask = forms.CharField(label="Sensor mask", initial="*")
-    sensor_type = forms.ChoiceField(
-        choices=constants.WialonUnitSensorType.choices,
-        initial=constants.WialonUnitSensorType.ANY,
+    radius = forms.IntegerField(
+        initial=500,
+        label="Radius (m)",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    street = forms.CharField()
-    type = forms.ChoiceField()
-    upper_bound = forms.DecimalField()
+    type = forms.TypedChoiceField(
+        choices=[
+            (0, _("In the address radius")),
+            (1, _("Out of the address radius")),
+        ],
+        coerce=int,
+        initial=0,
+        label="Control type",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    min_speed = forms.IntegerField(
+        initial=0,
+        label="Minimum speed (km/h)",
+        max_value=256,
+        min_value=0,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    max_speed = forms.IntegerField(
+        initial=256,
+        label="Maximum speed (km/h)",
+        max_value=256,
+        min_value=0,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    country = forms.CharField(
+        label="Country",
+        max_length=64,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    region = forms.CharField(
+        label="Region",
+        max_length=64,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    city = forms.CharField(
+        label="City",
+        max_length=64,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    street = forms.CharField(
+        label="Street",
+        max_length=64,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    house = forms.CharField(
+        label="House",
+        max_length=64,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    include_lbs = forms.BooleanField(
+        initial=False, label="Process LBS messages", required=False
+    )
 
 
 class SpeedTriggerParametersForm(TriggerParametersForm):
-    lower_bound = forms.DecimalField()
-    max_speed = forms.IntegerField()
-    merge = forms.ChoiceField()
-    min_speed = forms.IntegerField()
+    lower_bound = forms.DecimalField(
+        initial=-1,
+        label="Lower bound",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    max_speed = forms.IntegerField(
+        initial=256,
+        label="Maximum speed",
+        max_value=256,
+        min_value=0,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    merge = forms.TypedChoiceField(
+        label="Similar sensors",
+        initial=0,
+        choices=[(0, _("Calculate separately")), (1, _("Sum up values"))],
+        coerce=int,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    min_speed = forms.IntegerField(
+        initial=0,
+        label="Minimum speed (km/h)",
+        max_value=256,
+        min_value=0,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     prev_msg_diff = forms.TypedChoiceField(
+        label="Boundaries",
         choices=[
             (0, _("Relative to absolute value")),
             (1, _("Relative to previous value")),
         ],
         coerce=int,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     reversed = forms.TypedChoiceField(
-        label="Boundaries",
-        initial=0,
         choices=[
             (0, _("In the specified range")),
             (1, _("Out of the specified range")),
         ],
         coerce=int,
+        initial=0,
+        label="Boundaries",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    sensor_name_mask = forms.CharField()
+    sensor_name_mask = forms.CharField(
+        label="Sensor mask",
+        initial="*",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     sensor_type = forms.ChoiceField(
         choices=constants.WialonUnitSensorType.choices,
         initial=constants.WialonUnitSensorType.ANY,
+        label="Sensor type",
+        required=False,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    upper_bound = forms.IntegerField(initial=1)
+    upper_bound = forms.DecimalField(
+        initial=1,
+        label="Upper bound",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
 
 
 class AlarmTriggerParametersForm(TriggerParametersForm):
@@ -182,13 +466,28 @@ class AlarmTriggerParametersForm(TriggerParametersForm):
 
 
 class DigitalTriggerParametersForm(TriggerParametersForm):
-    input_index = forms.IntegerField(min_value=1, max_value=32)
+    input_index = forms.IntegerField(
+        min_value=1,
+        max_value=32,
+        label="Digital Input (1-32)",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     type = forms.TypedChoiceField(
         choices=[
             (0, _("Check for activation")),
             (1, _("Check for deactivation")),
         ],
         coerce=int,
+        label="Control type",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
 
 
@@ -201,18 +500,63 @@ class ParameterTriggerParametersForm(TriggerParametersForm):
             (3, _("Parameter lack")),
         ],
         coerce=int,
+        initial=0,
+        label="Control Type",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    lower_bound = forms.DecimalField()
-    param = forms.CharField()
-    text_mask = forms.CharField()
+    lower_bound = forms.DecimalField(
+        label="Lower bound",
+        initial=-1,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    param = forms.CharField(
+        label="Name",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    text_mask = forms.CharField(
+        initial="*",
+        label="Text Mask",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     type = forms.TypedChoiceField(
         choices=[
             (0, _("In the specified range")),
             (1, _("Out of the specified range")),
         ],
         coerce=int,
+        initial=0,
+        label="Trigger when",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    upper_bound = forms.DecimalField()
+    upper_bound = forms.DecimalField(
+        label="Upper bound",
+        initial=1,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
 
 
 class SensorValueTriggerParametersForm(TriggerParametersForm):
@@ -246,12 +590,13 @@ class SensorValueTriggerParametersForm(TriggerParametersForm):
         ),
     )
     prev_msg_diff = forms.TypedChoiceField(
-        label="Boundaries",
         choices=[
             (0, _("Relative to absolute value")),
             (1, _("Relative to previous value")),
         ],
         coerce=int,
+        initial=0,
+        label="Boundaries",
         widget=forms.widgets.Select(
             attrs={
                 "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
@@ -269,7 +614,7 @@ class SensorValueTriggerParametersForm(TriggerParametersForm):
     )
     sensor_type = forms.ChoiceField(
         choices=constants.WialonUnitSensorType.choices,
-        initial="",
+        initial=constants.WialonUnitSensorType.ANY,
         label="Sensor type",
         required=False,
         widget=forms.widgets.Select(
@@ -279,13 +624,13 @@ class SensorValueTriggerParametersForm(TriggerParametersForm):
         ),
     )
     type = forms.TypedChoiceField(
-        label="Trigger when",
+        coerce=int,
         initial=0,
         choices=[
             (0, _("Sensor value in-range")),
             (1, _("Sensor value out-of-range")),
         ],
-        coerce=int,
+        label="Trigger when",
         widget=forms.widgets.Select(
             attrs={
                 "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
@@ -327,105 +672,345 @@ class SensorValueTriggerParametersForm(TriggerParametersForm):
 
 
 class OutageTriggerParametersForm(TriggerParametersForm):
+    time = forms.IntegerField(
+        label="Time interval (sec)",
+        initial=3,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    type = forms.TypedChoiceField(
+        label="Control type",
+        choices=[(0, _("Coordinates loss")), (1, _("Connection loss"))],
+        coerce=int,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    include_lbs = forms.BooleanField(
+        initial=False, label="Process LBS messages", required=False
+    )
     check_restore = forms.TypedChoiceField(
+        coerce=int,
         choices=[
             (0, _("Connection lost")),
             (1, _("Connection lost and restored")),
             (2, _("Connection restored")),
         ],
-        coerce=int,
+        label="Notify when",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    geozones_list = forms.CharField()
+    geozones_list = forms.CharField(
+        label="Geofence IDs",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     geozones_type = forms.TypedChoiceField(
-        choices=[(0, _("Out of geofence")), (1, _("In geofence"))], coerce=int
-    )
-    include_lbs = forms.BooleanField()
-    time = forms.IntegerField()
-    type = forms.TypedChoiceField(
-        choices=[(0, _("Coordinates loss")), (1, _("Connection loss"))],
+        choices=[(0, _("Out of geofence")), (1, _("In geofence"))],
         coerce=int,
+        label="Geofence control type",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
 
 
 class InterpositionTriggerParametersForm(TriggerParametersForm):
-    include_lbs = forms.BooleanField()
-    lo = forms.ChoiceField(
-        choices=[("AND", _("Logical AND")), ("OR", _("Logical OR"))]
+    sensor_name_mask = forms.CharField(
+        label="Sensor mask",
+        initial="*",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    lower_bound = forms.DecimalField()
-    max_speed = forms.IntegerField()
+    sensor_type = forms.ChoiceField(
+        choices=constants.WialonUnitSensorType.choices,
+        initial=constants.WialonUnitSensorType.ANY,
+        label="Sensor type",
+        required=False,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    lower_bound = forms.DecimalField(
+        initial=-1,
+        label="Lower bound",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    upper_bound = forms.DecimalField(
+        initial=1,
+        label="Upper bound",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     merge = forms.TypedChoiceField(
+        label="Similar sensors",
+        initial=0,
         choices=[(0, _("Calculate separately")), (1, _("Sum up values"))],
         coerce=int,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    min_speed = forms.IntegerField()
-    prev_msg_diff = forms.TypedChoiceField(
-        choices=[
-            (0, _("Relative to absolute value")),
-            (1, _("Relative to previous value")),
-        ],
-        coerce=int,
+    max_speed = forms.IntegerField(
+        initial=256,
+        label="Maximum speed",
+        max_value=256,
+        min_value=0,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    radius = forms.IntegerField()
-    reversed = forms.TypedChoiceField(
-        label="Boundaries",
+    min_speed = forms.IntegerField(
         initial=0,
+        label="Minimum speed (km/h)",
+        max_value=256,
+        min_value=0,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    reversed = forms.TypedChoiceField(
         choices=[
             (0, _("In the specified range")),
             (1, _("Out of the specified range")),
         ],
         coerce=int,
+        initial=0,
+        label="Boundaries",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    sensor_name_mask = forms.CharField(label="Sensor mask", initial="*")
-    sensor_type = forms.ChoiceField(
-        choices=constants.WialonUnitSensorType.choices,
-        initial=constants.WialonUnitSensorType.ANY,
+    prev_msg_diff = forms.TypedChoiceField(
+        label="Boundaries",
+        choices=[
+            (0, _("Relative to absolute value")),
+            (1, _("Relative to previous value")),
+        ],
+        coerce=int,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    radius = forms.IntegerField(
+        initial=500,
+        label="Radius (m)",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     type = forms.TypedChoiceField(
         choices=[
-            (0, _("Control approaching to units")),
-            (1, _("Control moving away from units")),
+            (0, _("Moving toward unit(s)")),
+            (1, _("Moving away from unit(s)")),
         ],
         coerce=int,
+        initial=0,
+        label="Trigger when",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    unit_guids = forms.CharField()
-    upper_bound = forms.DecimalField()
+    unit_guids = forms.CharField(
+        label="Unit IDs",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    include_lbs = forms.BooleanField(
+        initial=False, label="Process LBS messages", required=False
+    )
+    lo = forms.ChoiceField(
+        choices=[("", "None"), ("AND", _("AND")), ("OR", _("OR"))],
+        initial="",
+        label="Logical operator",
+        required=False,
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
 
 
 class ExcessTriggerParametersForm(TriggerParametersForm):
     flags = forms.TypedChoiceField(
-        choices=[(1, _("Data messages")), (2, _("SMS messages"))], coerce=int
+        choices=[(1, _("Data messages")), (2, _("SMS messages"))],
+        coerce=int,
+        initial=1,
+        label="Message type",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    msgs_limit = forms.IntegerField()
-    time_offset = forms.IntegerField()
+    msgs_limit = forms.IntegerField(
+        label="Maximum messages",
+        initial=1,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    time_offset = forms.IntegerField(
+        initial=60,
+        label="Reset counter every (sec)",
+        max_value=86400,
+        min_value=1,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
 
 
 class RouteTriggerParametersForm(TriggerParametersForm):
-    mask = forms.CharField()
-    round_mask = forms.CharField()
-    schedule_mask = forms.CharField()
-    types = forms.CharField()
+    mask = forms.CharField(
+        label="Route name mask",
+        initial="*",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    round_mask = forms.CharField(
+        label="Ride name mask",
+        initial="*",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    schedule_mask = forms.CharField(
+        label="Schedule name mask",
+        initial="*",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    types = forms.CharField(
+        label="Route control types (comma-separated)",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
 
 
 class DriverTriggerParametersForm(TriggerParametersForm):
-    driver_code_mask = forms.CharField()
+    driver_code_mask = forms.CharField(
+        initial="*",
+        label="Driver code mask",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     flags = forms.TypedChoiceField(
         choices=[(1, _("Driver assignment")), (2, _("Driver separation"))],
         coerce=int,
+        initial=1,
+        label="Trigger on",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
 
 
 class TrailerTriggerParametersForm(TriggerParametersForm):
-    driver_code_mask = forms.CharField()
+    driver_code_mask = forms.CharField(
+        initial="*",
+        label="Trailer code mask",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     flags = forms.TypedChoiceField(
         choices=[(1, _("Trailer assignment")), (2, _("Trailer separation"))],
         coerce=int,
+        initial=1,
+        label="Trigger on",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
 
 
 class MaintenanceTriggerParametersForm(TriggerParametersForm):
-    days = forms.IntegerField()
-    engine_hours = forms.IntegerField()
+    days = forms.IntegerField(
+        label="Days interval",
+        initial=1,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    engine_hours = forms.IntegerField(
+        label="Engine hours interval (h)",
+        initial=1,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     flags = forms.TypedChoiceField(
         choices=[
             (0, _("Control all service intervals")),
@@ -434,72 +1019,174 @@ class MaintenanceTriggerParametersForm(TriggerParametersForm):
             (4, _("Days interval")),
         ],
         coerce=int,
+        initial=0,
+        label="Control flags",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    mask = forms.CharField()
-    mileage = forms.IntegerField()
+    mask = forms.CharField(
+        label="Mask",
+        initial="*",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    mileage = forms.IntegerField(
+        label="Mileage interval (km)",
+        initial=1,
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
     val = forms.TypedChoiceField(
         choices=[
-            (1, _("Notify when service term approaches")),
-            (-1, _("Notify when service term is expired")),
+            (1, _("Service term approaches")),
+            (-1, _("Service term is expired")),
         ],
         coerce=int,
+        initial=1,
+        label="Notify when",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
 
 
 class FuelTriggerParametersForm(TriggerParametersForm):
-    sensor_name_mask = forms.CharField(label="Sensor mask", initial="*")
-    geozones_type = forms.TypedChoiceField(
-        choices=[
-            (0, _("Disabled/outside geofence")),
-            (1, _("Inside geofence")),
-        ],
-        coerce=int,
+    sensor_name_mask = forms.CharField(
+        label="Sensor mask",
+        initial="*",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    geozones_list = forms.CharField()
-    realtime_only = forms.BooleanField()
+    geozones_type = forms.TypedChoiceField(
+        choices=[(0, _("Disabled/Out of geofence")), (1, _("In geofence"))],
+        coerce=int,
+        label="Geofence control type",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    geozones_list = forms.CharField(
+        label="Geofence IDs",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    realtime_only = forms.TypedChoiceField(
+        choices=[(0, _("Disable")), (1, _("Enable"))],
+        coerce=int,
+        initial=0,
+        label="Ignore the recalculation of historical data?",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
 
 
 class FuelDrainTriggerParametersForm(TriggerParametersForm):
-    sensor_name_mask = forms.CharField(label="Sensor mask", initial="*")
-    geozones_type = forms.TypedChoiceField(
-        choices=[
-            (0, _("Disabled/outside geofence")),
-            (1, _("Inside geofence")),
-        ],
-        coerce=int,
+    sensor_name_mask = forms.CharField(
+        label="Sensor mask",
+        initial="*",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
-    geozones_list = forms.CharField()
-    realtime_only = forms.BooleanField()
+    geozones_type = forms.TypedChoiceField(
+        choices=[(0, _("Disabled/Out of geofence")), (1, _("In geofence"))],
+        coerce=int,
+        label="Geofence control type",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    geozones_list = forms.CharField(
+        label="Geofence IDs",
+        widget=forms.widgets.TextInput(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
+    realtime_only = forms.TypedChoiceField(
+        choices=[(0, _("Disable")), (1, _("Enable"))],
+        coerce=int,
+        initial=0,
+        label="Ignore the recalculation of historical data?",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
+    )
 
 
 class HealthTriggerParametersForm(TriggerParametersForm):
     healthy = forms.TypedChoiceField(
-        choices=[
-            (0, _("Don't trigger when the device is healthy")),
-            (1, _("Trigger when the device is healthy")),
-        ],
+        choices=[(0, _("Disabled")), (1, _("Enabled"))],
         coerce=int,
+        initial=1,
+        label="Trigger when the device is healthy",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     unhealthy = forms.TypedChoiceField(
-        choices=[
-            (0, _("Don't trigger when the device is unhealthy")),
-            (1, _("Trigger when the device is unhealthy")),
-        ],
+        choices=[(0, _("Disabled")), (1, _("Enabled"))],
         coerce=int,
+        initial=0,
+        label="Trigger when the device is unhealthy",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     needAttention = forms.TypedChoiceField(
-        choices=[
-            (0, _("Don't trigger when the device needs attention")),
-            (1, _("Trigger when the device needs attention")),
-        ],
+        choices=[(0, _("Disabled")), (1, _("Enabled"))],
         coerce=int,
+        initial=0,
+        label="Trigger when the device needs attention",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
     triggerForEachIncident = forms.TypedChoiceField(
-        choices=[
-            (0, _("Don't trigger for each incident")),
-            (1, _("Trigger for each incident")),
-        ],
+        choices=[(0, _("Enabled")), (1, _("Disabled"))],
         coerce=int,
+        initial=0,
+        label="Trigger for each incident",
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
+            }
+        ),
     )
 
 
