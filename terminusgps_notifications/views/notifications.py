@@ -314,7 +314,8 @@ class WialonNotificationDeleteView(
             with WialonSession(token=token) as session:
                 self.object.update_in_wialon(mode, session)
             return super().form_valid(form=form)
-        except (ValueError, WialonAPIError):
+        except (ValueError, WialonAPIError) as e:
+            logger.warning(e)
             return HttpResponse(status=406)
 
 
