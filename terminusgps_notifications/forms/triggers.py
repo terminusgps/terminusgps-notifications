@@ -34,7 +34,7 @@ class TriggerForm(forms.Form):
     """Trigger parameters."""
     t = forms.ChoiceField(
         choices=constants.WialonNotificationTriggerType.choices,
-        help_text=_("Please select a trigger from the list."),
+        help_text=_("Select a trigger from the list."),
         initial=constants.WialonNotificationTriggerType.SENSOR,
         widget=forms.widgets.Select(
             {
@@ -61,22 +61,30 @@ class TriggerParametersForm(forms.Form):
 class GeofenceTriggerParametersForm(TriggerParametersForm):
     sensor_type = forms.ChoiceField(
         choices=constants.WialonUnitSensorType.choices,
+        help_text=_("Select the sensor type from the list."),
         initial=constants.WialonUnitSensorType.ANY,
         label=_("Sensor type"),
         required=False,
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     sensor_name_mask = forms.CharField(
+        help_text=_("Enter a mask for the sensor name. Ex: *IGNITION*"),
         initial="*",
         label=_("Sensor mask"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     lower_bound = forms.DecimalField(
+        help_text=_(
+            "Enter a lower bound for the sensor value. Decimal places are allowed."
+        ),
         initial=-1,
         label=_("Lower bound"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     upper_bound = forms.DecimalField(
+        help_text=_(
+            "Enter an upper bound for the sensor value. Decimal places are allowed."
+        ),
         initial=1,
         label=_("Upper bound"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
@@ -87,14 +95,16 @@ class GeofenceTriggerParametersForm(TriggerParametersForm):
             (1, _("Relative to previous value")),
         ],
         coerce=int,
-        label=_("Boundaries"),
+        label=_("Boundary formation"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     geozone_ids = forms.CharField(
+        help_text=_("Enter a comma-separated list of geofence IDs."),
         label=_("Geofence IDs"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     min_speed = forms.IntegerField(
+        help_text=_("Enter a minimum speed in kilometers per hour."),
         initial=0,
         label=_("Minimum speed (km/h)"),
         max_value=256,
@@ -102,6 +112,7 @@ class GeofenceTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     max_speed = forms.IntegerField(
+        help_text=_("Enter a maximum speed in kilometers per hour."),
         initial=256,
         label=_("Maximum speed (km/h)"),
         max_value=256,
@@ -135,8 +146,12 @@ class GeofenceTriggerParametersForm(TriggerParametersForm):
         label=_("Trigger when"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
-    include_lbs = forms.BooleanField(
-        initial=False, label=_("Process LBS messages"), required=False
+    include_lbs = forms.TypedChoiceField(
+        choices=[(0, _("Disabled")), (1, _("Enabled"))],
+        coerce=int,
+        initial=0,
+        label=_("Process LBS messages"),
+        widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     lo = forms.ChoiceField(
         choices=[("", "None"), ("AND", _("AND")), ("OR", _("OR"))],
@@ -150,6 +165,7 @@ class GeofenceTriggerParametersForm(TriggerParametersForm):
 class AddressTriggerParametersForm(TriggerParametersForm):
     sensor_type = forms.ChoiceField(
         choices=constants.WialonUnitSensorType.choices,
+        help_text=_("Select the sensor type from the list."),
         initial=constants.WialonUnitSensorType.ANY,
         label=_("Sensor type"),
         required=False,
@@ -158,14 +174,21 @@ class AddressTriggerParametersForm(TriggerParametersForm):
     sensor_name_mask = forms.CharField(
         label=_("Sensor mask"),
         initial="*",
+        help_text=_("Enter a mask for the sensor name. Ex: *IGNITION*"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     lower_bound = forms.DecimalField(
+        help_text=_(
+            "Enter a lower bound for the sensor value. Decimal places are allowed."
+        ),
         initial=-1,
         label=_("Lower bound"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     upper_bound = forms.DecimalField(
+        help_text=_(
+            "Enter an upper bound for the sensor value. Decimal places are allowed."
+        ),
         initial=1,
         label=_("Upper bound"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
@@ -176,7 +199,7 @@ class AddressTriggerParametersForm(TriggerParametersForm):
             (1, _("Relative to previous value")),
         ],
         coerce=int,
-        label=_("Boundaries"),
+        label=_("Boundary formation"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     merge = forms.TypedChoiceField(
@@ -199,6 +222,7 @@ class AddressTriggerParametersForm(TriggerParametersForm):
     radius = forms.IntegerField(
         initial=500,
         label=_("Radius (m)"),
+        help_text=_("Enter a radius in meters originating from the address."),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     type = forms.TypedChoiceField(
@@ -212,6 +236,7 @@ class AddressTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     min_speed = forms.IntegerField(
+        help_text=_("Enter a minimum speed in kilometers per hour."),
         initial=0,
         label=_("Minimum speed (km/h)"),
         max_value=256,
@@ -219,6 +244,7 @@ class AddressTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     max_speed = forms.IntegerField(
+        help_text=_("Enter a maximum speed in kilometers per hour."),
         initial=256,
         label=_("Maximum speed (km/h)"),
         max_value=256,
@@ -226,42 +252,55 @@ class AddressTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     country = forms.CharField(
+        help_text=_("Enter a country."),
         label=_("Country"),
         max_length=64,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     region = forms.CharField(
+        help_text=_("Enter a region (state/province)."),
         label=_("Region"),
         max_length=64,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     city = forms.CharField(
+        help_text=_("Enter a city."),
         label=_("City"),
         max_length=64,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     street = forms.CharField(
+        help_text=_("Enter a street."),
         label=_("Street"),
         max_length=64,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     house = forms.CharField(
+        help_text=_("Enter a house/street number."),
         label=_("House"),
         max_length=64,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
-    include_lbs = forms.BooleanField(
-        initial=False, label=_("Process LBS messages"), required=False
+    include_lbs = forms.TypedChoiceField(
+        choices=[(0, _("Disabled")), (1, _("Enabled"))],
+        coerce=int,
+        initial=0,
+        label=_("Process LBS messages"),
+        widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
 
 
 class SpeedTriggerParametersForm(TriggerParametersForm):
     lower_bound = forms.DecimalField(
+        help_text=_(
+            "Enter a lower bound for the sensor value. Decimal places are allowed."
+        ),
         initial=-1,
         label=_("Lower bound"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     max_speed = forms.IntegerField(
+        help_text=_("Enter a maximum speed in kilometers per hour."),
         initial=256,
         label=_("Maximum speed"),
         max_value=256,
@@ -276,6 +315,7 @@ class SpeedTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     min_speed = forms.IntegerField(
+        help_text=_("Enter a minimum speed in kilometers per hour."),
         initial=0,
         label=_("Minimum speed (km/h)"),
         max_value=256,
@@ -302,18 +342,23 @@ class SpeedTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     sensor_name_mask = forms.CharField(
-        label=_("Sensor mask"),
+        help_text=_("Enter a mask for the sensor name. Ex: *IGNITION*"),
         initial="*",
+        label=_("Sensor mask"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     sensor_type = forms.ChoiceField(
         choices=constants.WialonUnitSensorType.choices,
+        help_text=_("Select the sensor type from the list."),
         initial=constants.WialonUnitSensorType.ANY,
         label=_("Sensor type"),
         required=False,
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     upper_bound = forms.DecimalField(
+        help_text=_(
+            "Enter an upper bound for the sensor value. Decimal places are allowed."
+        ),
         initial=1,
         label=_("Upper bound"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
@@ -326,18 +371,18 @@ class AlarmTriggerParametersForm(TriggerParametersForm):
 
 class DigitalTriggerParametersForm(TriggerParametersForm):
     input_index = forms.IntegerField(
-        min_value=1,
+        help_text=_(
+            "Enter the index of the digital input. Digits 1-32 are allowed."
+        ),
+        label=_("Digital input"),
         max_value=32,
-        label=_("Digital Input (1-32)"),
+        min_value=1,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     type = forms.TypedChoiceField(
-        choices=[
-            (0, _("Check for activation")),
-            (1, _("Check for deactivation")),
-        ],
+        choices=[(0, _("On activation")), (1, _("On deactivation"))],
         coerce=int,
-        label=_("Control type"),
+        label=_("Trigger when"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
 
@@ -351,23 +396,29 @@ class ParameterTriggerParametersForm(TriggerParametersForm):
             (3, _("Parameter lack")),
         ],
         coerce=int,
+        help_text=_("Select a parameter type from the list."),
         initial=0,
         label=_("Control type"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     lower_bound = forms.DecimalField(
+        help_text=_(
+            "Enter a lower bound for the sensor value. Decimal places are allowed."
+        ),
         label=_("Lower bound"),
         initial=-1,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     param = forms.CharField(
-        label=_("Name"),
+        label=_("Parameter name"),
+        help_text=_("Enter the name of the parameter."),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     text_mask = forms.CharField(
         initial="*",
-        label=_("Text Mask"),
+        label=_("Parameter text mask"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
+        help_text=_("Enter a wildcard based text mask."),
     )
     type = forms.TypedChoiceField(
         choices=[
@@ -380,6 +431,9 @@ class ParameterTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     upper_bound = forms.DecimalField(
+        help_text=_(
+            "Enter an upper bound for the sensor value. Decimal places are allowed."
+        ),
         label=_("Upper bound"),
         initial=1,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
@@ -388,11 +442,17 @@ class ParameterTriggerParametersForm(TriggerParametersForm):
 
 class SensorValueTriggerParametersForm(TriggerParametersForm):
     lower_bound = forms.DecimalField(
+        help_text=_(
+            "Enter a lower bound for the sensor value. Decimal places are allowed."
+        ),
         label=_("Lower bound"),
         initial=-1,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     upper_bound = forms.DecimalField(
+        help_text=_(
+            "Enter an upper bound for the sensor value. Decimal places are allowed."
+        ),
         label=_("Upper bound"),
         initial=1,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
@@ -415,12 +475,14 @@ class SensorValueTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     sensor_name_mask = forms.CharField(
-        label=_("Sensor mask"),
+        help_text=_("Enter a mask for the sensor name. Ex: *IGNITION*"),
         initial="*",
+        label=_("Sensor mask"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     sensor_type = forms.ChoiceField(
         choices=constants.WialonUnitSensorType.choices,
+        help_text=_("Select the sensor type from the list."),
         initial=constants.WialonUnitSensorType.ANY,
         label=_("Sensor type"),
         required=False,
@@ -472,8 +534,9 @@ class SensorValueTriggerParametersForm(TriggerParametersForm):
 
 class OutageTriggerParametersForm(TriggerParametersForm):
     time = forms.IntegerField(
-        label=_("Time interval (sec)"),
+        help_text=_("Enter the time (in seconds) between outages."),
         initial=3,
+        label=_("Time interval (sec)"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     type = forms.TypedChoiceField(
@@ -482,8 +545,12 @@ class OutageTriggerParametersForm(TriggerParametersForm):
         coerce=int,
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
-    include_lbs = forms.BooleanField(
-        initial=False, label=_("Process LBS messages"), required=False
+    include_lbs = forms.TypedChoiceField(
+        choices=[(0, _("Disabled")), (1, _("Enabled"))],
+        coerce=int,
+        initial=0,
+        label=_("Process LBS messages"),
+        widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     check_restore = forms.TypedChoiceField(
         coerce=int,
@@ -509,25 +576,33 @@ class OutageTriggerParametersForm(TriggerParametersForm):
 
 class InterpositionTriggerParametersForm(TriggerParametersForm):
     sensor_name_mask = forms.CharField(
-        label=_("Sensor mask"),
+        help_text=_("Enter a mask for the sensor name. Ex: *IGNITION*"),
         initial="*",
+        label=_("Sensor mask"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     sensor_type = forms.ChoiceField(
         choices=constants.WialonUnitSensorType.choices,
+        help_text=_("Select the sensor type from the list."),
         initial=constants.WialonUnitSensorType.ANY,
         label=_("Sensor type"),
         required=False,
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     lower_bound = forms.DecimalField(
-        initial=-1,
+        help_text=_(
+            "Enter a lower bound for the sensor value. Decimal places are allowed."
+        ),
         label=_("Lower bound"),
+        initial=-1,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     upper_bound = forms.DecimalField(
-        initial=1,
+        help_text=_(
+            "Enter an upper bound for the sensor value. Decimal places are allowed."
+        ),
         label=_("Upper bound"),
+        initial=1,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     merge = forms.TypedChoiceField(
@@ -538,13 +613,15 @@ class InterpositionTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     max_speed = forms.IntegerField(
+        help_text=_("Enter a maximum speed in kilometers per hour."),
         initial=256,
-        label=_("Maximum speed"),
+        label=_("Maximum speed (km/h)"),
         max_value=256,
         min_value=0,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     min_speed = forms.IntegerField(
+        help_text=_("Enter a minimum speed in kilometers per hour."),
         initial=0,
         label=_("Minimum speed (km/h)"),
         max_value=256,
@@ -562,17 +639,20 @@ class InterpositionTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     prev_msg_diff = forms.TypedChoiceField(
-        label=_("Boundaries"),
         choices=[
             (0, _("Relative to absolute value")),
             (1, _("Relative to previous value")),
         ],
         coerce=int,
+        label=_("Boundary formation"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     radius = forms.IntegerField(
         initial=500,
         label=_("Radius (m)"),
+        help_text=_(
+            "Enter a radius in meters originating from the interposition."
+        ),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     type = forms.TypedChoiceField(
@@ -588,9 +668,14 @@ class InterpositionTriggerParametersForm(TriggerParametersForm):
     unit_guids = forms.CharField(
         label=_("Unit IDs"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
+        help_text=_("Enter a comma-separated list of unit IDs."),
     )
-    include_lbs = forms.BooleanField(
-        initial=False, label=_("Process LBS messages"), required=False
+    include_lbs = forms.TypedChoiceField(
+        choices=[(0, _("Disabled")), (1, _("Enabled"))],
+        coerce=int,
+        initial=0,
+        label=_("Process LBS messages"),
+        widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     lo = forms.ChoiceField(
         choices=[("", "None"), ("AND", _("AND")), ("OR", _("OR"))],
@@ -610,13 +695,19 @@ class ExcessTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     msgs_limit = forms.IntegerField(
-        label=_("Maximum messages"),
-        initial=1,
+        label=_("Message limit"),
+        initial=0,
+        help_text=_(
+            "Enter the maximum number of messages allowed before they're considered 'excess'."
+        ),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     time_offset = forms.IntegerField(
+        help_text=_(
+            "Enter the interval (in seconds) to reset the counter on."
+        ),
         initial=60,
-        label=_("Reset counter every (sec)"),
+        label=_("Reset interval (sec)"),
         max_value=86400,
         min_value=1,
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
@@ -628,19 +719,25 @@ class RouteTriggerParametersForm(TriggerParametersForm):
         label=_("Route name mask"),
         initial="*",
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
+        help_text=_("Enter a mask for the route name. Ex: *MY AWESOME ROUTE*"),
     )
     round_mask = forms.CharField(
         label=_("Ride name mask"),
         initial="*",
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
+        help_text=_("Enter a mask for the ride name. Ex: *MY AWESOME RIDE*"),
     )
     schedule_mask = forms.CharField(
         label=_("Schedule name mask"),
         initial="*",
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
+        help_text=_(
+            "Enter a mask for the route schedule name. Ex: *MY AWESOME SCHEDULE*"
+        ),
     )
+    # TODO: forms.MultipleChoiceField implementation of the below field
     types = forms.CharField(
-        label=_("Route control types (comma-separated)"),
+        label=_("Route control types"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
 
@@ -650,6 +747,7 @@ class DriverTriggerParametersForm(TriggerParametersForm):
         initial="*",
         label=_("Driver code mask"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
+        help_text=_("Enter a mask for the driver code. Ex: *DRIVER NAME*"),
     )
     flags = forms.TypedChoiceField(
         choices=[(1, _("Driver assignment")), (2, _("Driver separation"))],
@@ -665,6 +763,7 @@ class TrailerTriggerParametersForm(TriggerParametersForm):
         initial="*",
         label=_("Trailer code mask"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
+        help_text=_("Enter a mask for the trailer code. Ex: *TRAILER NAME*"),
     )
     flags = forms.TypedChoiceField(
         choices=[(1, _("Trailer assignment")), (2, _("Trailer separation"))],
@@ -677,13 +776,14 @@ class TrailerTriggerParametersForm(TriggerParametersForm):
 
 class MaintenanceTriggerParametersForm(TriggerParametersForm):
     days = forms.IntegerField(
-        label=_("Days interval"),
         initial=1,
+        label=_("Days interval"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     engine_hours = forms.IntegerField(
-        label=_("Engine hours interval (h)"),
+        help_text=_("Enter the engine hours interval in hours."),
         initial=1,
+        label=_("Engine hours interval (h)"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     flags = forms.TypedChoiceField(
@@ -699,13 +799,15 @@ class MaintenanceTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     mask = forms.CharField(
-        label=_("Mask"),
+        help_text=_("Enter a wildcard based mask. Ex: *MAINTENANCE*"),
         initial="*",
+        label=_("Mask"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     mileage = forms.IntegerField(
-        label=_("Mileage interval (km)"),
+        help_text=_("Enter the mileage interval in kilometers."),
         initial=1,
+        label=_("Mileage interval (km)"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     val = forms.TypedChoiceField(
@@ -722,8 +824,9 @@ class MaintenanceTriggerParametersForm(TriggerParametersForm):
 
 class FuelTriggerParametersForm(TriggerParametersForm):
     sensor_name_mask = forms.CharField(
-        label=_("Sensor mask"),
+        help_text=_("Enter a mask for the sensor name. Ex: *IGNITION*"),
         initial="*",
+        label=_("Sensor mask"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
     geozones_type = forms.TypedChoiceField(
@@ -733,6 +836,7 @@ class FuelTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     geozones_list = forms.CharField(
+        help_text=_("Enter a comma-separated list of geofence IDs."),
         label=_("Geofence IDs"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
@@ -758,6 +862,7 @@ class FuelDrainTriggerParametersForm(TriggerParametersForm):
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     geozones_list = forms.CharField(
+        help_text=_("Enter a comma-separated list of geofence IDs."),
         label=_("Geofence IDs"),
         widget=forms.widgets.TextInput(attrs={"class": WIDGET_CSS_CLASS}),
     )
@@ -774,6 +879,9 @@ class HealthTriggerParametersForm(TriggerParametersForm):
     healthy = forms.TypedChoiceField(
         choices=[(0, _("Disabled")), (1, _("Enabled"))],
         coerce=int,
+        help_text=_(
+            "Enable this option to trigger the notification when the device is reported healthy."
+        ),
         initial=1,
         label=_("Trigger when the device is healthy"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
@@ -781,6 +889,9 @@ class HealthTriggerParametersForm(TriggerParametersForm):
     unhealthy = forms.TypedChoiceField(
         choices=[(0, _("Disabled")), (1, _("Enabled"))],
         coerce=int,
+        help_text=_(
+            "Enable this option to trigger the notification when the device is reported unhealthy."
+        ),
         initial=0,
         label=_("Trigger when the device is unhealthy"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
@@ -788,13 +899,19 @@ class HealthTriggerParametersForm(TriggerParametersForm):
     needAttention = forms.TypedChoiceField(
         choices=[(0, _("Disabled")), (1, _("Enabled"))],
         coerce=int,
+        help_text=_(
+            "Enable this option to trigger the notification when the device reports it needs attention."
+        ),
         initial=0,
         label=_("Trigger when the device needs attention"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     triggerForEachIncident = forms.TypedChoiceField(
-        choices=[(0, _("Enabled")), (1, _("Disabled"))],
+        choices=[(0, _("Disabled")), (1, _("Enabled"))],
         coerce=int,
+        help_text=_(
+            "Enable this option to trigger the notification when the device reports any incident."
+        ),
         initial=0,
         label=_("Trigger for each incident"),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
