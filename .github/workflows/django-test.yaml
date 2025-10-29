@@ -16,7 +16,8 @@ jobs:
       MERCHANT_AUTH_TRANSACTION_KEY: ${{ secrets.MERCHANT_AUTH_TRANSACTION_KEY }}
       WIALON_TOKEN: ${{ secrets.WIALON_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v7
