@@ -330,19 +330,20 @@ class WialonNotificationListView(
         "terminusgps_notifications/notifications/partials/_list.html"
     )
     template_name = "terminusgps_notifications/notifications/list.html"
+    paginate_by = 12
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``has_token`` and ``login_params`` to the view context."""
+        """Adds ``customer``, ``has_token`` and ``login_params`` to the view context."""
+        customer = services.get_customer(self.request.user)
+        has_token = hasattr(customer, "token") if customer else False
+        login_params = services.get_wialon_login_parameters(
+            self.request.user.username
+        )
+
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        customer, _ = (
-            models.TerminusgpsNotificationsCustomer.objects.get_or_create(
-                user=self.request.user
-            )
-        )
-        context["has_token"] = hasattr(customer, "token")
-        context["login_params"] = services.get_wialon_login_parameters(
-            customer.user.username
-        )
+        context["customer"] = customer
+        context["has_token"] = has_token
+        context["login_params"] = login_params
         return context
 
     def get_ordering(self) -> str:
