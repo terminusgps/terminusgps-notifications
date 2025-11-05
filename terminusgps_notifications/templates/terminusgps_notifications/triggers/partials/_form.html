@@ -1,0 +1,15 @@
+<form class="flex flex-col gap-4" hx-post="{% url 'terminusgps_notifications:triggers form' %}" hx-target="this" hx-swap="outerHTML">
+    {% csrf_token %}
+    <section class="flex flex-col gap-2">
+        {{ form.t }}
+        <label class="order-first font-semibold peer-user-invalid:text-red-600" for="{{ form.t.id_for_label }}">Trigger Type</label>
+        <p class="text-sm peer-user-invalid:text-red-800" id="{{ form.t.id_for_label }}_helptext">{{ form.t.help_text }}</p>
+        {% if form.t.errors %}<div class="animate-jiggle font-italic">{{ form.t.errors }}</div>{% endif %}
+    </section>
+    <section class="flex flex-col gap-2">
+        {{ form.p }}
+        <label class="order-first font-semibold peer-user-invalid:text-red-600" for="{{ form.p.id_for_label }}">Trigger Parameters</label>
+        <p class="text-sm peer-user-invalid:text-red-800" id="{{ form.p.id_for_label }}_helptext">{{ form.p.help_text }}</p>
+        {% if form.p.errors %}<div class="animate-jiggle font-italic">{{ form.p.errors }}</div>{% endif %}
+    </section>
+</form>

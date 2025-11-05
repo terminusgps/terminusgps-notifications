@@ -40,6 +40,11 @@ urlpatterns = [
         name="create notifications",
     ),
     path(
+        "notifications/create/success/",
+        views.WialonNotificationCreateSuccessView.as_view(),
+        name="create notifications success",
+    ),
+    path(
         "notifications/<int:notification_pk>/detail/",
         views.WialonNotificationDetailView.as_view(),
         name="detail notifications",
@@ -55,23 +60,23 @@ urlpatterns = [
         name="delete notifications",
     ),
     path(
-        "notifications/units/select/",
+        "notifications/units/form/",
         views.WialonNotificationUnitSelectFormView.as_view(),
-        name="select units",
+        name="units form",
     ),
     path(
-        "notifications/triggers/select/",
-        views.WialonNotificationTriggerSelectFormView.as_view(),
-        name="select triggers",
+        "notifications/triggers/form/",
+        views.WialonNotificationTriggerFormView.as_view(),
+        name="triggers form",
     ),
     path(
-        "notifications/triggers/parameters/",
+        "notifications/triggers/parameters/form/",
         views.WialonNotificationTriggerParametersFormView.as_view(),
-        name="trigger parameters",
+        name="trigger parameters form",
     ),
     path(
         "notifications/triggers/parameters/success/",
-        views.WialonNotificationTriggerParametersFormSuccessView.as_view(),
+        views.WialonNotificationTriggerParametersSuccessView.as_view(),
         name="trigger parameters success",
     ),
     path(

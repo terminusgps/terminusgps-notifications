@@ -1,7 +1,14 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm
 from django.core.validators import validate_email
 from django.utils.translation import gettext_lazy as _
+
+WIDGET_CSS_CLASS = (
+    settings.WIDGET_CSS_CLASS
+    if hasattr(settings, "WIDGET_CSS_CLASS")
+    else "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600"
+)
 
 
 class TerminusgpsNotificationsAuthenticationForm(AuthenticationForm):
@@ -9,7 +16,7 @@ class TerminusgpsNotificationsAuthenticationForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields["username"].widget = forms.widgets.EmailInput(
             attrs={
-                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
+                "class": WIDGET_CSS_CLASS,
                 "placeholder": "email@terminusgps.com",
                 "autofocus": True,
                 "enterkeyhint": "next",
@@ -18,7 +25,7 @@ class TerminusgpsNotificationsAuthenticationForm(AuthenticationForm):
         )
         self.fields["password"].widget = forms.widgets.PasswordInput(
             attrs={
-                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
+                "class": WIDGET_CSS_CLASS,
                 "placeholder": "••••••••••••••••",
                 "autocomplete": False,
                 "inputmode": "text",
@@ -34,7 +41,7 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
         ),
         widget=forms.widgets.TextInput(
             attrs={
-                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
+                "class": WIDGET_CSS_CLASS,
                 "placeholder": "First",
                 "enterkeyhint": "next",
             }
@@ -46,7 +53,7 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
         ),
         widget=forms.widgets.TextInput(
             attrs={
-                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
+                "class": WIDGET_CSS_CLASS,
                 "placeholder": "Last",
                 "enterkeyhint": "next",
             }
@@ -59,7 +66,7 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
         ),
         widget=forms.widgets.TextInput(
             attrs={
-                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
+                "class": WIDGET_CSS_CLASS,
                 "placeholder": "Company",
                 "enterkeyhint": "next",
             }

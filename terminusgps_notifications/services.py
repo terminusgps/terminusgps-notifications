@@ -1,21 +1,11 @@
-import typing
 from urllib.parse import urlencode, urljoin
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
-from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse
-from terminusgps.wialon.flags import DataFlag
-from terminusgps.wialon.session import WialonSession
 from terminusgps_payments.models import CustomerProfile
 
-from terminusgps_notifications.models import (
-    TerminusgpsNotificationsCustomer,
-    WialonToken,
-)
-
-if settings.configured and not hasattr(settings, "WIALON_RESOURCE_NAME"):
-    raise ImproperlyConfigured("'WIALON_RESOURCE_NAME' setting is required.")
+from terminusgps_notifications.models import TerminusgpsNotificationsCustomer
 
 
 def get_customer(
@@ -48,19 +38,19 @@ def get_customer_profile(user: AbstractBaseUser) -> CustomerProfile | None:
         return getattr(user, "customer_profile")
 
 
-def get_wialon_token(user: AbstractBaseUser) -> WialonToken | None:
+def get_wialon_token(user: AbstractBaseUser) -> str | None:
     """
     Returns the :py:obj:`~terminusgps_notifications.models.WialonToken` for a user.
 
     :param user: A Django user.
     :type user: ~django.contrib.auth.models.AbstractBaseUser
     :returns: A Wialon API token, if the user has one.
-    :rtype: ~terminusgps_notifications.models.WialonToken | None
+    :rtype: str | None
 
     """
     customer = get_customer(user)
     if customer is not None and hasattr(customer, "token"):
-        return getattr(customer, "token")
+        return getattr(customer, "token").name
 
 
 def get_wialon_redirect_uri() -> str:
@@ -94,40 +84,5 @@ def get_wialon_login_parameters(username: str) -> str:
             "user": username,
             "response_type": "token",
             "redirect_uri": get_wialon_redirect_uri(),
-        }
-    )
-
-
-def search_wialon_for_notification_resource(
-    session: WialonSession,
-) -> dict[str, typing.Any]:
-    """Searches the customer's Wialon database for notification resource."""
-    return session.wialon_api.core_search_items(
-        **{
-            "spec": {
-                "itemsType": "avl_resource",
-                "propName": "sys_name",
-                "propValueMask": settings.WIALON_RESOURCE_NAME,
-                "sortType": "sys_name",
-                "propType": "property",
-            },
-            "force": 0,
-            "flags": DataFlag.RESOURCE_BASE,
-            "from": 0,
-            "to": 0,
-        }
-    )
-
-
-def create_wialon_notification_resource(
-    session: WialonSession,
-) -> dict[str, typing.Any]:
-    """Creates a notification resource in the customer's Wialon database."""
-    return session.wialon_api.core_create_resource(
-        **{
-            "creatorId": session.uid,
-            "name": settings.WIALON_RESOURCE_NAME,
-            "dataFlags": DataFlag.RESOURCE_BASE,
-            "skipCreatorCheck": int(True),
         }
     )

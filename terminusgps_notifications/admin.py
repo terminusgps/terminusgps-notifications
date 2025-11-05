@@ -10,7 +10,7 @@ class TerminusgpsNotificationsCustomerAdmin(admin.ModelAdmin):
     readonly_fields = ["tax", "grand_total"]
     exclude = ["subscription"]
     fieldsets = [
-        (None, {"fields": ["user", "date_format", "resource_id"]}),
+        (None, {"fields": ["user", "date_format"]}),
         (
             "Messaging",
             {
@@ -47,6 +47,7 @@ class WialonNotificationAdmin(admin.ModelAdmin):
         "actions",
         "schedule",
         "control_schedule",
-        "trigger",
+        "trigger_type",
+        "trigger_parameters",
         "unit_list",
     ]

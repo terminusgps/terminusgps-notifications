@@ -8,7 +8,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 from django.forms import Form
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_control, cache_page
@@ -29,136 +29,176 @@ from terminusgps_notifications import constants, forms, models, services
 logger = logging.getLogger(__name__)
 
 
-@method_decorator(cache_page(timeout=60 * 15), name="get")
-@method_decorator(cache_control(private=True), name="get")
-class WialonNotificationUnitSelectFormView(
-    LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
-):
-    content_type = "text/html"
-    form_class = forms.WialonUnitSelectionForm
-    http_method_names = ["get", "post"]
-    partial_template_name = (
-        "terminusgps_notifications/units/partials/_select.html"
-    )
-    template_name = "terminusgps_notifications/units/select.html"
-
-    def form_valid(self, form):
-        """Redirects the client to the next form in the flow (select triggers)."""
-        return HttpResponseRedirect(
-            reverse(
-                "terminusgps_notifications:select triggers",
-                query={"un": str(form.cleaned_data["units"])},
-            )
-        )
-
-    def get_form(self, form_class=None) -> forms.WialonUnitSelectionForm:
-        """Sets the form :py:attr:`unit_list` from the Wialon API."""
-        form = super().get_form(form_class=form_class)
-        customer = services.get_customer(self.request.user)
-        if customer is not None and hasattr(customer, "token"):
-            token = getattr(customer, "token").name
-            with WialonSession(token=token) as session:
-                try:
-                    unit_list = [
-                        (int(unit["id"]), str(unit["nm"]))
-                        for unit in customer.get_units_from_wialon(session)
-                    ]
-                    form.fields["units"].choices = unit_list
-                except WialonAPIError as e:
-                    logger.warning(
-                        f"Failed to create a unit list for '{customer}': '{e}'"
-                    )
-                    form.fields["units"].choices = []
-        return form
-
-
-@method_decorator(cache_page(timeout=60 * 15), name="get")
-@method_decorator(cache_control(private=True), name="get")
-class WialonNotificationTriggerSelectFormView(
+@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
+@method_decorator(cache_control(private=True), name="dispatch")
+class WialonNotificationTriggerFormView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
 ):
     content_type = "text/html"
     form_class = forms.TriggerForm
     http_method_names = ["get", "post"]
-    initial = {"t": constants.WialonNotificationTriggerType.SENSOR}
     partial_template_name = (
-        "terminusgps_notifications/triggers/partials/_select.html"
+        "terminusgps_notifications/triggers/partials/_form.html"
     )
-    template_name = "terminusgps_notifications/triggers/select.html"
-
-    def get_initial(self, **kwargs) -> dict[str, typing.Any]:
-        initial: dict[str, typing.Any] = super().get_initial(**kwargs)
-        initial["un"] = self.request.GET.get("un")
-        return initial
+    template_name = "terminusgps_notifications/triggers/form.html"
+    success_url = reverse_lazy(
+        "terminusgps_notifications:create notifications"
+    )
 
     def form_valid(self, form: forms.TriggerForm) -> HttpResponse:
-        return HttpResponseRedirect(
-            reverse(
-                "terminusgps_notifications:create notifications",
-                query={
-                    "un": form.cleaned_data["un"],
-                    "p": json.dumps(form.cleaned_data["p"]),
-                    "t": form.cleaned_data["t"],
-                },
-            )
-        )
+        """Adds ``t`` and ``p`` to the request session before redirecting the client."""
+        self.request.session["t"] = form.cleaned_data["t"]
+        self.request.session["p"] = form.cleaned_data["p"]
+        return super().form_valid(form=form)
 
 
-class WialonNotificationTriggerParametersFormSuccessView(
-    LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
-):
-    content_type = "text/html"
-    http_method_names = ["get"]
-    template_name = (
-        "terminusgps_notifications/triggers/parameters_success.html"
-    )
-    partial_template_name = (
-        "terminusgps_notifications/triggers/partials/_parameters_success.html"
-    )
-
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["value"] = self.request.GET.get("p")
-        return context
-
-
+@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
+@method_decorator(cache_control(private=True), name="dispatch")
 class WialonNotificationTriggerParametersFormView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
 ):
     content_type = "text/html"
     http_method_names = ["get", "post"]
     partial_template_name = (
-        "terminusgps_notifications/triggers/partials/_parameters.html"
+        "terminusgps_notifications/triggers/partials/_parameters_form.html"
     )
-    template_name = "terminusgps_notifications/triggers/parameters.html"
-
-    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
-        super().setup(request, *args, **kwargs)
-        self.trigger = None
-        if t := self.request.GET.get("t"):
-            self.trigger = t
-        elif t := self.request.POST.get("t"):
-            self.trigger = t
+    success_url = reverse_lazy(
+        "terminusgps_notifications:trigger parameters success"
+    )
+    template_name = "terminusgps_notifications/triggers/parameters_form.html"
 
     def get_form_class(self):
-        if self.trigger is None:
-            return Form
-        return forms.triggers.TRIGGER_FORM_MAP.get(self.trigger)
+        if self.request.GET.get("t"):
+            self.request.session["t"] = self.request.GET["t"]
+        return forms.TRIGGER_FORM_MAP.get(
+            self.request.session.get("t", "sensor_value")
+        )
 
     def form_valid(self, form):
-        return HttpResponseRedirect(
-            reverse(
-                "terminusgps_notifications:trigger parameters success",
-                query={"p": form.as_json()},
-            )
+        self.request.session["p"] = json.dumps(form.cleaned_data)
+        return super().form_valid(form=form)
+
+
+@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
+@method_decorator(cache_control(private=True), name="dispatch")
+class WialonNotificationTriggerParametersSuccessView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
+):
+    content_type = "text/html"
+    http_method_names = ["get"]
+    partial_template_name = (
+        "terminusgps_notifications/triggers/partials/_parameters_success.html"
+    )
+    template_name = (
+        "terminusgps_notifications/triggers/parameters_success.html"
+    )
+
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        context["value"] = self.request.session.get("p", "{}")
+        return context
+
+
+@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
+@method_decorator(cache_control(private=True), name="dispatch")
+class WialonNotificationUnitSelectFormView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
+):
+    content_type = "text/html"
+    extra_context = {"title": "Select Units"}
+    form_class = forms.WialonUnitSelectForm
+    http_method_names = ["get", "post"]
+    partial_template_name = (
+        "terminusgps_notifications/units/partials/_form.html"
+    )
+    template_name = "terminusgps_notifications/units/form.html"
+    success_url = reverse_lazy("terminusgps_notifications:triggers form")
+
+    def get_form(self, form_class=None) -> forms.WialonUnitSelectForm:
+        form = super().get_form(form_class=form_class)
+        customer = services.get_customer(self.request.user)
+        token = services.get_wialon_token(self.request.user)
+        if customer and token:
+            with WialonSession(token=token) as session:
+                resource_id_choices = self.get_resource_id_choices(
+                    customer, session
+                )
+                if self.request.session.get("resource_id"):
+                    resource_id = self.request.session["resource_id"]
+                else:
+                    resource_id = (
+                        self.request.GET["resource_id"]
+                        if self.request.GET.get("resource_id")
+                        else resource_id_choices[0][0]
+                    )
+                    self.request.session["resource_id"] = resource_id
+                unit_list_choices = self.get_unit_list_choices(
+                    customer,
+                    resource_id,
+                    session,
+                    self.request.session.get("items_type", "avl_unit"),
+                )
+                form.fields["resource_id"].choices = resource_id_choices
+                form.fields["unit_list"].choices = unit_list_choices
+        return form
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        request.session["resource_id"] = request.GET.get("resource_id")
+        request.session["items_type"] = request.GET.get(
+            "items_type", "avl_unit"
         )
+        return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form: forms.WialonUnitSelectForm) -> HttpResponse:
+        self.request.session["resource_id"] = form.cleaned_data["resource_id"]
+        self.request.session["unit_list"] = form.cleaned_data["unit_list"]
+        return super().form_valid(form=form)
+
+    def get_resource_id_choices(
+        self,
+        customer: models.TerminusgpsNotificationsCustomer,
+        session: WialonSession,
+    ) -> list[tuple[int, str]]:
+        return [
+            (int(resource["id"]), str(resource["nm"]))
+            for resource in customer.get_resources_from_wialon(session)
+        ]
+
+    def get_unit_list_choices(
+        self,
+        customer: models.TerminusgpsNotificationsCustomer,
+        resource_id: int,
+        session: WialonSession,
+        items_type: str,
+    ) -> list[tuple[int, str]]:
+        return [
+            (int(unit["id"]), str(unit["nm"]))
+            for unit in customer.get_units_from_wialon(
+                resource_id, session, items_type
+            )
+        ]
+
+
+class WialonNotificationCreateSuccessView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
+):
+    content_type = "text/html"
+    extra_context = {"title": "Created Notification"}
+    http_method_names = ["get"]
+    partial_template_name = (
+        "terminusgps_notifications/notifications/partials/_create_success.html"
+    )
+    template_name = (
+        "terminusgps_notifications/notifications/create_success.html"
+    )
 
 
 class WialonNotificationCreateView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, CreateView
 ):
     extra_context = {
-        "message_tags": constants.WialonNotificationMessageTag.choices
+        "title": "Create Notification",
+        "message_tags": constants.WialonNotificationMessageTag.choices,
     }
     content_type = "text/html"
     form_class = forms.WialonNotificationCreationForm
@@ -167,24 +207,15 @@ class WialonNotificationCreateView(
     partial_template_name = (
         "terminusgps_notifications/notifications/partials/_create.html"
     )
-    success_url = reverse_lazy("terminusgps_notifications:notifications")
+    success_url = reverse_lazy(
+        "terminusgps_notifications:create notifications success"
+    )
     template_name = "terminusgps_notifications/notifications/create.html"
 
     def get_initial(self, **kwargs) -> dict[str, typing.Any]:
         initial: dict[str, typing.Any] = super().get_initial(**kwargs)
-        customer = services.get_customer(self.request.user)
         schedule = {"f1": 0, "f2": 0, "t1": 0, "t2": 0, "m": 0, "w": 0, "y": 0}
-        trigger = {
-            "t": self.request.GET.get("t", ""),
-            "p": json.loads(self.request.GET.get("p", "{}")),
-        }
-
-        initial["name"] = "New Notification"
-        initial["message"] = "%NOTIFICATION%"
-        initial["timezone"] = 0
-        initial["customer"] = customer
-        initial["unit_list"] = self.request.GET.get("un")
-        initial["trigger"] = trigger
+        initial["timezone"] = 0  # TODO: Retrieve client timezone
         initial["schedule"] = schedule.copy()
         initial["control_schedule"] = schedule.copy()
         return initial
@@ -193,24 +224,38 @@ class WialonNotificationCreateView(
     def form_valid(
         self, form: forms.WialonNotificationCreationForm
     ) -> HttpResponse:
-        mode = constants.WialonNotificationUpdateCallModeType.CREATE
-        customer = form.cleaned_data["customer"]
-        token = getattr(customer, "token").name
-
         try:
+            customer = services.get_customer(self.request.user)
+            token = services.get_wialon_token(self.request.user)
+            if token is None:
+                raise ValueError("Invalid/non-existent Wialon API token.")
+            if customer is None:
+                raise ValueError("Invalid/non-existent customer.")
             with WialonSession(token=token) as session:
-                if not customer.resource_id:
-                    customer.save()
                 notification = form.save(commit=False)
-                notification.actions = notification.get_actions()
+                notification.customer = customer
                 notification.text = notification.get_text()
-                api_response = notification.update_in_wialon(mode, session)
+                notification.actions = notification.get_actions()
+                notification.trigger_type = self.request.session["t"]
+                notification.trigger_parameters = self.request.session["p"]
+                notification.resource_id = self.request.session["resource_id"]
+                notification.unit_list = self.request.session["unit_list"]
+                api_response = notification.update_in_wialon("create", session)
                 notification.wialon_id = int(api_response[0])
                 notification.save()
-            response = super().form_valid(form=form)
-            response.headers["HX-Retarget"] = "#notifications"
-            return response
+                self.object = notification
+                return HttpResponseRedirect(self.get_success_url())
         except WialonAPIError as e:
+            form.add_error(
+                None,
+                ValidationError(
+                    _("Whoops! '%(error_message)s'"),
+                    code="invalid",
+                    params={"error_message": str(e)},
+                ),
+            )
+            return self.form_invalid(form=form)
+        except ValueError as e:
             form.add_error(
                 None,
                 ValidationError(
@@ -261,19 +306,16 @@ class WialonNotificationUpdateView(
     def form_valid(
         self, form: forms.WialonNotificationUpdateForm
     ) -> HttpResponse:
-        mode = constants.WialonNotificationUpdateCallModeType.UPDATE
         notification = form.save(commit=True)
-        token = getattr(notification.customer, "token").name
-        if form.changed_data:
+        token = services.get_wialon_token(notification.customer.user)
+        if token and form.changed_data:
             try:
-                if not notification.customer.resource_id:
-                    notification.customer.save()
                 with WialonSession(token=token) as session:
                     if "method" in form.changed_data:
                         notification.actions = notification.get_actions()
                     if "message" in form.changed_data:
                         notification.text = notification.get_text()
-                    notification.update_in_wialon(mode, session)
+                    notification.update_in_wialon("update", session)
             except (ValueError, WialonAPIError) as e:
                 form.add_error(
                     None,
@@ -284,9 +326,7 @@ class WialonNotificationUpdateView(
                     ),
                 )
                 return self.form_invalid(form=form)
-        return HttpResponseRedirect(
-            notification.get_absolute_url(), headers={"HX-Refresh": "true"}
-        )
+        return HttpResponseRedirect(notification.get_absolute_url())
 
 
 class WialonNotificationDeleteView(

@@ -8,13 +8,14 @@ from .customers import (
     WialonLoginView,
 )
 from .notifications import (
+    WialonNotificationCreateSuccessView,
     WialonNotificationCreateView,
     WialonNotificationDeleteView,
     WialonNotificationDetailView,
     WialonNotificationListView,
-    WialonNotificationTriggerParametersFormSuccessView,
+    WialonNotificationTriggerFormView,
     WialonNotificationTriggerParametersFormView,
-    WialonNotificationTriggerSelectFormView,
+    WialonNotificationTriggerParametersSuccessView,
     WialonNotificationUnitSelectFormView,
     WialonNotificationUpdateView,
 )

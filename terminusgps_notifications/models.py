@@ -1,21 +1,21 @@
-import ast
 import logging
 import typing
 import urllib.parse
+from collections.abc import Collection
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.validators import MaxValueValidator, MinLengthValidator
+from django.core.validators import MaxValueValidator
 from django.db import models, transaction
 from django.db.models import F
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from encrypted_field import EncryptedField
-from terminusgps.validators import validate_is_digit
 from terminusgps.wialon import flags
 from terminusgps.wialon.session import WialonAPIError, WialonSession
 
 from terminusgps_notifications.constants import (
+    WialonNotificationTriggerType,
     WialonNotificationUpdateCallModeType,
 )
 
@@ -45,15 +45,6 @@ class TerminusgpsNotificationsCustomer(models.Model):
         max_length=24,
     )
     """Date format for notifications."""
-    resource_id = models.CharField(
-        blank=True,
-        default=None,
-        help_text="Enter an 8-digit Wialon resource id to create notifications in.",
-        max_length=8,
-        null=True,
-        validators=[validate_is_digit, MinLengthValidator(8)],
-    )
-    """Wialon resource id."""
     max_sms_count = models.PositiveIntegerField(
         default=500,
         help_text="Enter the maximum number of allowed sms messages in a single period.",
@@ -116,8 +107,64 @@ class TerminusgpsNotificationsCustomer(models.Model):
         """Returns the customer user's username."""
         return str(self.user.username)
 
+    def get_unit_groups_from_wialon(
+        self,
+        resource_id: str | int,
+        session: WialonSession,
+        force: bool = False,
+    ) -> list[dict[str, typing.Any]]:
+        """
+        Returns a list of of customer Wialon unit group dictionaries from the Wialon API.
+
+        Wialon unit group dictionary format:
+
+        +------------+---------------+---------------------------------+
+        | key        | type          | desc                            |
+        +============+===============+=================================+
+        | ``"mu"``   | :py:obj:`int` | Measurement system              |
+        +------------+---------------+---------------------------------+
+        | ``"nm"``   | :py:obj:`str` | Unit group name                 |
+        +------------+---------------+---------------------------------+
+        | ``"cls"``  | :py:obj:`int` | Superclass ID: 'avl_unit_group' |
+        +------------+---------------+---------------------------------+
+        | ``"id"``   | :py:obj:`int` | Unit group ID                   |
+        +------------+---------------+---------------------------------+
+        | ``"uacl"`` | :py:obj:`int` | User's access rights            |
+        +------------+---------------+---------------------------------+
+
+        :param force: Whether to force a Wialon API call instead of using a cached response. Default is :py:obj:`False` (use cache).
+        :type force: bool
+        :raises ValueError: If ``resource_id`` was a string and contained non-digit characters.
+        :returns: A list of Wialon unit group dictionaries.
+        :rtype: list[dict[str, ~typing.Any]]
+
+        """
+        if isinstance(resource_id, str) and not resource_id.isdigit():
+            raise ValueError(
+                f"resource_id can only contain digits, got '{resource_id}'."
+            )
+        return session.wialon_api.core_search_items(
+            **{
+                "spec": {
+                    "itemsType": "avl_unit_group",
+                    "propName": "sys_billing_account_guid,sys_name",
+                    "propValueMask": f"{resource_id},*",
+                    "sortType": "sys_name",
+                    "propType": "property,property",
+                },
+                "force": int(force),
+                "flags": flags.DataFlag.UNIT_BASE,
+                "from": 0,
+                "to": 0,
+            }
+        ).get("items", [])
+
     def get_units_from_wialon(
-        self, session: WialonSession, force: bool = False
+        self,
+        resource_id: str | int,
+        session: WialonSession,
+        items_type: str = "avl_unit",
+        force: bool = False,
     ) -> list[dict[str, typing.Any]]:
         """
         Returns a list of of customer Wialon unit dictionaries from the Wialon API.
@@ -140,18 +187,23 @@ class TerminusgpsNotificationsCustomer(models.Model):
 
         :param force: Whether to force a Wialon API call instead of using a cached response. Default is :py:obj:`False` (use cache).
         :type force: bool
+        :raises ValueError: If ``resource_id`` was a string and contained non-digit characters.
         :returns: A list of Wialon unit dictionaries.
         :rtype: list[dict[str, ~typing.Any]]
 
         """
+        if isinstance(resource_id, str) and not resource_id.isdigit():
+            raise ValueError(
+                f"resource_id can only contain digits, got '{resource_id}'."
+            )
         return session.wialon_api.core_search_items(
             **{
                 "spec": {
-                    "itemsType": "avl_unit",
-                    "propName": "sys_id",
-                    "propValueMask": "*",
-                    "sortType": "sys_id",
-                    "propType": "property",
+                    "itemsType": items_type,
+                    "propName": "sys_billing_account_guid,sys_name",
+                    "propValueMask": f"{resource_id},*",
+                    "sortType": "sys_name",
+                    "propType": "property,property",
                 },
                 "force": int(force),
                 "flags": flags.DataFlag.UNIT_BASE,
@@ -159,6 +211,173 @@ class TerminusgpsNotificationsCustomer(models.Model):
                 "to": 0,
             }
         ).get("items", [])
+
+    def get_resources_from_wialon(
+        self, session: WialonSession, force: bool = False
+    ) -> list[dict[str, typing.Any]]:
+        """
+        Returns a list of of customer Wialon resource dictionaries from the Wialon API.
+
+        Wialon resource dictionary format:
+
+        +------------+---------------+-------------------------------+
+        | key        | type          | desc                          |
+        +============+===============+===============================+
+        | ``"mu"``   | :py:obj:`int` | Measurement system            |
+        +------------+---------------+-------------------------------+
+        | ``"nm"``   | :py:obj:`str` | Resource name                 |
+        +------------+---------------+-------------------------------+
+        | ``"cls"``  | :py:obj:`int` | Superclass ID: 'avl_resource' |
+        +------------+---------------+-------------------------------+
+        | ``"id"``   | :py:obj:`int` | Resource ID                   |
+        +------------+---------------+-------------------------------+
+        | ``"uacl"`` | :py:obj:`int` | User's access rights          |
+        +------------+---------------+-------------------------------+
+
+        :param force: Whether to force a Wialon API call instead of using a cached response. Default is :py:obj:`False` (use cache).
+        :type force: bool
+        :returns: A list of Wialon resource dictionaries.
+        :rtype: list[dict[str, ~typing.Any]]
+
+        """
+        return session.wialon_api.core_search_items(
+            **{
+                "spec": {
+                    "itemsType": "avl_resource",
+                    "propName": "sys_name",
+                    "propValueMask": "*",
+                    "sortType": "sys_name",
+                    "propType": "property",
+                },
+                "force": int(force),
+                "flags": flags.DataFlag.RESOURCE_BASE,
+                "from": 0,
+                "to": 0,
+            }
+        ).get("items", [])
+
+    def get_notifications_from_wialon(
+        self,
+        resource_id: str | int,
+        session: WialonSession,
+        notification_ids: Collection[int] | None = None,
+    ) -> list[dict[str, typing.Any]]:
+        """
+        Returns a list of notification dictionaries from the Wialon API.
+
+        Wialon notification dictionary format:
+
+        +----------------+----------------+-----------------------------------------------+
+        | key            | type           | desc                                          |
+        +================+================+===============================================+
+        | ``"id"``       | :py:obj:`int`  | Notification ID                               |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"n"``        | :py:obj:`str`  | Notification name                             |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"txt"``      | :py:obj:`int`  | Notification text                             |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ta"``       | :py:obj:`int`  | Activation time (UNIX timestamp)              |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"td"``       | :py:obj:`int`  | Deactivation time (UNIX timestamp)            |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ma"``       | :py:obj:`int`  | Maximum number of alarms (0 = unlimited)      |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"mmtd"``     | :py:obj:`int`  | Maximum time interval between messages (sec)  |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"cdt"``      | :py:obj:`int`  | Alarm timeout (sec)                           |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"mast"``     | :py:obj:`int`  | Minimum duration of the alarm state (sec)     |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"mpst"``     | :py:obj:`int`  | Minimum duration of previous state (sec)      |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"cp"``       | :py:obj:`int`  | Control period relative to current time (sec) |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"fl"``       | :py:obj:`int`  | Notification flags                            |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"tz"``       | :py:obj:`int`  | Notification timezone                         |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"la"``       | :py:obj:`str`  | Notification language code                    |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ac"``       | :py:obj:`int`  | Alarms count                                  |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"d"``        | :py:obj:`str`  | Notification description                      |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"sch"``      | :py:obj:`dict` | Notification schedule (see below)             |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ctrl_sch"`` | :py:obj:`dict` | Notification control schedule (see below)     |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"un"``       | :py:obj:`list` | List of unit/unit group IDs                   |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"act"``      | :py:obj:`list` | List of notification actions (see below)      |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"trg"``      | :py:obj:`dict` | Notification trigger (see below)              |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ct"``       | :py:obj:`int`  | Creation time (UNIX timestamp)                |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"mt"``       | :py:obj:`int`  | Last modification time (UNIX timestamp)       |
+        +----------------+----------------+-----------------------------------------------+
+
+        Notification schedule/control schedule format:
+
+        +----------+----------------+------------------------------------------------------------------+
+        | key      | type           | desc                                                             |
+        +==========+================+==================================================================+
+        | ``"f1"`` | :py:obj:`int`  | Beginning of interval 1 (minutes from midnight)                  |
+        +----------+----------------+------------------------------------------------------------------+
+        | ``"f2"`` | :py:obj:`int`  | Beginning of interval 2 (minutes from midnight)                  |
+        +----------+----------------+------------------------------------------------------------------+
+        | ``"t1"`` | :py:obj:`int`  | End of interval 1 (minutes from midnight)                        |
+        +----------+----------------+------------------------------------------------------------------+
+        | ``"t2"`` | :py:obj:`int`  | End of interval 2 (minutes from midnight)                        |
+        +----------+----------------+------------------------------------------------------------------+
+        | ``"m"``  | :py:obj:`int`  | Mask of the days of the month (1: 2:\ sup:`0`, 31: 2\ :sup:`30`) |
+        +----------+----------------+------------------------------------------------------------------+
+        | ``"y"``  | :py:obj:`int`  | Mask of months (Jan: 2\ :sup:`0`, Dec: 2:\ sup:`11`)             |
+        +----------+----------------+------------------------------------------------------------------+
+        | ``"w"``  | :py:obj:`int`  | Mask of days of the week (Mon: 2\ :sup:`0`, Sun: 2\ :sup:`6`)    |
+        +----------+----------------+------------------------------------------------------------------+
+        | ``"f"``  | :py:obj:`int`  | Schedule flags                                                   |
+        +----------+----------------+------------------------------------------------------------------+
+
+        Notification `action <https://wialon-help.link/bb04a9a5>`_ format (each item in the ``act`` list):
+
+        +----------+-----------------+-------------------+
+        | key      | type            | desc              |
+        +==========+=================+===================+
+        | ``"t"``  | :py:obj:`str`   | Action type       |
+        +----------+-----------------+-------------------+
+        | ``"p"``  | :py:obj:`dict`  | Action parameters |
+        +----------+-----------------+-------------------+
+
+        Notification `trigger <https://wialon-help.link/9d54585d>`_ format:
+
+        +----------+-----------------+--------------------+
+        | key      | type            | desc               |
+        +==========+=================+====================+
+        | ``"t"``  | :py:obj:`str`   | Trigger type       |
+        +----------+-----------------+--------------------+
+        | ``"p"``  | :py:obj:`dict`  | Trigger parameters |
+        +----------+-----------------+--------------------+
+
+        :param resource_id: A Wialon resource id.
+        :type resource_id: str | int
+        :param session: A valid Wialon API session.
+        :type session: ~terminusgps.wialon.session.WialonSession
+        :param notification_ids: Optional. A list of notification ids.
+        :type notification_ids: ~collections.abc.Collection[int] | None
+        :raises ValueError: If ``resource_id`` was a string containing non-digit characters.
+        :returns: A list of Wialon notification dictionaries.
+        :rtype: list[dict[str, ~typing.Any]]
+
+        """
+        if isinstance(resource_id, str) and not resource_id.isdigit():
+            raise ValueError(
+                f"resource_id can only contain digits, got '{resource_id}'."
+            )
+        params = {"itemId": resource_id}
+        if notification_ids is not None:
+            params["col"] = notification_ids
+        return session.wialon_api.resource_get_notification_data(**params)
 
 
 class WialonToken(models.Model):
@@ -288,10 +507,15 @@ class WialonNotification(models.Model):
 
     timezone = models.IntegerField(default=0)
     """Timezone."""
-    unit_list = models.CharField(blank=True, max_length=2048)
+    unit_list = models.JSONField(blank=True, default=list)
     """List of Wialon units."""
-    trigger = models.JSONField(blank=True, default=dict)
-    """Trigger."""
+    trigger_type = models.CharField(
+        choices=WialonNotificationTriggerType.choices,
+        default=WialonNotificationTriggerType.SENSOR,
+    )
+    """Trigger type."""
+    trigger_parameters = models.JSONField(blank=True, default=dict)
+    """Trigger parameters."""
     schedule = models.JSONField(blank=True, default=dict)
     """Schedule."""
     control_schedule = models.JSONField(blank=True, default=dict)
@@ -302,17 +526,19 @@ class WialonNotification(models.Model):
     """Text."""
     enabled = models.BooleanField(default=True)
     """Whether the notification is enabled in Wialon."""
+    date_created = models.DateTimeField(auto_now_add=True)
+    """Date created."""
 
     wialon_id = models.PositiveBigIntegerField()
     """Wialon id."""
+    resource_id = models.PositiveBigIntegerField()
+    """Resource id."""
     customer = models.ForeignKey(
         "terminusgps_notifications.TerminusgpsNotificationsCustomer",
         on_delete=models.CASCADE,
         related_name="notifications",
     )
     """Associated customer."""
-    date_created = models.DateTimeField(auto_now_add=True)
-    """Date created."""
 
     class Meta:
         verbose_name = _("wialon notification")
@@ -321,6 +547,16 @@ class WialonNotification(models.Model):
     def __str__(self) -> str:
         """Returns the notification name."""
         return str(self.name)
+
+    @transaction.atomic
+    def save(self, **kwargs) -> None:
+        """Sets :py:attr:`text` and :py:attr:`actions` before saving."""
+        update_fields = kwargs.get("update_fields", [])
+        if not self.text or "message" in update_fields:
+            self.text = self.get_text()
+        if not self.actions or "method" in update_fields:
+            self.actions = self.get_actions()
+        return super().save(**kwargs)
 
     def get_absolute_url(self) -> str:
         return reverse(
@@ -348,56 +584,10 @@ class WialonNotification(models.Model):
                         "https://api.terminusgps.com/",
                         f"/v3/notify/{self.method}/",
                     ),
-                    "get": 1,  # 1 - GET request, 2 - POST request
+                    "get": 1,  # 1 = GET request, 2 = POST request
                 },
             }
         ]
-
-    @transaction.atomic
-    def enable(self, session: WialonSession) -> dict[str, typing.Any] | None:
-        """
-        Enables the notification in Wialon.
-
-        :param session: A valid Wialon API session.
-        :type session: ~terminusgps.wialon.session.WialonSession
-        :raises WialonAPIError: If something went wrong calling the Wialon API.
-        :returns: A dictionary of notification data, if it was enabled.
-        :rtype: dict[str, ~typing.Any] | None
-
-        """
-        if not self.enabled:
-            try:
-                params = self.get_wialon_parameters(call_mode="enable")
-                params["e"] = int(True)
-                res = session.wialon_api.resource_update_notification(**params)
-                self.enabled = True
-                return res
-            except WialonAPIError as e:
-                logger.critical(e)
-                raise
-
-    @transaction.atomic
-    def disable(self, session: WialonSession) -> dict[str, typing.Any] | None:
-        """
-        Disables the notification in Wialon.
-
-        :param session: A valid Wialon API session.
-        :type session: ~terminusgps.wialon.session.WialonSession
-        :raises WialonAPIError: If something went wrong calling the Wialon API.
-        :returns: A dictionary of notification data, if it was disabled.
-        :rtype: dict[str, ~typing.Any] | None
-
-        """
-        if self.enabled:
-            try:
-                params = self.get_wialon_parameters(call_mode="enable")
-                params["e"] = int(False)
-                res = session.wialon_api.resource_update_notification(**params)
-                self.enabled = False
-                return res
-            except WialonAPIError as e:
-                logger.critical(e)
-                raise
 
     def update_in_wialon(
         self,
@@ -411,7 +601,6 @@ class WialonNotification(models.Model):
         :type call_mode: ~terminusgps_notifications.constants.WialonNotificationUpdateCallMode
         :param session: A valid Wialon API session.
         :type session: ~terminusgps.wialon.session.WialonSession
-        :raises ValueError: If ``call_mode`` wasn't one of ``"create"``, ``"update"``, ``"enable"`` or ``"delete"``.
         :raises WialonAPIError: If something went wrong calling the Wialon API.
         :returns: A dictionary of notification data.
         :rtype: dict[str, ~typing.Any]
@@ -420,8 +609,7 @@ class WialonNotification(models.Model):
         try:
             params = self.get_wialon_parameters(call_mode=call_mode)
             return session.wialon_api.resource_update_notification(**params)
-        except WialonAPIError as e:
-            logger.critical(e)
+        except WialonAPIError:
             raise
 
     def get_wialon_parameters(self, call_mode: str) -> dict[str, typing.Any]:
@@ -430,26 +618,22 @@ class WialonNotification(models.Model):
 
         :param call_mode: A Wialon API update notification call mode.
         :type call_mode: str
-        :raises ValueError: If :py:attr:`resource_id` wasn't set on the customer.
         :returns: A dictionary of Wialon API update notification parameters.
         :rtype: dict[str, ~typing.Any]
 
         """
-        if not self.customer.resource_id:
-            raise ValueError(
-                f"'{self.customer}' didn't have a resource id set, got: '{self.customer.resource_id}'."
-            )
-        resource_id = int(self.customer.resource_id)
-        id = 0 if call_mode == "create" else self.wialon_id
-        unit_list = ast.literal_eval(self.unit_list)
         return {
-            "itemId": resource_id,
-            "id": id,
+            "itemId": self.resource_id,
+            "id": 0 if call_mode == "create" else self.wialon_id,
             "callMode": call_mode,
             "n": self.name,
             "txt": self.text,
-            "ta": self.activation_time if self.activation_time else 0,
-            "td": self.deactivation_time if self.deactivation_time else 0,
+            "ta": self.activation_time.timestamp()
+            if self.activation_time is not None
+            else 0,
+            "td": self.deactivation_time.timestamp()
+            if self.deactivation_time is not None
+            else 0,
             "ma": self.max_alarms,
             "mmtd": self.max_message_interval,
             "cdt": self.alarm_timeout,
@@ -459,8 +643,8 @@ class WialonNotification(models.Model):
             "fl": self.flags,
             "la": self.language,
             "tz": self.timezone,
-            "un": unit_list,
-            "trg": self.trigger,
+            "un": self.unit_list,
+            "trg": {"t": self.trigger_type, "p": self.trigger_parameters},
             "act": self.actions,
             "sch": self.schedule,
             "ctrl_sch": self.control_schedule,
