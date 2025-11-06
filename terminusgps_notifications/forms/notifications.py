@@ -30,6 +30,7 @@ class WialonUnitSelectForm(forms.Form):
                 "hx-swap": "outerHTML",
                 "hx-target": "#id_unit_list",
                 "hx-trigger": "change",
+                "hx-include": "this,[name='items_type']",
             }
         ),
     )
@@ -174,6 +175,10 @@ class WialonNotificationCreationForm(forms.ModelForm):
             "flags",
             "schedule",
             "control_schedule",
+            "unit_list",
+            "resource_id",
+            "trigger_type",
+            "trigger_parameters",
         ]
         help_texts = {
             "method": "Select whether to text the message (sms) or read the message aloud (voice) on notification trigger.",
@@ -269,6 +274,10 @@ class WialonNotificationCreationForm(forms.ModelForm):
             "schedule": forms.widgets.HiddenInput(),
             "control_schedule": forms.widgets.HiddenInput(),
             "timezone": forms.widgets.HiddenInput(),
+            "unit_list": forms.widgets.HiddenInput(),
+            "resource_id": forms.widgets.HiddenInput(),
+            "trigger_type": forms.widgets.HiddenInput(),
+            "trigger_parameters": forms.widgets.HiddenInput(),
         }
 
 
@@ -293,8 +302,12 @@ class TriggerForm(forms.Form):
         ),
     )
     """Trigger type."""
-    p = forms.JSONField(widget=forms.widgets.HiddenInput())
+    p = forms.JSONField(
+        widget=forms.widgets.Textarea(attrs={"class": "hidden"})
+    )
     """Trigger parameters."""
+    resource_id = forms.IntegerField(widget=forms.widgets.HiddenInput())
+    unit_list = forms.JSONField(widget=forms.widgets.HiddenInput())
 
 
 class GeofenceTriggerParametersForm(forms.Form):

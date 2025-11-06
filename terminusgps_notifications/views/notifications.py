@@ -8,7 +8,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 from django.forms import Form
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_control, cache_page
@@ -40,16 +40,29 @@ class WialonNotificationTriggerFormView(
     partial_template_name = (
         "terminusgps_notifications/triggers/partials/_form.html"
     )
-    template_name = "terminusgps_notifications/triggers/form.html"
     success_url = reverse_lazy(
         "terminusgps_notifications:create notifications"
     )
+    template_name = "terminusgps_notifications/triggers/form.html"
+
+    def get_initial(self, **kwargs) -> dict[str, typing.Any]:
+        initial: dict[str, typing.Any] = super().get_initial(**kwargs)
+        initial["unit_list"] = self.request.GET.getlist("unit_list")
+        initial["resource_id"] = self.request.GET.get("resource_id")
+        return initial
 
     def form_valid(self, form: forms.TriggerForm) -> HttpResponse:
-        """Adds ``t`` and ``p`` to the request session before redirecting the client."""
-        self.request.session["t"] = form.cleaned_data["t"]
-        self.request.session["p"] = form.cleaned_data["p"]
-        return super().form_valid(form=form)
+        return HttpResponseRedirect(
+            reverse(
+                "terminusgps_notifications:create notifications",
+                query={
+                    "trigger_type": form.cleaned_data["t"],
+                    "trigger_parameters": json.dumps(form.cleaned_data["p"]),
+                    "resource_id": form.cleaned_data["resource_id"],
+                    "unit_list": form.cleaned_data["unit_list"],
+                },
+            )
+        )
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
@@ -69,14 +82,10 @@ class WialonNotificationTriggerParametersFormView(
 
     def get_form_class(self):
         if self.request.GET.get("t"):
-            self.request.session["t"] = self.request.GET["t"]
-        return forms.TRIGGER_FORM_MAP.get(
-            self.request.session.get("t", "sensor_value")
-        )
-
-    def form_valid(self, form):
-        self.request.session["p"] = json.dumps(form.cleaned_data)
-        return super().form_valid(form=form)
+            trigger_type = self.request.GET["t"]
+        elif self.request.POST.get("t"):
+            trigger_type = self.request.POST["t"]
+        return forms.TRIGGER_FORM_MAP.get(trigger_type)
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
@@ -99,8 +108,8 @@ class WialonNotificationTriggerParametersSuccessView(
         return context
 
 
-@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
-@method_decorator(cache_control(private=True), name="dispatch")
+@method_decorator(cache_page(timeout=60 * 15), name="get")
+@method_decorator(cache_control(private=True), name="get")
 class WialonNotificationUnitSelectFormView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
 ):
@@ -114,69 +123,55 @@ class WialonNotificationUnitSelectFormView(
     template_name = "terminusgps_notifications/units/form.html"
     success_url = reverse_lazy("terminusgps_notifications:triggers form")
 
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        if "resource_id" not in request.GET or "items_type" not in request.GET:
+            return HttpResponse(status=406)
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        if (
+            "resource_id" not in request.POST
+            or "items_type" not in request.POST
+        ):
+            return HttpResponse(status=406)
+        return super().post(request, *args, **kwargs)
+
     def get_form(self, form_class=None) -> forms.WialonUnitSelectForm:
         form = super().get_form(form_class=form_class)
         customer = services.get_customer(self.request.user)
         token = services.get_wialon_token(self.request.user)
         if customer and token:
             with WialonSession(token=token) as session:
-                resource_id_choices = self.get_resource_id_choices(
-                    customer, session
+                resource_id = self.request.GET.get(
+                    "resource_id", self.request.POST.get("resource_id")
                 )
-                if self.request.session.get("resource_id"):
-                    resource_id = self.request.session["resource_id"]
-                else:
-                    resource_id = (
-                        self.request.GET["resource_id"]
-                        if self.request.GET.get("resource_id")
-                        else resource_id_choices[0][0]
+                items_type = self.request.GET.get(
+                    "items_type", self.request.POST.get("items_type")
+                )
+                form.fields["resource_id"].choices = [
+                    (int(resource["id"]), str(resource["nm"]))
+                    for resource in customer.get_resources_from_wialon(session)
+                ]
+                form.fields["unit_list"].choices = [
+                    (int(unit["id"]), str(unit["nm"]))
+                    for unit in customer.get_units_from_wialon(
+                        resource_id=resource_id,
+                        session=session,
+                        items_type=items_type,
                     )
-                    self.request.session["resource_id"] = resource_id
-                unit_list_choices = self.get_unit_list_choices(
-                    customer,
-                    resource_id,
-                    session,
-                    self.request.session.get("items_type", "avl_unit"),
-                )
-                form.fields["resource_id"].choices = resource_id_choices
-                form.fields["unit_list"].choices = unit_list_choices
+                ]
         return form
 
-    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        request.session["resource_id"] = request.GET.get("resource_id")
-        request.session["items_type"] = request.GET.get(
-            "items_type", "avl_unit"
-        )
-        return super().get(request, *args, **kwargs)
-
     def form_valid(self, form: forms.WialonUnitSelectForm) -> HttpResponse:
-        self.request.session["resource_id"] = form.cleaned_data["resource_id"]
-        self.request.session["unit_list"] = form.cleaned_data["unit_list"]
-        return super().form_valid(form=form)
-
-    def get_resource_id_choices(
-        self,
-        customer: models.TerminusgpsNotificationsCustomer,
-        session: WialonSession,
-    ) -> list[tuple[int, str]]:
-        return [
-            (int(resource["id"]), str(resource["nm"]))
-            for resource in customer.get_resources_from_wialon(session)
-        ]
-
-    def get_unit_list_choices(
-        self,
-        customer: models.TerminusgpsNotificationsCustomer,
-        resource_id: int,
-        session: WialonSession,
-        items_type: str,
-    ) -> list[tuple[int, str]]:
-        return [
-            (int(unit["id"]), str(unit["nm"]))
-            for unit in customer.get_units_from_wialon(
-                resource_id, session, items_type
+        return HttpResponseRedirect(
+            reverse(
+                "terminusgps_notifications:triggers form",
+                query={
+                    "resource_id": form.cleaned_data["resource_id"],
+                    "unit_list": form.cleaned_data["unit_list"],
+                },
             )
-        ]
+        )
 
 
 class WialonNotificationCreateSuccessView(
@@ -212,12 +207,23 @@ class WialonNotificationCreateView(
     )
     template_name = "terminusgps_notifications/notifications/create.html"
 
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        print(f"{request.GET = }")
+        print(f"{json.loads(request.GET.get("trigger_parameters", "{}")) = }")
+        return super().get(request, *args, **kwargs)
+
     def get_initial(self, **kwargs) -> dict[str, typing.Any]:
         initial: dict[str, typing.Any] = super().get_initial(**kwargs)
         schedule = {"f1": 0, "f2": 0, "t1": 0, "t2": 0, "m": 0, "w": 0, "y": 0}
         initial["timezone"] = 0  # TODO: Retrieve client timezone
         initial["schedule"] = schedule.copy()
         initial["control_schedule"] = schedule.copy()
+        initial["resource_id"] = self.request.GET.get("resource_id")
+        initial["unit_list"] = self.request.GET.getlist("unit_list")
+        initial["trigger_type"] = self.request.GET.get("trigger_type")
+        initial["trigger_parameters"] = json.loads(
+            self.request.GET.get("trigger_parameters", "{}")
+        )
         return initial
 
     @transaction.atomic
@@ -236,10 +242,13 @@ class WialonNotificationCreateView(
                 notification.customer = customer
                 notification.text = notification.get_text()
                 notification.actions = notification.get_actions()
-                notification.trigger_type = self.request.session["t"]
-                notification.trigger_parameters = self.request.session["p"]
-                notification.resource_id = self.request.session["resource_id"]
-                notification.unit_list = self.request.session["unit_list"]
+                notification.trigger_type = form.cleaned_data["trigger_type"]
+                notification.resource_id = form.cleaned_data["resource_id"]
+                notification.unit_list = form.cleaned_data["unit_list"]
+                notification.trigger_parameters = form.cleaned_data[
+                    "trigger_parameters"
+                ]
+
                 api_response = notification.update_in_wialon("create", session)
                 notification.wialon_id = int(api_response[0])
                 notification.save()
@@ -373,19 +382,33 @@ class WialonNotificationListView(
     paginate_by = 12
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer``, ``has_token`` and ``login_params`` to the view context."""
-        customer = services.get_customer(self.request.user)
-        has_token = hasattr(customer, "token") if customer else False
+        """Adds ``customer``, ``has_token`` ``resource_id`` and ``login_params`` to the view context."""
+        customer = (
+            services.get_customer(self.request.user)
+            if hasattr(self.request, "user")
+            else None
+        )
         login_params = (
             services.get_wialon_login_parameters(self.request.user.username)
             if hasattr(self.request, "user")
             else {}
         )
-
+        has_token = (
+            hasattr(customer, "token")
+            if customer and customer is not None
+            else False
+        )
+        resource_id = None
+        if customer and has_token:
+            token = services.get_wialon_token(self.request.user)
+            with WialonSession(token=token) as session:
+                resources = customer.get_resources_from_wialon(session)
+                resource_id = int(resources[0]["id"])
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer
         context["has_token"] = has_token
         context["login_params"] = login_params
+        context["resource_id"] = resource_id
         return context
 
     def get_ordering(self) -> str:

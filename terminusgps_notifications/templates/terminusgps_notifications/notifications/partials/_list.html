@@ -40,10 +40,10 @@
 {% empty %}
 <p>You don't have any notifications yet.</p>
 {% endfor %}
-{% if has_token %}
+{% if has_token and resource_id %}
 <button
     class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400"
-    hx-get="{% url 'terminusgps_notifications:units form' %}"
+    hx-get="{% url 'terminusgps_notifications:units form' %}?resource_id={{ resource_id }}&items_type=avl_unit"
     hx-target="#notifications"
     >New Notification
 </button>
