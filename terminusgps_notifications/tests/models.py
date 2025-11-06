@@ -1,5 +1,3 @@
-from unittest.mock import Mock
-
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from terminusgps.authorizenet.constants import Environment, ValidationMode
@@ -14,7 +12,6 @@ from terminusgps_notifications import models
 class TerminusgpsNotificationsCustomerTestCase(TestCase):
     def setUp(self) -> None:
         self.test_company = "Test Company"
-        self.test_resource_id = "12345678"
         self.test_creds = {
             "username": "testuser@testdomain.com",
             "email": "testuser@testdomain.com",
@@ -27,9 +24,7 @@ class TerminusgpsNotificationsCustomerTestCase(TestCase):
         )
         self.test_customer = (
             models.TerminusgpsNotificationsCustomer.objects.create(
-                user=self.test_user,
-                company=self.test_company,
-                resource_id=self.test_resource_id,
+                user=self.test_user, company=self.test_company
             )
         )
 
@@ -63,49 +58,6 @@ class TerminusgpsNotificationsCustomerTestCase(TestCase):
             places=2,
         )
 
-    def test_get_units_from_wialon(self) -> None:
-        """Fails if the method doesn't return the expected Wialon API response."""
-        mock_response = {
-            "items": [
-                {
-                    "nm": "Unit #1",
-                    "cls": 2,
-                    "id": 12345678,
-                    "mu": 1,
-                    "uacl": 4178867978239,
-                },
-                {
-                    "nm": "Unit #2",
-                    "cls": 2,
-                    "id": 23456781,
-                    "mu": 1,
-                    "uacl": 4178867978239,
-                },
-                {
-                    "nm": "Unit #3",
-                    "cls": 2,
-                    "id": 34567812,
-                    "mu": 1,
-                    "uacl": 4178867978239,
-                },
-                {
-                    "nm": "Unit #4",
-                    "cls": 2,
-                    "id": 45678123,
-                    "mu": 1,
-                    "uacl": 4178867978239,
-                },
-            ]
-        }
-        mock_session = Mock()
-        mock_wialon_api = Mock()
-        mock_session.wialon_api = mock_wialon_api
-        mock_session.wialon_api.core_search_items.return_value = mock_response
-        self.assertEqual(
-            mock_response.get("items", []),
-            self.test_customer.get_units_from_wialon(mock_session),
-        )
-
 
 class WialonNotificationTestCase(TestCase):
     def setUp(self) -> None:
@@ -129,7 +81,7 @@ class WialonNotificationTestCase(TestCase):
             name="Test Notification",
             message="%NOTIFICATION%",
             method="sms",
-            unit_list="[12345678, 56781234]",
+            unit_list=[12345678, 56781234],
             trigger={
                 "trg": {
                     "t": "sensor_value",
