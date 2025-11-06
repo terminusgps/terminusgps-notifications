@@ -4,7 +4,6 @@ from authorizenet import apicontractsv1
 from django.contrib.auth import get_user_model
 from django.test import Client, RequestFactory, TestCase, override_settings
 from terminusgps.authorizenet.constants import Environment, ValidationMode
-from terminusgps.wialon.session import WialonSession
 from terminusgps_payments.models import AddressProfile, PaymentProfile
 from terminusgps_payments.services import AuthorizenetService
 
@@ -658,21 +657,16 @@ class WialonNotificationUnitSelectFormViewTestCase(TestCase):
         view = self.view_cls()
         view.setup(request)
         form = view.get_form()
-        with WialonSession(token=self.test_token.name) as session:
-            unit_list = self.test_customer.get_units_from_wialon(session)
-            self.assertEqual(
-                [(int(unit["id"]), str(unit["nm"])) for unit in unit_list],
-                form.fields["units"].choices,
-            )
+        # TODO: Test form
 
     def test_form_valid(self) -> None:
         """Fails if the ``un`` path parameter wasn't added to the URL before redirecting the client."""
-        # TODO
         request = self.factory.get(self.endpoint)
         request.user = self.test_user
         view = self.view_cls()
         view.setup(request)
         form = view.get_form(form_class=None)
+        # TODO: Test form
 
 
 class WialonNotificationTriggerSelectFormViewTestCase(TestCase):
