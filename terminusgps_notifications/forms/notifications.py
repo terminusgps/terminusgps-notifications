@@ -18,15 +18,14 @@ class WialonUnitSelectForm(forms.Form):
     resource_id = forms.TypedChoiceField(
         choices=[],
         coerce=int,
-        help_text=_(
-            "Select a resource from the list. Ctrl+click to select multiple. Cmd+click on Mac."
-        ),
+        help_text=_("Select a resource from the list."),
         label=_("Resource"),
         widget=forms.widgets.Select(
             attrs={
                 "class": WIDGET_CSS_CLASS,
                 "autofocus": True,
                 "hx-get": reverse_lazy("terminusgps_notifications:units form"),
+                "hx-indicator": "#unit_list_indicator",
                 "hx-select": "#id_unit_list",
                 "hx-swap": "outerHTML",
                 "hx-target": "#id_unit_list",
@@ -294,11 +293,7 @@ class TriggerForm(forms.Form):
         ),
     )
     """Trigger type."""
-    p = forms.JSONField(
-        help_text=_("Enter custom parameters for your notification trigger."),
-        label=_("Trigger parameters"),
-        widget=forms.widgets.TextInput(),
-    )
+    p = forms.JSONField(widget=forms.widgets.HiddenInput())
     """Trigger parameters."""
 
 

@@ -1,4 +1,4 @@
-<form hx-post="{% url 'terminusgps_notifications:trigger parameters form' %}" hx-target="this" hx-include="this,[name='t']" hx-swap="outerHTML">
+<form id="id_p" class="flex flex-col gap-4 border p-4 rounded bg-gray-300" hx-post="{% url 'terminusgps_notifications:trigger parameters form' %}" hx-target="this" hx-include="this,[name='t']" hx-swap="outerHTML">
     {% csrf_token %}
     {% for field in form %}
     <section class="flex flex-col gap-2">
@@ -8,5 +8,5 @@
         <div class="animate-jiggle font-italic">{{ field.errors }}</div>
     </section>
     {% endfor %}
-    <button class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400" type="submit">Next</button>
+    <button class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out animate-pulse hover:bg-terminus-red-400" type="submit">Save Parameters</button>
 </form>

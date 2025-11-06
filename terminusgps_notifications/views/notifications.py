@@ -346,13 +346,12 @@ class WialonNotificationDeleteView(
         return super().get_queryset().filter(customer__user=self.request.user)
 
     def form_valid(self, form: Form) -> HttpResponse:
-        mode = constants.WialonNotificationUpdateCallModeType.DELETE
-        if not self.object.customer.resource_id:
-            self.object.customer.save()
-        token = getattr(self.object.customer, "token").name
         try:
+            token = services.get_wialon_token(self.request.user)
+            if not token:
+                raise ValueError("Invalid Wialon API token.")
             with WialonSession(token=token) as session:
-                self.object.update_in_wialon(mode, session)
+                self.object.update_in_wialon("delete", session)
             return super().form_valid(form=form)
         except (ValueError, WialonAPIError) as e:
             logger.warning(e)
@@ -377,8 +376,10 @@ class WialonNotificationListView(
         """Adds ``customer``, ``has_token`` and ``login_params`` to the view context."""
         customer = services.get_customer(self.request.user)
         has_token = hasattr(customer, "token") if customer else False
-        login_params = services.get_wialon_login_parameters(
-            self.request.user.username
+        login_params = (
+            services.get_wialon_login_parameters(self.request.user.username)
+            if hasattr(self.request, "user")
+            else {}
         )
 
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
