@@ -56,7 +56,7 @@ ADMINS = (
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False if "test" not in sys.argv else True,
+    "disable_existing_loggers": "test" in sys.argv,
     "formatters": {
         "verbose": {
             "format": "%(asctime)s [%(process)d] [%(module)s] [%(levelname)s] %(message)s",
