@@ -87,6 +87,14 @@ class WialonNotificationTriggerParametersFormView(
             trigger_type = self.request.POST["t"]
         return forms.TRIGGER_FORM_MAP.get(trigger_type)
 
+    def form_valid(self, form):
+        return HttpResponseRedirect(
+            reverse(
+                "terminusgps_notifications:trigger parameters success",
+                query={"p": json.dumps(form.cleaned_data)},
+            )
+        )
+
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 @method_decorator(cache_control(private=True), name="dispatch")
@@ -104,7 +112,7 @@ class WialonNotificationTriggerParametersSuccessView(
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["value"] = self.request.session.get("p", "{}")
+        context["value"] = self.request.GET.get("p", "{}")
         return context
 
 
@@ -206,11 +214,6 @@ class WialonNotificationCreateView(
         "terminusgps_notifications:create notifications success"
     )
     template_name = "terminusgps_notifications/notifications/create.html"
-
-    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        print(f"{request.GET = }")
-        print(f"{json.loads(request.GET.get("trigger_parameters", "{}")) = }")
-        return super().get(request, *args, **kwargs)
 
     def get_initial(self, **kwargs) -> dict[str, typing.Any]:
         initial: dict[str, typing.Any] = super().get_initial(**kwargs)
@@ -379,10 +382,10 @@ class WialonNotificationListView(
         "terminusgps_notifications/notifications/partials/_list.html"
     )
     template_name = "terminusgps_notifications/notifications/list.html"
-    paginate_by = 12
+    paginate_by = 8
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer``, ``has_token`` ``resource_id`` and ``login_params`` to the view context."""
+        """Adds ``customer``, ``has_token``, ``resource_id`` and ``login_params`` to the view context."""
         customer = (
             services.get_customer(self.request.user)
             if hasattr(self.request, "user")
@@ -398,25 +401,24 @@ class WialonNotificationListView(
             if customer and customer is not None
             else False
         )
+
         resource_id = None
         if customer and has_token:
-            token = services.get_wialon_token(self.request.user)
-            with WialonSession(token=token) as session:
-                resources = customer.get_resources_from_wialon(session)
-                resource_id = int(resources[0]["id"])
+            if self.request.session.get("resource_id"):
+                resource_id = self.request.session["resource_id"]
+            else:
+                token = services.get_wialon_token(self.request.user)
+                with WialonSession(token=token) as session:
+                    resources = customer.get_resources_from_wialon(session)
+                    resource_id = int(resources[0]["id"])
+                    self.request.session["resource_id"] = resource_id
+
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer
         context["has_token"] = has_token
         context["login_params"] = login_params
         context["resource_id"] = resource_id
         return context
-
-    def get_ordering(self) -> str:
-        """Returns ordering based on the ``order`` query parameter."""
-        if user_input := self.request.GET.get("order"):
-            if user_input in ("name", "-date_created"):
-                return user_input
-        return self.ordering
 
     def get_queryset(self) -> QuerySet:
         return (

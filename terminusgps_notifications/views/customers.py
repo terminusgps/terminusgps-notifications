@@ -313,7 +313,7 @@ class CustomerStatsView(
     template_name = "terminusgps_notifications/customers/stats.html"
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer`` to the view context."""
+        """Adds ``customer`` and ``executions`` to the view context."""
         customer = (
             services.get_customer(self.request.user)
             if hasattr(self.request, "user")
@@ -322,6 +322,7 @@ class CustomerStatsView(
 
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer
+        context["executions"] = customer.executions if customer else None
         return context
 
 
