@@ -45,20 +45,13 @@ class TerminusgpsNotificationsCustomer(models.Model):
         max_length=24,
     )
     """Date format for notifications."""
-    max_sms_count = models.PositiveIntegerField(
+    max_executions = models.PositiveIntegerField(
         default=500,
-        help_text="Enter the maximum number of allowed sms messages in a single period.",
+        help_text="Enter the maximum number of allowed notification executions in a single period.",
     )
-    """Maximum number of allowed sms messages for the period."""
-    max_voice_count = models.PositiveIntegerField(
-        default=500,
-        help_text="Enter the maximum number of allowed voice messages in a single period.",
-    )
-    """Maximum number of allowed voice messages for the period."""
-    sms_count = models.PositiveIntegerField(default=0)
-    """Current number of sms messages for the period."""
-    voice_count = models.PositiveIntegerField(default=0)
-    """Current number of voice messages for the period."""
+    """Maximum number of allowed notification executions."""
+    executions = models.PositiveIntegerField(default=0)
+    """Current number of notification executions."""
 
     tax_rate = models.DecimalField(
         max_digits=9,
@@ -106,58 +99,6 @@ class TerminusgpsNotificationsCustomer(models.Model):
     def __str__(self) -> str:
         """Returns the customer user's username."""
         return str(self.user.username)
-
-    def get_unit_groups_from_wialon(
-        self,
-        resource_id: str | int,
-        session: WialonSession,
-        force: bool = False,
-    ) -> list[dict[str, typing.Any]]:
-        """
-        Returns a list of of customer Wialon unit group dictionaries from the Wialon API.
-
-        Wialon unit group dictionary format:
-
-        +------------+---------------+---------------------------------+
-        | key        | type          | desc                            |
-        +============+===============+=================================+
-        | ``"mu"``   | :py:obj:`int` | Measurement system              |
-        +------------+---------------+---------------------------------+
-        | ``"nm"``   | :py:obj:`str` | Unit group name                 |
-        +------------+---------------+---------------------------------+
-        | ``"cls"``  | :py:obj:`int` | Superclass ID: 'avl_unit_group' |
-        +------------+---------------+---------------------------------+
-        | ``"id"``   | :py:obj:`int` | Unit group ID                   |
-        +------------+---------------+---------------------------------+
-        | ``"uacl"`` | :py:obj:`int` | User's access rights            |
-        +------------+---------------+---------------------------------+
-
-        :param force: Whether to force a Wialon API call instead of using a cached response. Default is :py:obj:`False` (use cache).
-        :type force: bool
-        :raises ValueError: If ``resource_id`` was a string and contained non-digit characters.
-        :returns: A list of Wialon unit group dictionaries.
-        :rtype: list[dict[str, ~typing.Any]]
-
-        """
-        if isinstance(resource_id, str) and not resource_id.isdigit():
-            raise ValueError(
-                f"resource_id can only contain digits, got '{resource_id}'."
-            )
-        return session.wialon_api.core_search_items(
-            **{
-                "spec": {
-                    "itemsType": "avl_unit_group",
-                    "propName": "sys_billing_account_guid,sys_name",
-                    "propValueMask": f"{resource_id},*",
-                    "sortType": "sys_name",
-                    "propType": "property,property",
-                },
-                "force": int(force),
-                "flags": flags.DataFlag.UNIT_BASE,
-                "from": 0,
-                "to": 0,
-            }
-        ).get("items", [])
 
     def get_units_from_wialon(
         self,
@@ -319,25 +260,25 @@ class TerminusgpsNotificationsCustomer(models.Model):
 
         Notification schedule/control schedule format:
 
-        +----------+----------------+------------------------------------------------------------------+
-        | key      | type           | desc                                                             |
-        +==========+================+==================================================================+
-        | ``"f1"`` | :py:obj:`int`  | Beginning of interval 1 (minutes from midnight)                  |
-        +----------+----------------+------------------------------------------------------------------+
-        | ``"f2"`` | :py:obj:`int`  | Beginning of interval 2 (minutes from midnight)                  |
-        +----------+----------------+------------------------------------------------------------------+
-        | ``"t1"`` | :py:obj:`int`  | End of interval 1 (minutes from midnight)                        |
-        +----------+----------------+------------------------------------------------------------------+
-        | ``"t2"`` | :py:obj:`int`  | End of interval 2 (minutes from midnight)                        |
-        +----------+----------------+------------------------------------------------------------------+
-        | ``"m"``  | :py:obj:`int`  | Mask of the days of the month (1: 2:\ sup:`0`, 31: 2\ :sup:`30`) |
-        +----------+----------------+------------------------------------------------------------------+
-        | ``"y"``  | :py:obj:`int`  | Mask of months (Jan: 2\ :sup:`0`, Dec: 2:\ sup:`11`)             |
-        +----------+----------------+------------------------------------------------------------------+
-        | ``"w"``  | :py:obj:`int`  | Mask of days of the week (Mon: 2\ :sup:`0`, Sun: 2\ :sup:`6`)    |
-        +----------+----------------+------------------------------------------------------------------+
-        | ``"f"``  | :py:obj:`int`  | Schedule flags                                                   |
-        +----------+----------------+------------------------------------------------------------------+
+        +----------+---------------+------------------------------------------------------------------+
+        | key      | type          | desc                                                             |
+        +==========+===============+==================================================================+
+        | ``"f1"`` | :py:obj:`int` | Beginning of interval 1 (minutes from midnight)                  |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"f2"`` | :py:obj:`int` | Beginning of interval 2 (minutes from midnight)                  |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"t1"`` | :py:obj:`int` | End of interval 1 (minutes from midnight)                        |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"t2"`` | :py:obj:`int` | End of interval 2 (minutes from midnight)                        |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"m"``  | :py:obj:`int` | Mask of the days of the month (1: 2:\ sup:`0`, 31: 2\ :sup:`30`) |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"y"``  | :py:obj:`int` | Mask of months (Jan: 2\ :sup:`0`, Dec: 2:\ sup:`11`)             |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"w"``  | :py:obj:`int` | Mask of days of the week (Mon: 2\ :sup:`0`, Sun: 2\ :sup:`6`)    |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"f"``  | :py:obj:`int` | Schedule flags                                                   |
+        +----------+---------------+------------------------------------------------------------------+
 
         Notification `action <https://wialon-help.link/bb04a9a5>`_ format (each item in the ``act`` list):
 
@@ -524,6 +465,8 @@ class WialonNotification(models.Model):
     """Actions."""
     text = models.CharField(max_length=1024, blank=True)
     """Text."""
+    activations = models.PositiveIntegerField(default=0)
+    """Activation count."""
     enabled = models.BooleanField(default=True)
     """Whether the notification is enabled in Wialon."""
     date_created = models.DateTimeField(auto_now_add=True)
@@ -588,6 +531,12 @@ class WialonNotification(models.Model):
                 },
             }
         ]
+
+    def get_from_wialon(self, session: WialonSession) -> dict[str, typing.Any]:
+        """Returns notification data from Wialon."""
+        return session.wialon_api.resource_get_notification_data(
+            **{"itemId": self.resource_id, "col": [self.wialon_id]}
+        )
 
     def update_in_wialon(
         self,

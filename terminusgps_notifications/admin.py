@@ -5,23 +5,18 @@ from . import models
 
 @admin.register(models.TerminusgpsNotificationsCustomer)
 class TerminusgpsNotificationsCustomerAdmin(admin.ModelAdmin):
-    list_display = ["user", "sms_count", "voice_count", "subscription__status"]
+    list_display = [
+        "user",
+        "max_executions",
+        "executions",
+        "subscription__status",
+    ]
     list_filter = ["subscription__status"]
     readonly_fields = ["tax", "grand_total"]
     exclude = ["subscription"]
     fieldsets = [
         (None, {"fields": ["user", "date_format"]}),
-        (
-            "Messaging",
-            {
-                "fields": [
-                    "max_sms_count",
-                    "max_voice_count",
-                    "sms_count",
-                    "voice_count",
-                ]
-            },
-        ),
+        ("Messaging", {"fields": ["max_executions", "executions"]}),
         (
             "Pricing",
             {"fields": ["tax_rate", "subtotal", "tax", "grand_total"]},
