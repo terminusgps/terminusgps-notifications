@@ -1,3 +1,3 @@
 <section id="notifications" class="flex flex-col gap-4">
-    <section id="notifications-list" class="flex flex-col gap-4" hx-target="this" hx-get="{% url 'terminusgps_notifications:list notifications' %}" hx-trigger="load once"></section>
+    <section id="notifications-list" class="flex flex-col gap-4" hx-target="this" hx-get="{% url 'terminusgps_notifications:list notifications' %}?refresh=true" hx-trigger="load once"></section>
 </section>

@@ -41,16 +41,27 @@ class DashboardView(
     )
     template_name = "terminusgps_notifications/customers/dashboard.html"
 
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer`` to the view context."""
+    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
+        """Adds :py:attr:`customer` and :py:attr:`has_token` to the view."""
         customer = (
-            services.get_customer(self.request.user)
-            if hasattr(self.request, "user")
+            services.get_customer(request.user)
+            if hasattr(request, "user")
             else None
         )
+        token = (
+            services.get_wialon_token(request.user)
+            if hasattr(request, "user")
+            else None
+        )
+        self.customer = customer
+        self.has_token = bool(token)
+        return super().setup(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        """Adds :py:attr:`customer` and :py:attr:`has_token` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"] = customer
+        context["customer"] = self.customer
+        context["has_token"] = self.has_token
         return context
 
 
@@ -65,47 +76,58 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
     )
     template_name = "terminusgps_notifications/customers/account.html"
 
-    @transaction.atomic
-    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        """Saves a Wialon API token for the user based on the ``user_name`` and ``access_token`` path parameters."""
-        if hasattr(request, "user"):
-            user = getattr(request, "user")
-            username = request.GET.get("user_name")
-            access_token = request.GET.get("access_token")
-            if username and access_token and username == user.username:
-                customer = services.get_customer(user)
-                if customer is not None:
-                    if hasattr(customer, "token"):
-                        old_token = getattr(customer, "token")
-                        old_token.delete()
-                    new_token = WialonToken()
-                    new_token.name = access_token
-                    new_token.customer = customer
-                    new_token.save()
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer``, ``has_token`` and ``login_params`` to the view context."""
+    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
+        """Adds :py:attr:`customer`, :py:attr:`has_token` and :py:attr:`login_params` to the view."""
         customer = (
-            services.get_customer(self.request.user)
-            if hasattr(self.request, "user")
+            services.get_customer(request.user)
+            if hasattr(request, "user")
+            else None
+        )
+        token = (
+            services.get_wialon_token(request.user)
+            if hasattr(request, "user")
             else None
         )
         login_params = (
-            services.get_wialon_login_parameters(self.request.user)
-            if hasattr(self.request, "user")
+            services.get_wialon_login_parameters(request.user)
+            if hasattr(request, "user")
             else None
         )
-        has_token = (
-            hasattr(customer, "token")
-            if customer and hasattr(customer, "token")
-            else False
-        )
+        self.customer = customer
+        self.has_token = bool(token)
+        self.login_params = login_params
+        return super().setup(request, *args, **kwargs)
 
+    @transaction.atomic
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        """Saves a Wialon API token for the user based on the ``user_name`` and ``access_token`` path parameters."""
+        if hasattr(request, "user") and self.customer is not None:
+            user = getattr(request, "user")
+            username = request.GET.get("user_name")
+            access_token = request.GET.get("access_token")
+            if all(
+                [
+                    username,
+                    access_token,
+                    hasattr(user, "username"),
+                    getattr(user, "username") == self.customer.user.username,
+                ]
+            ):
+                if hasattr(self.customer, "token"):
+                    old_token = getattr(self.customer, "token")
+                    old_token.delete()
+                new_token = WialonToken()
+                new_token.name = access_token
+                new_token.customer = self.customer
+                new_token.save()
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        """Adds :py:attr:`customer`, :py:attr:`has_token` and :py:attr:`login_params` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"] = customer
-        context["login_params"] = login_params
-        context["has_token"] = has_token
+        context["customer"] = self.customer
+        context["has_token"] = self.has_token
+        context["login_params"] = self.login_params
         return context
 
 
@@ -120,16 +142,20 @@ class SubscriptionView(
     )
     template_name = "terminusgps_notifications/customers/subscription.html"
 
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer`` to the view context."""
+    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
+        """Adds :py:attr:`customer` to the view."""
         customer = (
-            services.get_customer(self.request.user)
-            if hasattr(self.request, "user")
+            services.get_customer(request.user)
+            if hasattr(request, "user")
             else None
         )
+        self.customer = customer
+        return super().setup(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        """Adds :py:attr:`customer` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"] = customer
+        context["customer"] = self.customer
         return context
 
 
@@ -144,22 +170,27 @@ class NotificationsView(
     )
     template_name = "terminusgps_notifications/customers/notifications.html"
 
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer`` and ``has_token`` to the view context."""
+    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
+        """Adds :py:attr:`customer` and :py:attr:`has_token` to the view context."""
         customer = (
-            services.get_customer(self.request.user)
-            if hasattr(self.request, "user")
+            services.get_customer(request.user)
+            if hasattr(request, "user")
             else None
         )
-        has_token = (
-            hasattr(customer, "token")
-            if customer and hasattr(customer, "token")
-            else False
+        token = (
+            services.get_wialon_token(request.user)
+            if hasattr(request, "user")
+            else None
         )
+        self.customer = customer
+        self.has_token = bool(token)
+        return super().setup(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        """Adds :py:attr:`customer` and :py:attr:`has_token` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"] = customer
-        context["has_token"] = has_token
+        context["customer"] = self.customer
+        context["has_token"] = self.has_token
         return context
 
 
@@ -176,20 +207,20 @@ class CustomerSubscriptionCreateView(
     )
 
     def setup(self, request: HttpRequest, *args, **kwargs) -> None:
-        """Adds :py:attr:`anet_service` to the view for Authorizenet API calls."""
+        """Adds :py:attr:`customer` and :py:attr:`anet_service` to the view."""
+        customer = (
+            services.get_customer(request.user)
+            if hasattr(request, "user")
+            else None
+        )
+        self.customer = customer
         self.anet_service = AuthorizenetService()
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer`` to the view context."""
-        customer = (
-            services.get_customer(self.request.user)
-            if hasattr(self.request, "user")
-            else None
-        )
-
+        """Adds :py:attr:`customer` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"] = customer
+        context["customer"] = self.customer
         return context
 
     def get_form(self, form_class=None) -> CustomerSubscriptionCreationForm:
@@ -208,9 +239,7 @@ class CustomerSubscriptionCreateView(
         self, form: CustomerSubscriptionCreationForm
     ) -> HttpResponse:
         """Creates a subscription for the customer in Authorizenet."""
-        # Get customer and customer profile
-        customer = services.get_customer(self.request.user)
-        if customer is None:
+        if self.customer is None:
             form.add_error(
                 None,
                 ValidationError(
@@ -239,7 +268,7 @@ class CustomerSubscriptionCreateView(
         address_profile = form.cleaned_data["address_profile"]
         start_date = timezone.now()
         name = "Terminus GPS Notifications"
-        amount = customer.grand_total
+        amount = self.customer.grand_total
         trial_amount = decimal.Decimal("0.00")
 
         # Set once-per-month interval
@@ -282,8 +311,8 @@ class CustomerSubscriptionCreateView(
             )
             subscription.pk = int(anet_response.subscriptionId)
             subscription.save()
-            customer.subscription = subscription
-            customer.save()
+            self.customer.subscription = subscription
+            self.customer.save()
             return HttpResponseRedirect(
                 reverse("terminusgps_notifications:subscription"),
                 headers={"HX-Retarget": "#subscription"},
@@ -312,18 +341,46 @@ class CustomerStatsView(
     )
     template_name = "terminusgps_notifications/customers/stats.html"
 
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer`` and ``executions`` to the view context."""
+    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
+        """Adds :py:attr:`customer`, :py:attr:`has_token` and :py:attr:`login_params` to the view."""
         customer = (
-            services.get_customer(self.request.user)
-            if hasattr(self.request, "user")
+            services.get_customer(request.user)
+            if hasattr(request, "user")
             else None
         )
+        token = (
+            services.get_wialon_token(request.user)
+            if hasattr(request, "user")
+            else None
+        )
+        login_params = (
+            services.get_wialon_login_parameters(request.user)
+            if hasattr(request, "user")
+            else None
+        )
+        self.customer = customer
+        self.has_token = bool(token)
+        self.login_params = login_params
+        return super().setup(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        """Adds :py:attr:`customer`, :py:attr:`has_token` and :py:attr:`login_params` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"] = customer
-        context["executions"] = customer.executions if customer else None
+        context["customer"] = self.customer
+        context["has_token"] = self.has_token
+        context["login_params"] = self.login_params
         return context
+
+
+class CustomerMessagesView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
+):
+    content_type = "text/html"
+    http_method_names = ["get"]
+    template_name = "terminusgps_notifications/customers/messages.html"
+    partial_template_name = (
+        "terminusgps_notifications/customers/partials/_messages.html"
+    )
 
 
 class WialonLoginView(LoginRequiredMixin, RedirectView):

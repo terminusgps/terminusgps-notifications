@@ -1,18 +1,17 @@
 import logging
 import typing
 import urllib.parse
-from collections.abc import Collection
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator
-from django.db import models, transaction
+from django.db import models
 from django.db.models import F
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from encrypted_field import EncryptedField
 from terminusgps.wialon import flags
-from terminusgps.wialon.session import WialonAPIError, WialonSession
+from terminusgps.wialon.session import WialonSession
 
 from terminusgps_notifications.constants import (
     WialonNotificationTriggerType,
@@ -197,128 +196,11 @@ class TerminusgpsNotificationsCustomer(models.Model):
             }
         ).get("items", [])
 
-    def get_notifications_from_wialon(
-        self,
-        resource_id: str | int,
-        session: WialonSession,
-        notification_ids: Collection[int] | None = None,
-    ) -> list[dict[str, typing.Any]]:
-        """
-        Returns a list of notification dictionaries from the Wialon API.
-
-        Wialon notification dictionary format:
-
-        +----------------+----------------+-----------------------------------------------+
-        | key            | type           | desc                                          |
-        +================+================+===============================================+
-        | ``"id"``       | :py:obj:`int`  | Notification ID                               |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"n"``        | :py:obj:`str`  | Notification name                             |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"txt"``      | :py:obj:`int`  | Notification text                             |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"ta"``       | :py:obj:`int`  | Activation time (UNIX timestamp)              |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"td"``       | :py:obj:`int`  | Deactivation time (UNIX timestamp)            |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"ma"``       | :py:obj:`int`  | Maximum number of alarms (0 = unlimited)      |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"mmtd"``     | :py:obj:`int`  | Maximum time interval between messages (sec)  |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"cdt"``      | :py:obj:`int`  | Alarm timeout (sec)                           |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"mast"``     | :py:obj:`int`  | Minimum duration of the alarm state (sec)     |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"mpst"``     | :py:obj:`int`  | Minimum duration of previous state (sec)      |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"cp"``       | :py:obj:`int`  | Control period relative to current time (sec) |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"fl"``       | :py:obj:`int`  | Notification flags                            |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"tz"``       | :py:obj:`int`  | Notification timezone                         |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"la"``       | :py:obj:`str`  | Notification language code                    |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"ac"``       | :py:obj:`int`  | Alarms count                                  |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"d"``        | :py:obj:`str`  | Notification description                      |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"sch"``      | :py:obj:`dict` | Notification schedule (see below)             |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"ctrl_sch"`` | :py:obj:`dict` | Notification control schedule (see below)     |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"un"``       | :py:obj:`list` | List of unit/unit group IDs                   |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"act"``      | :py:obj:`list` | List of notification actions (see below)      |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"trg"``      | :py:obj:`dict` | Notification trigger (see below)              |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"ct"``       | :py:obj:`int`  | Creation time (UNIX timestamp)                |
-        +----------------+----------------+-----------------------------------------------+
-        | ``"mt"``       | :py:obj:`int`  | Last modification time (UNIX timestamp)       |
-        +----------------+----------------+-----------------------------------------------+
-
-        Notification schedule/control schedule format:
-
-        +----------+---------------+------------------------------------------------------------------+
-        | key      | type          | desc                                                             |
-        +==========+===============+==================================================================+
-        | ``"f1"`` | :py:obj:`int` | Beginning of interval 1 (minutes from midnight)                  |
-        +----------+---------------+------------------------------------------------------------------+
-        | ``"f2"`` | :py:obj:`int` | Beginning of interval 2 (minutes from midnight)                  |
-        +----------+---------------+------------------------------------------------------------------+
-        | ``"t1"`` | :py:obj:`int` | End of interval 1 (minutes from midnight)                        |
-        +----------+---------------+------------------------------------------------------------------+
-        | ``"t2"`` | :py:obj:`int` | End of interval 2 (minutes from midnight)                        |
-        +----------+---------------+------------------------------------------------------------------+
-        | ``"m"``  | :py:obj:`int` | Mask of the days of the month (1: 2:\ sup:`0`, 31: 2\ :sup:`30`) |
-        +----------+---------------+------------------------------------------------------------------+
-        | ``"y"``  | :py:obj:`int` | Mask of months (Jan: 2\ :sup:`0`, Dec: 2:\ sup:`11`)             |
-        +----------+---------------+------------------------------------------------------------------+
-        | ``"w"``  | :py:obj:`int` | Mask of days of the week (Mon: 2\ :sup:`0`, Sun: 2\ :sup:`6`)    |
-        +----------+---------------+------------------------------------------------------------------+
-        | ``"f"``  | :py:obj:`int` | Schedule flags                                                   |
-        +----------+---------------+------------------------------------------------------------------+
-
-        Notification `action <https://wialon-help.link/bb04a9a5>`_ format (each item in the ``act`` list):
-
-        +----------+-----------------+-------------------+
-        | key      | type            | desc              |
-        +==========+=================+===================+
-        | ``"t"``  | :py:obj:`str`   | Action type       |
-        +----------+-----------------+-------------------+
-        | ``"p"``  | :py:obj:`dict`  | Action parameters |
-        +----------+-----------------+-------------------+
-
-        Notification `trigger <https://wialon-help.link/9d54585d>`_ format:
-
-        +----------+-----------------+--------------------+
-        | key      | type            | desc               |
-        +==========+=================+====================+
-        | ``"t"``  | :py:obj:`str`   | Trigger type       |
-        +----------+-----------------+--------------------+
-        | ``"p"``  | :py:obj:`dict`  | Trigger parameters |
-        +----------+-----------------+--------------------+
-
-        :param resource_id: A Wialon resource id.
-        :type resource_id: str | int
-        :param session: A valid Wialon API session.
-        :type session: ~terminusgps.wialon.session.WialonSession
-        :param notification_ids: Optional. A list of notification ids.
-        :type notification_ids: ~collections.abc.Collection[int] | None
-        :raises ValueError: If ``resource_id`` was a string containing non-digit characters.
-        :returns: A list of Wialon notification dictionaries.
-        :rtype: list[dict[str, ~typing.Any]]
-
-        """
-        if isinstance(resource_id, str) and not resource_id.isdigit():
-            raise ValueError(
-                f"resource_id can only contain digits, got '{resource_id}'."
-            )
-        params = {"itemId": resource_id}
-        if notification_ids is not None:
-            params["col"] = notification_ids
-        return session.wialon_api.resource_get_notification_data(**params)
+    def get_messages_from_wialon(
+        self, session: WialonSession
+    ) -> dict[str, typing.Any]:
+        print(f"{session.wialon_api.avl_evts() = }")
+        return {}
 
 
 class WialonToken(models.Model):
@@ -491,16 +373,6 @@ class WialonNotification(models.Model):
         """Returns the notification name."""
         return str(self.name)
 
-    @transaction.atomic
-    def save(self, **kwargs) -> None:
-        """Sets :py:attr:`text` and :py:attr:`actions` before saving."""
-        update_fields = kwargs.get("update_fields", [])
-        if not self.text or "message" in update_fields:
-            self.text = self.get_text()
-        if not self.actions or "method" in update_fields:
-            self.actions = self.get_actions()
-        return super().save(**kwargs)
-
     def get_absolute_url(self) -> str:
         return reverse(
             "terminusgps_notifications:detail notifications",
@@ -509,13 +381,9 @@ class WialonNotification(models.Model):
 
     def get_text(self) -> str:
         """Returns the notification text (txt)."""
-        return urllib.parse.urlencode(
-            {
-                "unit_id": "%UNIT_ID%",
-                "user_id": self.customer.user.pk,
-                "message": self.message,
-            }
-        )
+        user_id: int = self.customer.user.pk
+        message: str = self.message
+        return f"unit_id=%UNIT_ID%&user_id={user_id}&message={message}"
 
     def get_actions(self) -> list[dict[str, typing.Any]]:
         """Returns a list of notification actions (act)."""
@@ -532,8 +400,113 @@ class WialonNotification(models.Model):
             }
         ]
 
-    def get_from_wialon(self, session: WialonSession) -> dict[str, typing.Any]:
-        """Returns notification data from Wialon."""
+    def get_data_from_wialon(
+        self, session: WialonSession
+    ) -> dict[str, typing.Any]:
+        """
+        Returns the notification data from Wialon using the Wialon API.
+
+        Notification data format:
+
+        +----------------+----------------+-----------------------------------------------+
+        | key            | type           | desc                                          |
+        +================+================+===============================================+
+        | ``"id"``       | :py:obj:`int`  | Notification ID                               |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"n"``        | :py:obj:`str`  | Notification name                             |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"txt"``      | :py:obj:`int`  | Notification text                             |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ta"``       | :py:obj:`int`  | Activation time (UNIX timestamp)              |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"td"``       | :py:obj:`int`  | Deactivation time (UNIX timestamp)            |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ma"``       | :py:obj:`int`  | Maximum number of alarms (0 = unlimited)      |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"mmtd"``     | :py:obj:`int`  | Maximum time interval between messages (sec)  |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"cdt"``      | :py:obj:`int`  | Alarm timeout (sec)                           |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"mast"``     | :py:obj:`int`  | Minimum duration of the alarm state (sec)     |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"mpst"``     | :py:obj:`int`  | Minimum duration of previous state (sec)      |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"cp"``       | :py:obj:`int`  | Control period relative to current time (sec) |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"fl"``       | :py:obj:`int`  | Notification flags                            |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"tz"``       | :py:obj:`int`  | Notification timezone                         |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"la"``       | :py:obj:`str`  | Notification language code                    |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ac"``       | :py:obj:`int`  | Alarms count                                  |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"d"``        | :py:obj:`str`  | Notification description                      |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"sch"``      | :py:obj:`dict` | Notification schedule (see below)             |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ctrl_sch"`` | :py:obj:`dict` | Notification control schedule (see below)     |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"un"``       | :py:obj:`list` | List of unit/unit group IDs                   |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"act"``      | :py:obj:`list` | List of notification actions (see below)      |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"trg"``      | :py:obj:`dict` | Notification trigger (see below)              |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"ct"``       | :py:obj:`int`  | Creation time (UNIX timestamp)                |
+        +----------------+----------------+-----------------------------------------------+
+        | ``"mt"``       | :py:obj:`int`  | Last modification time (UNIX timestamp)       |
+        +----------------+----------------+-----------------------------------------------+
+
+        Notification schedule/control schedule format:
+
+        +----------+---------------+------------------------------------------------------------------+
+        | key      | type          | desc                                                             |
+        +==========+===============+==================================================================+
+        | ``"f1"`` | :py:obj:`int` | Beginning of interval 1 (minutes from midnight)                  |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"f2"`` | :py:obj:`int` | Beginning of interval 2 (minutes from midnight)                  |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"t1"`` | :py:obj:`int` | End of interval 1 (minutes from midnight)                        |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"t2"`` | :py:obj:`int` | End of interval 2 (minutes from midnight)                        |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"m"``  | :py:obj:`int` | Mask of the days of the month (1: 2:\ sup:`0`, 31: 2\ :sup:`30`) |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"y"``  | :py:obj:`int` | Mask of months (Jan: 2\ :sup:`0`, Dec: 2:\ sup:`11`)             |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"w"``  | :py:obj:`int` | Mask of days of the week (Mon: 2\ :sup:`0`, Sun: 2\ :sup:`6`)    |
+        +----------+---------------+------------------------------------------------------------------+
+        | ``"f"``  | :py:obj:`int` | Schedule flags                                                   |
+        +----------+---------------+------------------------------------------------------------------+
+
+        Notification `action <https://wialon-help.link/bb04a9a5>`_ format (each item in the ``act`` list):
+
+        +----------+-----------------+-------------------+
+        | key      | type            | desc              |
+        +==========+=================+===================+
+        | ``"t"``  | :py:obj:`str`   | Action type       |
+        +----------+-----------------+-------------------+
+        | ``"p"``  | :py:obj:`dict`  | Action parameters |
+        +----------+-----------------+-------------------+
+
+        Notification `trigger <https://wialon-help.link/9d54585d>`_ format:
+
+        +----------+-----------------+--------------------+
+        | key      | type            | desc               |
+        +==========+=================+====================+
+        | ``"t"``  | :py:obj:`str`   | Trigger type       |
+        +----------+-----------------+--------------------+
+        | ``"p"``  | :py:obj:`dict`  | Trigger parameters |
+        +----------+-----------------+--------------------+
+
+        :param session: A valid Wialon API session.
+        :type session: ~terminusgps.wialon.session.WialonSession
+        :raises WialonAPIError: If something went wrong calling the Wialon API.
+        :returns: The notification data from Wialon.
+        :rtype: dict[str, ~typing.Any]
+
+        """
         return session.wialon_api.resource_get_notification_data(
             **{"itemId": self.resource_id, "col": [self.wialon_id]}
         )
@@ -555,11 +528,8 @@ class WialonNotification(models.Model):
         :rtype: dict[str, ~typing.Any]
 
         """
-        try:
-            params = self.get_wialon_parameters(call_mode=call_mode)
-            return session.wialon_api.resource_update_notification(**params)
-        except WialonAPIError:
-            raise
+        params = self.get_wialon_parameters(call_mode=call_mode)
+        return session.wialon_api.resource_update_notification(**params)
 
     def get_wialon_parameters(self, call_mode: str) -> dict[str, typing.Any]:
         """
