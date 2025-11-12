@@ -404,15 +404,15 @@ class WialonNotificationListView(
 
         resource_id = None
         if customer and has_token:
-            if self.request.session.get("resource_id"):
-                resource_id = self.request.session["resource_id"]
+            session_key = f"{customer.pk}_resource_id"
+            if self.request.session.get(session_key):
+                resource_id = self.request.session[session_key]
             else:
                 token = services.get_wialon_token(self.request.user)
                 with WialonSession(token=token) as session:
                     resources = customer.get_resources_from_wialon(session)
                     resource_id = int(resources[0]["id"])
-                    self.request.session["resource_id"] = resource_id
-
+                    self.request.session[session_key] = resource_id
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = customer
         context["has_token"] = has_token

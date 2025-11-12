@@ -1,4 +1,5 @@
 import base64
+import decimal
 import os
 import sys
 from pathlib import Path
@@ -47,6 +48,7 @@ WIALON_TOKEN_ACCESS_TYPE = (
     | TokenFlag.MANAGE_SENSITIVE
 )
 WSGI_APPLICATION = "src.wsgi.application"
+NOTIFICATIONS_SETUP_FEE = decimal.Decimal("140.00")
 
 ADMINS = (
     ("Peter", "pspeckman@terminusgps.com"),

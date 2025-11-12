@@ -1,0 +1,9 @@
+Hey, {{ first_name|default_if_none:'there' }}!
+
+Thanks for subscribing to [Terminus GPS Notifications]({{ link_homepage }})!
+
+Your new subscription grants you {{ executions_max }} live notification deliveries per billing period.
+
+You're ready to [create live notifications]({{ link_notifications }}) for your end-users!
+
+If you have any questions or concerns, feel free to reply to this email (we promise it'll make it to our support team).

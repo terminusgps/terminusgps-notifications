@@ -4,11 +4,20 @@ from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm
 from django.core.validators import validate_email
 from django.utils.translation import gettext_lazy as _
 
+from terminusgps_notifications.models import ExtensionPackage
+
 WIDGET_CSS_CLASS = (
     settings.WIDGET_CSS_CLASS
     if hasattr(settings, "WIDGET_CSS_CLASS")
     else "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600"
 )
+
+
+class ExtensionPackageCreationForm(forms.ModelForm):
+    class Meta:
+        model = ExtensionPackage
+        fields = ["customer"]
+        widgets = {"customer": forms.widgets.HiddenInput()}
 
 
 class TerminusgpsNotificationsAuthenticationForm(AuthenticationForm):
@@ -39,6 +48,7 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
         help_text=_(
             "Required. 64 characters or fewer. Letters and digits only."
         ),
+        label=_("First Name"),
         widget=forms.widgets.TextInput(
             attrs={
                 "class": WIDGET_CSS_CLASS,
@@ -51,6 +61,7 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
         help_text=_(
             "Required. 64 characters or fewer. Letters and digits only."
         ),
+        label=_("Last Name"),
         widget=forms.widgets.TextInput(
             attrs={
                 "class": WIDGET_CSS_CLASS,
@@ -60,14 +71,15 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
         ),
     )
     company_name = forms.CharField(
-        required=False,
+        label=_("Company Name"),
         help_text=_(
             "Optional. 64 characters or fewer. Letters and digits only."
         ),
+        required=False,
         widget=forms.widgets.TextInput(
             attrs={
                 "class": WIDGET_CSS_CLASS,
-                "placeholder": "Company",
+                "placeholder": "Terminus GPS",
                 "enterkeyhint": "next",
             }
         ),
@@ -84,14 +96,14 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
         self.fields["username"].validators.append(validate_email)
         self.fields["username"].widget = forms.widgets.TextInput(
             attrs={
-                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
+                "class": WIDGET_CSS_CLASS,
                 "placeholder": "email@terminusgps.com",
                 "enterkeyhint": "next",
             }
         )
         self.fields["password1"].widget = forms.widgets.PasswordInput(
             attrs={
-                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
+                "class": WIDGET_CSS_CLASS,
                 "placeholder": "••••••••••••••••",
                 "enterkeyhint": "next",
                 "autocomplete": False,
@@ -99,7 +111,7 @@ class TerminusgpsNotificationsRegistrationForm(BaseUserCreationForm):
         )
         self.fields["password2"].widget = forms.widgets.PasswordInput(
             attrs={
-                "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
+                "class": WIDGET_CSS_CLASS,
                 "placeholder": "••••••••••••••••",
                 "enterkeyhint": "done",
                 "autocomplete": False,

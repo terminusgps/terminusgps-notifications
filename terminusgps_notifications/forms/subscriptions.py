@@ -1,5 +1,9 @@
 from django import forms
 from django.conf import settings
+from terminusgps_payments.forms import (
+    AddressProfileChoiceField,
+    PaymentProfileChoiceField,
+)
 from terminusgps_payments.models import AddressProfile, PaymentProfile
 
 WIDGET_CSS_CLASS = (
@@ -9,29 +13,13 @@ WIDGET_CSS_CLASS = (
 )
 
 
-class PaymentProfileChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        if obj.credit_card is not None:
-            cc = obj.credit_card
-            return f"{cc.cardType} ending in {str(cc.cardNumber)[-4:]}"
-        return str(obj)
-
-
-class AddressProfileChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        if obj.address is not None:
-            addr = obj.address
-            return str(addr.address)
-        return str(obj)
-
-
 class CustomerSubscriptionCreationForm(forms.Form):
     payment_profile = PaymentProfileChoiceField(
-        queryset=PaymentProfile.objects.all(),
+        queryset=PaymentProfile.objects.none(),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     address_profile = AddressProfileChoiceField(
-        queryset=AddressProfile.objects.all(),
+        queryset=AddressProfile.objects.none(),
         widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
     )
     consent = forms.BooleanField(

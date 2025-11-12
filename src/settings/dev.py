@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import base64
+import decimal
 import os
 import sys
 from pathlib import Path
@@ -51,6 +52,8 @@ WIALON_TOKEN_ACCESS_TYPE = (
     | TokenFlag.MANAGE_SENSITIVE
 )
 WSGI_APPLICATION = "src.wsgi.application"
+NOTIFICATIONS_SETUP_FEE = decimal.Decimal("140.00")
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 ADMINS = (
     ("Peter", "pspeckman@terminusgps.com"),
@@ -112,12 +115,25 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_tasks",
     "terminusgps_payments.apps.TerminusgpsPaymentsConfig",
     "terminusgps_notifications.apps.TerminusgpsNotificationsConfig",
 ]
 
+TASKS = {
+    "default": {"BACKEND": "django_tasks.backends.immediate.ImmediateBackend"}
+}
+
+# CACHES = {
+#     "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+# }
+
 CACHES = {
-    "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "TIMEOUT": 60 * 15,
+    }
 }
 
 MIDDLEWARE = [

@@ -25,6 +25,26 @@ urlpatterns = [
         name="create subscriptions",
     ),
     path(
+        "subscriptions/packages/create/",
+        views.ExtensionPackageCreateView.as_view(),
+        name="create packages",
+    ),
+    path(
+        "subscriptions/packages/list/",
+        views.ExtensionPackageListView.as_view(),
+        name="list packages",
+    ),
+    path(
+        "subscriptions/packages/<int:package_pk>/detail/",
+        views.ExtensionPackageDetailView.as_view(),
+        name="detail packages",
+    ),
+    path(
+        "subscriptions/packages/<int:package_pk>/delete/",
+        views.ExtensionPackageDeleteView.as_view(),
+        name="delete packages",
+    ),
+    path(
         "notifications/",
         views.NotificationsView.as_view(),
         name="notifications",

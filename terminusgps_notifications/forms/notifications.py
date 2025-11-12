@@ -70,7 +70,7 @@ class WialonNotificationUpdateForm(forms.ModelForm):
             # Required fields
             "name": forms.widgets.TextInput(
                 attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
+                    "class": WIDGET_CSS_CLASS,
                     "placeholder": "New Notification",
                     "enterkeyhint": "next",
                     "inputmode": "text",
@@ -78,57 +78,45 @@ class WialonNotificationUpdateForm(forms.ModelForm):
             ),
             "message": forms.widgets.TextInput(
                 attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600",
+                    "class": WIDGET_CSS_CLASS,
                     "placeholder": "Hello! At %MSG_TIME%, your vehicle %UNIT% entered %ZONE%.",
                     "enterkeyhint": "next",
                     "inputmode": "text",
                 }
             ),
-            "method": forms.widgets.Select(
-                attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
-                }
-            ),
+            "method": forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
             # Advanced fields
             "activation_time": forms.widgets.DateTimeInput(
-                attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
-                }
+                attrs={"class": WIDGET_CSS_CLASS}
             ),
             "deactivation_time": forms.widgets.DateTimeInput(
-                attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
-                }
+                attrs={"class": WIDGET_CSS_CLASS}
             ),
             "max_alarms": forms.widgets.TextInput(
                 attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600",
+                    "class": WIDGET_CSS_CLASS,
                     "size": 1,
                     "maxlength": 4,
                     "inputmode": "decimal",
                 }
             ),
             "max_message_interval": forms.widgets.Select(
-                attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
-                }
+                attrs={"class": WIDGET_CSS_CLASS}
             ),
             "alarm_timeout": forms.widgets.TextInput(
                 attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600",
+                    "class": WIDGET_CSS_CLASS,
                     "size": 1,
                     "maxlength": 4,
                     "inputmode": "decimal",
                 }
             ),
             "control_period": forms.widgets.Select(
-                attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
-                }
+                attrs={"class": WIDGET_CSS_CLASS}
             ),
             "min_duration_alarm": forms.widgets.TextInput(
                 attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600",
+                    "class": WIDGET_CSS_CLASS,
                     "size": 1,
                     "maxlength": 4,
                     "inputmode": "decimal",
@@ -136,22 +124,16 @@ class WialonNotificationUpdateForm(forms.ModelForm):
             ),
             "min_duration_prev": forms.widgets.TextInput(
                 attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600",
+                    "class": WIDGET_CSS_CLASS,
                     "size": 1,
                     "maxlength": 4,
                     "inputmode": "decimal",
                 }
             ),
             "language": forms.widgets.Select(
-                attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
-                }
+                attrs={"class": WIDGET_CSS_CLASS}
             ),
-            "flags": forms.widgets.Select(
-                attrs={
-                    "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 invalid:bg-red-50 invalid:text-red-600"
-                }
-            ),
+            "flags": forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
         }
 
 
