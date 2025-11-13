@@ -384,8 +384,8 @@ class WialonNotificationListView(
     template_name = "terminusgps_notifications/notifications/list.html"
     paginate_by = 8
 
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds ``customer``, ``has_token``, ``resource_id`` and ``login_params`` to the view context."""
+    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
+        super().setup(request, *args, **kwargs)
         customer = (
             services.get_customer(self.request.user)
             if hasattr(self.request, "user")
@@ -401,22 +401,35 @@ class WialonNotificationListView(
             if customer and customer is not None
             else False
         )
+        has_subscription = (
+            hasattr(customer, "subscription")
+            if customer and customer is not None
+            else False
+        )
+        self.customer = customer
+        self.login_params = login_params
+        self.has_token = has_token
+        self.has_subscription = has_subscription
 
+    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
+        """Adds :py:attr:`customer`, :py:attr:`has_token`, :py:attr:`has_subscription`, :py:attr:`resource_id` and :py:attr:`login_params` to the view context."""
         resource_id = None
-        if customer and has_token:
-            session_key = f"{customer.pk}_resource_id"
+        if self.customer and self.has_token:
+            session_key = f"{self.customer.pk}_resource_id"
             if self.request.session.get(session_key):
                 resource_id = self.request.session[session_key]
             else:
                 token = services.get_wialon_token(self.request.user)
                 with WialonSession(token=token) as session:
-                    resources = customer.get_resources_from_wialon(session)
+                    resources = self.customer.get_resources_from_wialon(
+                        session
+                    )
                     resource_id = int(resources[0]["id"])
                     self.request.session[session_key] = resource_id
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"] = customer
-        context["has_token"] = has_token
-        context["login_params"] = login_params
+        context["customer"] = self.customer
+        context["has_token"] = self.has_token
+        context["login_params"] = self.login_params
         context["resource_id"] = resource_id
         return context
 
