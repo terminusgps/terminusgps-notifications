@@ -3,20 +3,20 @@
     <section class="flex gap-2 justify-between">
         <section class="flex flex-col gap-2 w-full">
             {{ form.first_name }}
-            <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.first_name.id_for_label }}">First Name</label>
+            <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
             <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.first_name.id_for_label }}_helptext">{{ form.first_name.help_text }}</p>
             {% if form.first_name.errors %}<div class="animate-jiggle font-italic">{{ form.first_name.errors }}</div>{% endif %}
         </section>
         <section class="flex flex-col gap-2 w-full">
             {{ form.last_name }}
-            <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.last_name.id_for_label }}">Last Name</label>
+            <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
             <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.last_name.id_for_label }}_helptext">{{ form.last_name.help_text }}</p>
             {% if form.last_name.errors %}<div class="animate-jiggle font-italic">{{ form.last_name.errors }}</div>{% endif %}
         </section>
     </section>
     <section class="flex flex-col gap-2">
         {{ form.company_name }}
-        <label class="order-first peer-user-invalid:text-red-800" for="{{ form.company_name.id_for_label }}">Company</label>
+        <label class="order-first peer-user-invalid:text-red-800" for="{{ form.company_name.id_for_label }}">{{ form.company_name.label }}</label>
         <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.company_name.id_for_label }}_helptext">{{ form.company_name.help_text|safe }}</p>
         {% if form.company_name.errors %}<div class="animate-jiggle font-italic">{{ form.company_name.errors }}</div>{% endif %}
     </section>

@@ -8,8 +8,9 @@ dependencies = [
     "django-encrypted-field>=1.0.5",
     "django>=5.2.7",
     "python-terminusgps>=48.1.0",
-    "terminusgps-payments>=2.6.0",
+    "terminusgps-payments>=2.8.0",
     "python-dateutil>=2.9.0.post0",
+    "django-tasks>=0.9.0",
 ]
 
 [project.urls]

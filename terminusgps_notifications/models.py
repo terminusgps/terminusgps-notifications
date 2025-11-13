@@ -10,7 +10,7 @@ from django.db.models import F
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from encrypted_field import EncryptedField
-from terminusgps.wialon import flags
+from terminusgps.wialon.flags import DataFlag
 from terminusgps.wialon.session import WialonSession
 
 from terminusgps_notifications.constants import (
@@ -44,14 +44,13 @@ class TerminusgpsNotificationsCustomer(models.Model):
         max_length=24,
     )
     """Date format for notifications."""
-    max_executions = models.PositiveIntegerField(
-        default=500,
-        help_text="Enter the maximum number of allowed notification executions in a single period.",
+    subtotal_base = models.DecimalField(
+        max_digits=9,
+        decimal_places=2,
+        default=60.00,
+        help_text="Enter a base dollar amount to charge the customer for service (not incl. tax) every period.",
     )
-    """Maximum number of allowed notification executions."""
-    executions = models.PositiveIntegerField(default=0)
-    """Current number of notification executions."""
-
+    """Subscription base subtotal."""
     tax_rate = models.DecimalField(
         max_digits=9,
         decimal_places=4,
@@ -62,10 +61,10 @@ class TerminusgpsNotificationsCustomer(models.Model):
     subtotal = models.DecimalField(
         max_digits=9,
         decimal_places=2,
-        default=64.99,
-        help_text="Enter a dollar amount to charge the customer (not incl. tax) every period.",
+        default=60.00,
+        help_text="Programatically generated customer subtotal amount (base + packages).",
     )
-    """Subscription subtotal."""
+    """Subscription current subtotal."""
     tax = models.GeneratedField(
         expression=(F("subtotal") * (F("tax_rate") + 1)) - F("subtotal"),
         output_field=models.DecimalField(max_digits=9, decimal_places=2),
@@ -80,7 +79,6 @@ class TerminusgpsNotificationsCustomer(models.Model):
         help_text="Automatically generated grand total amount (subtotal+tax).",
     )
     """Subscription grand total (subtotal + tax)."""
-
     subscription = models.ForeignKey(
         "terminusgps_payments.Subscription",
         on_delete=models.SET_NULL,
@@ -90,6 +88,19 @@ class TerminusgpsNotificationsCustomer(models.Model):
         default=None,
     )
     """Associated subscription."""
+
+    executions_max = models.PositiveIntegerField(
+        verbose_name="maximum executions", default=500
+    )
+    """Maximum number of notification executions in a single period."""
+    executions_max_base = models.PositiveIntegerField(
+        verbose_name="maximum executions base", default=500
+    )
+    """Maximum base number of notification executions in a single period."""
+    executions_count = models.PositiveIntegerField(
+        verbose_name="current executions", default=0
+    )
+    """Current number of notification executions this period."""
 
     class Meta:
         verbose_name = _("customer")
@@ -105,11 +116,14 @@ class TerminusgpsNotificationsCustomer(models.Model):
         session: WialonSession,
         items_type: str = "avl_unit",
         force: bool = False,
+        flags: int = DataFlag.UNIT_BASE,
+        start: int = 0,
+        end: int = 0,
     ) -> list[dict[str, typing.Any]]:
         """
         Returns a list of of customer Wialon unit dictionaries from the Wialon API.
 
-        Wialon unit dictionary format:
+        Default Wialon unit dictionary format (flags=1):
 
         +------------+---------------+---------------------------+
         | key        | type          | desc                      |
@@ -127,6 +141,12 @@ class TerminusgpsNotificationsCustomer(models.Model):
 
         :param force: Whether to force a Wialon API call instead of using a cached response. Default is :py:obj:`False` (use cache).
         :type force: bool
+        :param flags: Response flags. Default is ``1``.
+        :type flags: int
+        :param start: Start index. Default is ``0``.
+        :type start: int
+        :param end: End index. Default is ``0`` (no limit).
+        :type end: int
         :raises ValueError: If ``resource_id`` was a string and contained non-digit characters.
         :returns: A list of Wialon unit dictionaries.
         :rtype: list[dict[str, ~typing.Any]]
@@ -146,19 +166,24 @@ class TerminusgpsNotificationsCustomer(models.Model):
                     "propType": "property,property",
                 },
                 "force": int(force),
-                "flags": flags.DataFlag.UNIT_BASE,
-                "from": 0,
-                "to": 0,
+                "flags": flags,
+                "from": start,
+                "to": end,
             }
         ).get("items", [])
 
     def get_resources_from_wialon(
-        self, session: WialonSession, force: bool = False
+        self,
+        session: WialonSession,
+        force: bool = False,
+        flags: int = DataFlag.RESOURCE_BASE,
+        start: int = 0,
+        end: int = 0,
     ) -> list[dict[str, typing.Any]]:
         """
         Returns a list of of customer Wialon resource dictionaries from the Wialon API.
 
-        Wialon resource dictionary format:
+        Default Wialon resource dictionary format (flags=1):
 
         +------------+---------------+-------------------------------+
         | key        | type          | desc                          |
@@ -176,6 +201,12 @@ class TerminusgpsNotificationsCustomer(models.Model):
 
         :param force: Whether to force a Wialon API call instead of using a cached response. Default is :py:obj:`False` (use cache).
         :type force: bool
+        :param flags: Response flags. Default is ``1``.
+        :type flags: int
+        :param start: Start index. Default is ``0``.
+        :type start: int
+        :param end: End index. Default is ``0`` (no limit).
+        :type end: int
         :returns: A list of Wialon resource dictionaries.
         :rtype: list[dict[str, ~typing.Any]]
 
@@ -190,17 +221,32 @@ class TerminusgpsNotificationsCustomer(models.Model):
                     "propType": "property",
                 },
                 "force": int(force),
-                "flags": flags.DataFlag.RESOURCE_BASE,
-                "from": 0,
-                "to": 0,
+                "flags": flags,
+                "from": start,
+                "to": end,
             }
         ).get("items", [])
 
-    def get_messages_from_wialon(
-        self, session: WialonSession
-    ) -> dict[str, typing.Any]:
-        print(f"{session.wialon_api.avl_evts() = }")
-        return {}
+
+class ExtensionPackage(models.Model):
+    price = models.DecimalField(max_digits=9, decimal_places=2, default=40.00)
+    """Extension package price."""
+    executions = models.IntegerField(default=500)
+    """Extension package execution limit increase."""
+    customer = models.ForeignKey(
+        "terminusgps_notifications.TerminusgpsNotificationsCustomer",
+        on_delete=models.CASCADE,
+        related_name="packages",
+    )
+    """Associated customer."""
+
+    class Meta:
+        verbose_name = _("extension package")
+        verbose_name_plural = _("extension packages")
+
+    def __str__(self) -> str:
+        """Returns '<username>'s Extension Package #<pk>'."""
+        return f"{self.customer}'s Extension Package #{self.pk}"
 
 
 class WialonToken(models.Model):
@@ -374,6 +420,7 @@ class WialonNotification(models.Model):
         return str(self.name)
 
     def get_absolute_url(self) -> str:
+        """Returns a URL pointing to the notification's detail view."""
         return reverse(
             "terminusgps_notifications:detail notifications",
             kwargs={"notification_pk": self.pk},
@@ -547,12 +594,8 @@ class WialonNotification(models.Model):
             "callMode": call_mode,
             "n": self.name,
             "txt": self.text,
-            "ta": self.activation_time.timestamp()
-            if self.activation_time is not None
-            else 0,
-            "td": self.deactivation_time.timestamp()
-            if self.deactivation_time is not None
-            else 0,
+            "ta": 0,  # TODO: Convert ta/td attributes to timestamps
+            "td": 0,
             "ma": self.max_alarms,
             "mmtd": self.max_message_interval,
             "cdt": self.alarm_timeout,
