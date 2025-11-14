@@ -182,7 +182,7 @@ class NotificationsView(
     template_name = "terminusgps_notifications/customers/notifications.html"
 
     def setup(self, request: HttpRequest, *args, **kwargs) -> None:
-        """Adds :py:attr:`customer` and :py:attr:`has_token` to the view context."""
+        """Adds :py:attr:`customer`, :py:attr:`has_token` and :py:attr:`has_subscription` to the view."""
         customer = (
             services.get_customer(request.user)
             if hasattr(request, "user")
@@ -193,23 +193,20 @@ class NotificationsView(
             if hasattr(request, "user")
             else None
         )
-        packages = (
-            getattr(customer, "package").all()
-            if customer and hasattr(customer, "package")
-            else None
-        )
 
         self.customer = customer
         self.has_token = bool(token)
-        self.packages = packages
+        self.has_subscription = (
+            bool(customer.subscription) if customer else False
+        )
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds :py:attr:`customer` and :py:attr:`has_token` to the view context."""
+        """Adds :py:attr:`customer`, :py:attr:`has_token` and :py:attr:`has_subscription` to the view context."""
         context: dict[str, typing.Any] = super().get_context_data(**kwargs)
         context["customer"] = self.customer
         context["has_token"] = self.has_token
-        context["packages"] = self.packages
+        context["has_subscription"] = self.has_subscription
         return context
 
 
