@@ -91,15 +91,15 @@ class MessagePackageCreateView(
             return self.form_invalid(form=form)
         package = models.MessagePackage()
         package.customer = self.customer
-        package.count = int(form.cleaned_data["count"])
+        package.max = int(form.cleaned_data["count"])
         package.price = round(
-            decimal.Decimal(package.count / 500) * decimal.Decimal("40.00"),
+            decimal.Decimal(package.max / 500) * decimal.Decimal("40.00"),
             ndigits=2,
         )
 
         line_item = apicontractsv1.lineItemType()
         line_item.itemId = "1"
-        line_item.name = f"x{package.count} messages package"
+        line_item.name = f"x{package.max} messages package"
         line_item.description = (
             "Message package for Terminus GPS Notifications platform"
         )
