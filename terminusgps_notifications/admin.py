@@ -25,15 +25,7 @@ class TerminusgpsNotificationsCustomerAdmin(admin.ModelAdmin):
         ("Messaging", {"fields": ["messages_count", "messages_max"]}),
         (
             "Pricing",
-            {
-                "fields": [
-                    "tax_rate",
-                    "subtotal_base",
-                    "subtotal",
-                    "tax",
-                    "grand_total",
-                ]
-            },
+            {"fields": ["tax_rate", "subtotal", "tax", "grand_total"]},
         ),
     ]
 
