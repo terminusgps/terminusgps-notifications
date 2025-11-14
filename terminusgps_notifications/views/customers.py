@@ -114,14 +114,15 @@ class AccountView(LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView):
         """Saves a Wialon API token for the user based on the ``user_name`` and ``access_token`` path parameters."""
         if hasattr(request, "user") and self.customer is not None:
             user = getattr(request, "user")
-            username = request.GET.get("user_name")
+            username = request.GET.get("user_name").lower()
             access_token = request.GET.get("access_token")
             if all(
                 [
                     username,
                     access_token,
                     hasattr(user, "username"),
-                    getattr(user, "username") == self.customer.user.username,
+                    getattr(user, "username").lower()
+                    == self.customer.user.username.lower(),
                 ]
             ):
                 if hasattr(self.customer, "token"):
