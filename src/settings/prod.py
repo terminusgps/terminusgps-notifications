@@ -40,7 +40,6 @@ TIME_ZONE = "US/Central"
 USE_I18N = False
 USE_TZ = True
 USE_X_FORWARDED_HOST = True
-WIALON_RESOURCE_NAME = "Terminus GPS Notifications"
 WIALON_TOKEN = os.getenv("WIALON_TOKEN")
 WIALON_TOKEN_ACCESS_TYPE = (
     TokenFlag.VIEW_ACCESS
@@ -110,6 +109,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_rq",
+    "django_tasks",
     "terminusgps_payments.apps.TerminusgpsPaymentsConfig",
     "terminusgps_notifications.apps.TerminusgpsNotificationsConfig",
 ]
@@ -121,6 +122,8 @@ CACHES = {
         "TIMEOUT": 60 * 15,
     }
 }
+
+RQ_QUEUES = {"default": {"HOST": "127.0.0.1", "PORT": 6379, "DB": 0}}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

@@ -44,7 +44,6 @@ STATIC_URL = "static/"
 TIME_ZONE = "US/Central"
 USE_I18N = False
 USE_TZ = True
-WIALON_RESOURCE_NAME = "Terminus GPS Notifications"
 WIALON_TOKEN = os.getenv("WIALON_TOKEN")
 WIALON_TOKEN_ACCESS_TYPE = (
     TokenFlag.VIEW_ACCESS
@@ -63,7 +62,7 @@ ADMINS = (
 
 LOGGING = {
     "version": 1,
-    "disable_existing_loggers": False if "test" not in sys.argv else True,
+    "disable_existing_loggers": "test" in sys.argv,
     "formatters": {
         "verbose": {
             "format": "%(asctime)s [%(process)d] [%(module)s] [%(levelname)s] %(message)s",
