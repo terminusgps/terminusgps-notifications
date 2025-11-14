@@ -13,6 +13,7 @@ dependencies = [
     "django-tasks[rq]>=0.9.0",
     "redis[hiredis]>=7.0.1",
     "django-rq>=3.1",
+    "django-storages[s3]>=1.14.6",
 ]
 
 [project.urls]
