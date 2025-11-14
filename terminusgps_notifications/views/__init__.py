@@ -3,10 +3,6 @@ from .customers import (
     CustomerStatsView,
     CustomerSubscriptionCreateView,
     DashboardView,
-    ExtensionPackageCreateView,
-    ExtensionPackageDeleteView,
-    ExtensionPackageDetailView,
-    ExtensionPackageListView,
     NotificationsView,
     SubscriptionView,
     WialonLoginView,
@@ -22,6 +18,11 @@ from .notifications import (
     WialonNotificationTriggerParametersSuccessView,
     WialonNotificationUnitSelectFormView,
     WialonNotificationUpdateView,
+)
+from .packages import (
+    MessagePackageCreateView,
+    MessagePackageListView,
+    MessagePackagePriceView,
 )
 from .public import (
     ContactView,

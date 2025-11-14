@@ -115,17 +115,26 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_rq",
     "django_tasks",
     "terminusgps_payments.apps.TerminusgpsPaymentsConfig",
     "terminusgps_notifications.apps.TerminusgpsNotificationsConfig",
 ]
 
+RQ_QUEUES = {"default": {"HOST": "localhost", "PORT": 6379, "DB": 0}}
+
 TASKS = {
-    "default": {"BACKEND": "django_tasks.backends.immediate.ImmediateBackend"}
+    "default": {
+        "BACKEND": "django_tasks.backends.rq.RQBackend",
+        "QUEUES": ["default"],
+    }
 }
 
 CACHES = {
-    "default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+    }
 }
 
 MIDDLEWARE = [

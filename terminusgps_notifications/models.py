@@ -44,13 +44,6 @@ class TerminusgpsNotificationsCustomer(models.Model):
         max_length=24,
     )
     """Date format for notifications."""
-    subtotal_base = models.DecimalField(
-        max_digits=9,
-        decimal_places=2,
-        default=60.00,
-        help_text="Enter a base dollar amount to charge the customer for service (not incl. tax) every period.",
-    )
-    """Subscription base subtotal."""
     tax_rate = models.DecimalField(
         max_digits=9,
         decimal_places=4,
@@ -89,15 +82,15 @@ class TerminusgpsNotificationsCustomer(models.Model):
     )
     """Associated subscription."""
 
-    executions_max = models.PositiveIntegerField(
+    messages_max = models.PositiveIntegerField(
         verbose_name="maximum executions", default=500
     )
     """Maximum number of notification executions in a single period."""
-    executions_max_base = models.PositiveIntegerField(
+    messages_max_base = models.PositiveIntegerField(
         verbose_name="maximum executions base", default=500
     )
     """Maximum base number of notification executions in a single period."""
-    executions_count = models.PositiveIntegerField(
+    messages_count = models.PositiveIntegerField(
         verbose_name="current executions", default=0
     )
     """Current number of notification executions this period."""
@@ -228,11 +221,13 @@ class TerminusgpsNotificationsCustomer(models.Model):
         ).get("items", [])
 
 
-class ExtensionPackage(models.Model):
+class MessagePackage(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2, default=40.00)
-    """Extension package price."""
-    executions = models.IntegerField(default=500)
-    """Extension package execution limit increase."""
+    """Message package price."""
+    count = models.IntegerField(default=0)
+    """Message package current execution count."""
+    max = models.IntegerField(default=500)
+    """Message package maximum allowed executions."""
     customer = models.ForeignKey(
         "terminusgps_notifications.TerminusgpsNotificationsCustomer",
         on_delete=models.CASCADE,
@@ -241,12 +236,11 @@ class ExtensionPackage(models.Model):
     """Associated customer."""
 
     class Meta:
-        verbose_name = _("extension package")
-        verbose_name_plural = _("extension packages")
+        verbose_name = _("message package")
+        verbose_name_plural = _("message packages")
 
     def __str__(self) -> str:
-        """Returns '<username>'s Extension Package #<pk>'."""
-        return f"{self.customer}'s Extension Package #{self.pk}"
+        return f"MessagePackage #{self.pk}"
 
 
 class WialonToken(models.Model):

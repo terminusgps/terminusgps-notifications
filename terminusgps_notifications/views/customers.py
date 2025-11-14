@@ -2,27 +2,17 @@ import decimal
 import typing
 
 from authorizenet import apicontractsv1
-from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import QuerySet, Sum
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_control, cache_page
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    FormView,
-    ListView,
-    RedirectView,
-    TemplateView,
-)
+from django.views.generic import FormView, RedirectView, TemplateView
 from terminusgps.authorizenet.service import (
     AuthorizenetControllerExecutionError,
 )
@@ -34,12 +24,9 @@ from terminusgps_payments.models import (
 )
 from terminusgps_payments.services import AuthorizenetService
 
-from terminusgps_notifications import services, tasks
-from terminusgps_notifications.forms import (
-    CustomerSubscriptionCreationForm,
-    ExtensionPackageCreationForm,
-)
-from terminusgps_notifications.models import ExtensionPackage, WialonToken
+from terminusgps_notifications import services
+from terminusgps_notifications.forms import CustomerSubscriptionCreationForm
+from terminusgps_notifications.models import WialonToken
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
@@ -226,154 +213,6 @@ class NotificationsView(
         return context
 
 
-class ExtensionPackageListView(
-    LoginRequiredMixin, HtmxTemplateResponseMixin, ListView
-):
-    allow_empty = True
-    content_type = "text/html"
-    context_object_name = "packages"
-    extra_context = {"title": "Extension Packages"}
-    http_method_names = ["get"]
-    model = ExtensionPackage
-    ordering = "pk"
-    paginate_by = 4
-    partial_template_name = (
-        "terminusgps_notifications/subscriptions/packages/partials/_list.html"
-    )
-    template_name = (
-        "terminusgps_notifications/subscriptions/packages/list.html"
-    )
-
-    def get_queryset(self) -> QuerySet:
-        return (
-            super()
-            .get_queryset()
-            .filter(customer__user=self.request.user)
-            .order_by(self.get_ordering())
-        )
-
-
-class ExtensionPackageCreateView(
-    LoginRequiredMixin, HtmxTemplateResponseMixin, CreateView
-):
-    content_type = "text/html"
-    extra_context = {"title": "Create Extension Package"}
-    http_method_names = ["get", "post"]
-    form_class = ExtensionPackageCreationForm
-    partial_template_name = "terminusgps_notifications/subscriptions/packages/partials/_create.html"
-    template_name = (
-        "terminusgps_notifications/subscriptions/packages/create.html"
-    )
-    success_url = reverse_lazy("terminusgps_notifications:list packages")
-
-    def setup(self, request: HttpRequest, *args, **kwargs) -> None:
-        """Adds :py:attr:`customer` to the view."""
-        self.customer = (
-            services.get_customer(request.user)
-            if hasattr(request, "user")
-            else None
-        )
-        return super().setup(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        """Adds :py:attr:`customer` to the view context."""
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["customer"] = self.customer
-        return context
-
-    def get_initial(self, **kwargs) -> dict[str, typing.Any]:
-        """Sets the initial value for :py:attr:`customer` in the form."""
-        initial: dict[str, typing.Any] = super().get_initial(**kwargs)
-        initial["customer"] = self.customer
-        return initial
-
-    def get_form(self, form_class=None):
-        """Sets choices for :py:attr:`customer` in the form."""
-        form = super().get_form(form_class=form_class)
-        form.fields["customer"].choices = (
-            [(self.customer.pk, str(self.customer))]
-            if self.customer is not None
-            else []
-        )
-        return form
-
-    def form_valid(self, form: ExtensionPackageCreationForm) -> HttpResponse:
-        if form.cleaned_data["customer"].subscription is None:
-            form.add_error(
-                None,
-                ValidationError(
-                    _("Whoops! You need to be subscribed to do that."),
-                    code="invalid",
-                ),
-            )
-            return self.form_invalid(form=form)
-
-        response = super().form_valid(form=form)
-        customer = form.cleaned_data["customer"]
-        price_sum = customer.packages.aggregate(Sum("price")).get("price__sum")
-        executions_sum = customer.packages.aggregate(Sum("executions")).get(
-            "executions__sum"
-        )
-        new_amount = customer.subtotal_base + price_sum
-        new_executions = customer.executions_max_base + executions_sum
-        customer.subtotal = new_amount
-        customer.executions_max = new_executions
-        customer.save()
-        contract = apicontractsv1.ARBSubscriptionType()
-        contract.amount = new_amount
-        service = AuthorizenetService()
-        service.update_subscription(customer.subscription, contract)
-        customer.subscription.amount = customer.subtotal
-        customer.subscription.save()
-        return response
-
-
-class ExtensionPackageDetailView(
-    LoginRequiredMixin, HtmxTemplateResponseMixin, DetailView
-):
-    content_type = "text/html"
-    extra_context = {"title": "Extension Package Details"}
-    http_method_names = ["get"]
-    model = ExtensionPackage
-    partial_template_name = "terminusgps_notifications/subscriptions/packages/partials/_detail.html"
-    pk_url_kwarg = "package_pk"
-    template_name = (
-        "terminusgps_notifications/subscriptions/packages/detail.html"
-    )
-
-    def get_queryset(self) -> QuerySet:
-        if not hasattr(self.request, "user"):
-            return ExtensionPackage.objects.none()
-        return super().get_queryset().filter(customer__user=self.request.user)
-
-
-class ExtensionPackageDeleteView(
-    LoginRequiredMixin, HtmxTemplateResponseMixin, DeleteView
-):
-    content_type = "text/html"
-    extra_context = {"title": "Delete Extension Package"}
-    http_method_names = ["post"]
-    model = ExtensionPackage
-    partial_template_name = "terminusgps_notifications/subscriptions/packages/partials/_delete.html"
-    pk_url_kwarg = "package_pk"
-    success_url = reverse_lazy("terminusgps_notifications:list packages")
-    template_name = (
-        "terminusgps_notifications/subscriptions/packages/delete.html"
-    )
-
-    def get_queryset(self) -> QuerySet:
-        if not hasattr(self.request, "user"):
-            return ExtensionPackage.objects.none()
-        return super().get_queryset().filter(customer__user=self.request.user)
-
-    def form_valid(self, form) -> HttpResponse:
-        customer = self.object.customer
-        new_amount = customer.subtotal - self.object.price
-        customer.subtotal = new_amount
-        customer.save(update_fields=["subtotal"])
-        return super().form_valid(form=form)
-
-
 class CustomerSubscriptionCreateView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, FormView
 ):
@@ -526,9 +365,6 @@ class CustomerSubscriptionCreateView(
             subscription.save()
             self.customer.subscription = subscription
             self.customer.save()
-            tasks.reset_executions_count.enqueue_at(
-                start_date + relativedelta(months=1)
-            )
             return HttpResponseRedirect(
                 reverse("terminusgps_notifications:subscription")
             )

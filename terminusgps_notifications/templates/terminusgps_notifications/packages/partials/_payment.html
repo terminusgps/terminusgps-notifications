@@ -1,0 +1,5 @@
+<select id="id_payment" name="payment">
+    {% for payment in paymentprofile_list %}
+    <option value="{{ payment.pk }}">{{ payment }}</option>
+    {% endfor %}
+</select>
