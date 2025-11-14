@@ -7,31 +7,22 @@ from . import models
 class TerminusgpsNotificationsCustomerAdmin(admin.ModelAdmin):
     list_display = [
         "user",
-        "executions_count",
-        "executions_max",
+        "messages_count",
+        "messages_max",
         "subscription__status",
     ]
     list_filter = ["subscription__status"]
     readonly_fields = [
         "tax",
         "grand_total",
-        "executions_max",
-        "executions_count",
+        "messages_count",
+        "messages_max",
         "subtotal",
     ]
     exclude = ["subscription"]
     fieldsets = [
         (None, {"fields": ["user", "date_format"]}),
-        (
-            "Messaging",
-            {
-                "fields": [
-                    "executions_max",
-                    "executions_count",
-                    "executions_max_base",
-                ]
-            },
-        ),
+        ("Messaging", {"fields": ["messages_count", "messages_max"]}),
         (
             "Pricing",
             {
@@ -54,8 +45,8 @@ class WialonTokenAdmin(admin.ModelAdmin):
     readonly_fields = ["flags"]
 
 
-@admin.register(models.ExtensionPackage)
-class ExtensionPackageAdmin(admin.ModelAdmin):
+@admin.register(models.MessagePackage)
+class MessagePackageAdmin(admin.ModelAdmin):
     list_display = ["customer", "price"]
 
 

@@ -2,9 +2,12 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm
 from django.core.validators import validate_email
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from terminusgps_payments.forms import PaymentProfileChoiceField
+from terminusgps_payments.models import PaymentProfile
 
-from terminusgps_notifications.models import ExtensionPackage
+from terminusgps_notifications.models import MessagePackage
 
 WIDGET_CSS_CLASS = (
     settings.WIDGET_CSS_CLASS
@@ -13,11 +16,44 @@ WIDGET_CSS_CLASS = (
 )
 
 
-class ExtensionPackageCreationForm(forms.ModelForm):
+class MessagePackageCountField(forms.TypedChoiceField):
+    coerce = int
+    initial = 500
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.choices = [
+            (500, _("500 Messages")),
+            (1000, _("1000 messages")),
+            (5000, _("5000 messages")),
+        ]
+
+
+class MessagePackageCreationForm(forms.ModelForm):
+    payment = PaymentProfileChoiceField(
+        queryset=PaymentProfile.objects.none(),
+        widget=forms.widgets.Select(attrs={"class": WIDGET_CSS_CLASS}),
+    )
+
     class Meta:
-        model = ExtensionPackage
-        fields = ["customer"]
-        widgets = {"customer": forms.widgets.HiddenInput()}
+        model = MessagePackage
+        fields = ["count"]
+        field_classes = {"count": MessagePackageCountField}
+        widgets = {
+            "count": forms.widgets.Select(
+                attrs={
+                    "class": WIDGET_CSS_CLASS,
+                    "hx-get": reverse_lazy(
+                        "terminusgps_notifications:price packages"
+                    ),
+                    "hx-include": "this",
+                    "hx-swap": "outerHTML",
+                    "hx-target": "#id_price",
+                    "hx-trigger": "load once, change",
+                    "hx-indicator": "#price-indicator",
+                }
+            )
+        }
 
 
 class TerminusgpsNotificationsAuthenticationForm(AuthenticationForm):

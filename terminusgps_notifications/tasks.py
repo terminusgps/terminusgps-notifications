@@ -4,20 +4,16 @@ from urllib.parse import urljoin
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
-from django.db.models import Sum
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django_tasks import task
 from terminusgps.authorizenet.service import (
     AuthorizenetControllerExecutionError,
 )
-from terminusgps_payments.models import Subscription
+from terminusgps_payments.models import CustomerProfile, Subscription
 from terminusgps_payments.services import AuthorizenetService
 
-from terminusgps_notifications.models import (
-    ExtensionPackage,
-    TerminusgpsNotificationsCustomer,
-)
+from terminusgps_notifications.models import TerminusgpsNotificationsCustomer
 
 logger = logging.getLogger(__name__)
 BASE_URL = "https://api.terminusgps.com/"
@@ -147,67 +143,16 @@ def refresh_subscription_status(subscription_pk: int) -> str | None:
 
 
 @task
-def reset_executions_count(customer_pk: int) -> None:
-    """
-    Sets a customer's executions count to 0.
-
-    :param customer_pk: A customer primary key.
-    :type customer_pk: int
-    :returns: Nothing.
-    :rtype: None
-
-    """
+def sync_authorizenet_profiles(customer_pk: int) -> None:
+    """Retrieves customer profiles from Authorizenet and creates them locally."""
     try:
         customer = TerminusgpsNotificationsCustomer.objects.get(pk=customer_pk)
-        customer.executions_count = 0
-        customer.save(update_fields=["executions_count"])
-    except TerminusgpsNotificationsCustomer.DoesNotExist as e:
-        logger.critical(e)
-
-
-@task
-def reset_executions_max(customer_pk: int) -> None:
-    """
-    Recalculates and resets a customer's maximum executions.
-
-    :param customer_pk: A customer primary key.
-    :type customer_pk: int
-    :returns: Nothing.
-    :rtype: None
-
-    """
-    try:
-        customer = TerminusgpsNotificationsCustomer.objects.get(pk=customer_pk)
-        packages = ExtensionPackage.objects.filter(customer=customer)
-        customer.executions_max = (
-            packages.aggregate(Sum("executions")).get("executions__sum")
-            if packages.exists()
-            else customer.executions_max_base
-        )
-        customer.save(update_fields=["executions_max"])
-    except TerminusgpsNotificationsCustomer.DoesNotExist as e:
-        logger.critical(e)
-
-
-@task
-def reset_subtotal(customer_pk: int) -> None:
-    """
-    Recalculates and resets a customer's subtotal.
-
-    :param customer_pk: A customer primary key.
-    :type customer_pk: int
-    :returns: Nothing.
-    :rtype: None
-
-    """
-    try:
-        customer = TerminusgpsNotificationsCustomer.objects.get(pk=customer_pk)
-        packages = ExtensionPackage.objects.filter(customer=customer)
-        customer.subtotal = (
-            packages.aggregate(Sum("price")).get("price__sum")
-            if packages.exists()
-            else customer.subtotal_base
-        )
-        customer.save(update_fields=["subtotal"])
-    except TerminusgpsNotificationsCustomer.DoesNotExist as e:
+        cprofile = CustomerProfile.objects.get(user=customer.user)
+        service = AuthorizenetService()
+        anet_response = service.get_customer_profile(cprofile)
+        print(f"{dir(anet_response) = }")
+    except (
+        TerminusgpsNotificationsCustomer.DoesNotExist,
+        CustomerProfile.DoesNotExist,
+    ) as e:
         logger.critical(e)
