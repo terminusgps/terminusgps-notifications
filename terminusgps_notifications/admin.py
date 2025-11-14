@@ -12,13 +12,7 @@ class TerminusgpsNotificationsCustomerAdmin(admin.ModelAdmin):
         "subscription__status",
     ]
     list_filter = ["subscription__status"]
-    readonly_fields = [
-        "tax",
-        "grand_total",
-        "messages_count",
-        "messages_max",
-        "subtotal",
-    ]
+    readonly_fields = ["tax", "grand_total", "messages_count", "subtotal"]
     exclude = ["subscription"]
     fieldsets = [
         (None, {"fields": ["user", "date_format"]}),

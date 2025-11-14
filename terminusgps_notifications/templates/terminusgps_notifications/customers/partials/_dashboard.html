@@ -14,10 +14,10 @@
                         id="executions-meter"
                         class="w-full"
                         min="0"
-                        max="{{ customer.executions_max }}"
-                        value="{{ customer.executions_count }}"
+                        max="{{ customer.messages_max }}"
+                        value="{{ customer.messages_count }}"
                     ></meter>
-                    <label for="executions-meter">{{ customer.executions_count }}/{{ customer.executions_max }}</label>
+                    <label for="executions-meter">{{ customer.messages_count }}/{{ customer.messages_max }}</label>
                 </div>
             </section>
             <section class="flex gap-2 items-center border p-4 rounded bg-gray-100 drop-shadow-sm w-full">
