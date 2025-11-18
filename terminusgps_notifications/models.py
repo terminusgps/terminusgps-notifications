@@ -422,9 +422,14 @@ class WialonNotification(models.Model):
 
     def get_text(self) -> str:
         """Returns the notification text (txt)."""
-        user_id: int = self.customer.user.pk
-        message: str = self.message
-        return f"unit_id=%UNIT_ID%&user_id={user_id}&message={message}"
+        return urllib.parse.urlencode(
+            {
+                "user_id": self.customer.user.pk,
+                "unit_id": "%UNIT_ID%",
+                "message": self.message,
+            },
+            quote_via=urllib.parse.quote_plus,
+        )
 
     def get_actions(self) -> list[dict[str, typing.Any]]:
         """Returns a list of notification actions (act)."""
