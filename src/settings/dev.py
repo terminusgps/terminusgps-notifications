@@ -46,7 +46,8 @@ USE_I18N = False
 USE_TZ = True
 WIALON_TOKEN = os.getenv("WIALON_TOKEN")
 WIALON_TOKEN_ACCESS_TYPE = (
-    TokenFlag.VIEW_ACCESS
+    TokenFlag.ONLINE_TRACKING
+    | TokenFlag.VIEW_ACCESS
     | TokenFlag.MANAGE_NONSENSITIVE
     | TokenFlag.MANAGE_SENSITIVE
 )
