@@ -116,6 +116,10 @@ INSTALLED_APPS = [
     "terminusgps_notifications.apps.TerminusgpsNotificationsConfig",
 ]
 
+TASKS = {
+    "default": {"BACKEND": "django_tasks.backends.immediate.ImmediateBackend"}
+}
+
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
