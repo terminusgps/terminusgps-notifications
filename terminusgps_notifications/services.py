@@ -1,4 +1,4 @@
-from urllib.parse import urlencode, urljoin
+import urllib.parse
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
@@ -55,7 +55,7 @@ def get_wialon_token(user: AbstractBaseUser) -> str | None:
 
 def get_wialon_redirect_uri() -> str:
     """Returns the redirect (callback) URI for Wialon authentication."""
-    return urljoin(
+    return urllib.parse.urljoin(
         "https://api.terminusgps.com/"
         if not settings.DEBUG
         else "http://127.0.0.1:8000/",
@@ -73,7 +73,7 @@ def get_wialon_login_parameters(username: str) -> str:
     :rtype: str
 
     """
-    return urlencode(
+    return urllib.parse.urlencode(
         {
             "client_id": "Terminus GPS Notifications",
             "access_type": settings.WIALON_TOKEN_ACCESS_TYPE,
