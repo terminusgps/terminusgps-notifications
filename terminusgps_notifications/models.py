@@ -427,8 +427,7 @@ class WialonNotification(models.Model):
                 "user_id": self.customer.user.pk,
                 "unit_id": "%UNIT_ID%",
                 "message": self.message,
-            },
-            quote_via=urllib.parse.quote_plus,
+            }
         )
 
     def get_actions(self) -> list[dict[str, typing.Any]]:
