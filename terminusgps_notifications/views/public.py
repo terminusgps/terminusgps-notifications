@@ -107,7 +107,6 @@ class LogoutView(HtmxTemplateResponseMixin, LogoutViewBase):
     )
 
 
-@method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 class RegisterView(HtmxTemplateResponseMixin, FormView):
     content_type = "text/html"
     extra_context = {

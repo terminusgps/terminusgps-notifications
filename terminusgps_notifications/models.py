@@ -424,11 +424,16 @@ class WialonNotification(models.Model):
         """Returns the notification text (txt)."""
         return urllib.parse.urlencode(
             {
-                "user_id": self.customer.user.pk,
-                "unit_id": "%UNIT_ID%",
-                "message": self.message,
-            }
-        )
+                "user_id": str(self.customer.user.pk),
+                "unit_id": str("%UNIT_ID%"),
+                "unit_name": str("%UNIT%"),
+                "location": str("%LOCATION%"),
+                "msg_time_int": str("%MSG_TIME_INT%"),
+                "message": str(self.message),
+            },
+            quote_via=urllib.parse.quote,
+            safe="!$%\"'()*+,-./:;<=>@[\\]^_`{|}~",
+        ).replace("%20", " ")
 
     def get_actions(self) -> list[dict[str, typing.Any]]:
         """Returns a list of notification actions (act)."""

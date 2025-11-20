@@ -64,7 +64,7 @@ class WialonNotificationUpdateForm(forms.ModelForm):
             "flags",
         ]
         help_texts = {
-            "message": "Provide a message to send to the destination phone number. You may use the Wialon tags detailed below."
+            "message": "Provide a message to send to the destination phone number."
         }
         widgets = {
             # Required fields
@@ -79,7 +79,7 @@ class WialonNotificationUpdateForm(forms.ModelForm):
             "message": forms.widgets.TextInput(
                 attrs={
                     "class": WIDGET_CSS_CLASS,
-                    "placeholder": "Hello! At %MSG_TIME%, your vehicle %UNIT% entered %ZONE%.",
+                    "placeholder": "Hello, there!",
                     "enterkeyhint": "next",
                     "inputmode": "text",
                 }
@@ -164,7 +164,7 @@ class WialonNotificationCreationForm(forms.ModelForm):
         ]
         help_texts = {
             "method": "Select whether to text the message (sms) or read the message aloud (voice) on notification trigger.",
-            "message": "Provide a message to send to the destination phone number. You may use the Wialon tags detailed below.",
+            "message": "Provide a message to send to the destination phone number.",
         }
         widgets = {
             # Required fields
@@ -179,7 +179,7 @@ class WialonNotificationCreationForm(forms.ModelForm):
             "message": forms.widgets.TextInput(
                 attrs={
                     "class": "peer p-2 rounded border border-current bg-gray-50 dark:bg-gray-600 user-invalid:bg-red-50 user-invalid:text-red-600",
-                    "placeholder": "Hello! At %MSG_TIME%, your vehicle %UNIT% entered %ZONE%.",
+                    "placeholder": "Hello, there!",
                     "enterkeyhint": "next",
                     "inputmode": "text",
                 }

@@ -85,11 +85,6 @@ LOGGING = {
             "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
             "propagate": False,
         },
-        "authorizenet": {
-            "handlers": ["console"],
-            "level": os.getenv("AUTHORIZENET_LOG_LEVEL", "WARNING"),
-            "propagate": False,
-        },
         "terminusgps_notifications": {
             "handlers": ["console_verbose"],
             "level": os.getenv("NOTIFICATIONS_LOG_LEVEL", "INFO"),

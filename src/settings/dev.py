@@ -83,7 +83,7 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
-    "root": {"handlers": ["console"], "level": "DEBUG"},
+    "root": {"handlers": ["console"], "level": "WARNING"},
     "loggers": {
         "django": {
             "handlers": ["console"],
@@ -92,20 +92,42 @@ LOGGING = {
         },
         "terminusgps_notifications": {
             "handlers": ["console_verbose"],
-            "level": os.getenv("NOTIFICATIONS_LOG_LEVEL", "DEBUG"),
+            "level": os.getenv("NOTIFICATIONS_LOG_LEVEL", "INFO"),
             "propagate": False,
         },
         "terminusgps_payments": {
             "handlers": ["console_verbose"],
-            "level": os.getenv("PAYMENTS_LOG_LEVEL", "DEBUG"),
-            "propagate": False,
-        },
-        "authorizenet.sdk": {
-            "handlers": ["console"],
-            "level": os.getenv("AUTHORIZENET_LOG_LEVEL", "DEBUG"),
+            "level": os.getenv("PAYMENTS_LOG_LEVEL", "INFO"),
             "propagate": False,
         },
     },
+}
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": "test" in sys.argv,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s [%(process)d] [%(module)s] [%(levelname)s] %(message)s",
+            "datefmt": "[%Y-%m-%d %H:%M:%S%z]",
+            "class": "logging.Formatter",
+        },
+        "simple": {
+            "format": "%(asctime)s [%(levelname)s] %(message)s",
+            "datefmt": "[%Y-%m-%d %H:%M:%S%z]",
+            "class": "logging.Formatter",
+        },
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "simple"},
+        "console_verbose": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {"handlers": ["console"], "level": "DEBUG"},
+    "loggers": {},
 }
 
 INSTALLED_APPS = [

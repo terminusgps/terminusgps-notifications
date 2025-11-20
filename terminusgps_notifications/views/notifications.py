@@ -24,7 +24,7 @@ from django.views.generic import (
 from terminusgps.mixins import HtmxTemplateResponseMixin
 from terminusgps.wialon.session import WialonAPIError, WialonSession
 
-from terminusgps_notifications import constants, forms, models, services
+from terminusgps_notifications import forms, models, services
 
 logger = logging.getLogger(__name__)
 
@@ -199,10 +199,7 @@ class WialonNotificationCreateSuccessView(
 class WialonNotificationCreateView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, CreateView
 ):
-    extra_context = {
-        "title": "Create Notification",
-        "message_tags": constants.WialonNotificationMessageTag.choices,
-    }
+    extra_context = {"title": "Create Notification"}
     content_type = "text/html"
     form_class = forms.WialonNotificationCreationForm
     http_method_names = ["get", "post"]
@@ -299,9 +296,7 @@ class WialonNotificationDetailView(
 class WialonNotificationUpdateView(
     LoginRequiredMixin, HtmxTemplateResponseMixin, UpdateView
 ):
-    extra_context = {
-        "message_tags": constants.WialonNotificationMessageTag.choices
-    }
+    extra_context = {}
     content_type = "text/html"
     http_method_names = ["get", "post"]
     form_class = forms.WialonNotificationUpdateForm
