@@ -5,6 +5,7 @@ from authorizenet import apicontractsv1
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -132,6 +133,15 @@ class MessagePackageListView(
         "terminusgps_notifications/packages/partials/_list.html"
     )
     template_name = "terminusgps_notifications/packages/list.html"
+    ordering = ["price"]
+
+    def get_queryset(self) -> QuerySet:
+        return (
+            super()
+            .get_queryset()
+            .filter(customer__user=self.request.user)
+            .order_by(self.get_ordering())
+        )
 
 
 class MessagePackagePriceView(
