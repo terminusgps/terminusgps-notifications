@@ -133,7 +133,7 @@ class MessagePackageListView(
         "terminusgps_notifications/packages/partials/_list.html"
     )
     template_name = "terminusgps_notifications/packages/list.html"
-    ordering = ["price"]
+    ordering = "price"
 
     def get_queryset(self) -> QuerySet:
         return (
