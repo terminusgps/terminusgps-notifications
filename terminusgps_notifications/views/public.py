@@ -1,5 +1,7 @@
 import typing
+import urllib.parse
 
+from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.views import LoginView as LoginViewBase
 from django.contrib.auth.views import LogoutView as LogoutViewBase
 from django.db import transaction
@@ -10,6 +12,7 @@ from django.views.decorators.cache import cache_control, cache_page
 from django.views.generic import FormView, RedirectView, TemplateView
 from terminusgps.mixins import HtmxTemplateResponseMixin
 
+from terminusgps_notifications import tasks
 from terminusgps_notifications.forms import (
     TerminusgpsNotificationsAuthenticationForm,
     TerminusgpsNotificationsRegistrationForm,
@@ -116,24 +119,56 @@ class RegisterView(HtmxTemplateResponseMixin, FormView):
     form_class = TerminusgpsNotificationsRegistrationForm
     http_method_names = ["get", "post"]
     partial_template_name = "terminusgps_notifications/partials/_register.html"
-    success_url = reverse_lazy("terminusgps_notifications:login")
     template_name = "terminusgps_notifications/register.html"
 
     @transaction.atomic
     def form_valid(
         self, form: TerminusgpsNotificationsRegistrationForm
     ) -> HttpResponse:
-        user = form.save(commit=False)
+        user = form.save(commit=True)
         user.first_name = form.cleaned_data["first_name"]
         user.last_name = form.cleaned_data["last_name"]
         user.email = form.cleaned_data["username"]
-        user.save()
+        user.save(update_fields=["first_name", "last_name", "email"])
         customer = TerminusgpsNotificationsCustomer(user=user)
         customer.company = form.cleaned_data["company_name"]
         customer.save()
+        # self.send_registration_complete_email(user)
         return HttpResponseRedirect(
             reverse(
                 "terminusgps_notifications:login",
                 query={"username": form.cleaned_data["username"]},
             )
+        )
+
+    @staticmethod
+    def send_registration_complete_email(user: AbstractBaseUser) -> None:
+        to = [user.email]
+        subject = "Terminus GPS Notifications - Registration Complete"
+        template = "terminusgps_notifications/emails/registration_complete.txt"
+        context = {
+            "first_name": user.first_name,
+            "link_account": urllib.parse.urljoin(
+                "https://api.terminusgps.com/",
+                reverse("terminusgps_notifications:account"),
+            ),
+            "link_dashboard": urllib.parse.urljoin(
+                "https://api.terminusgps.com/",
+                reverse("terminusgps_notifications:dashboard"),
+            ),
+            "link_homepage": urllib.parse.urljoin(
+                "https://api.terminusgps.com/",
+                reverse("terminusgps_notifications:home"),
+            ),
+            "link_notifications": urllib.parse.urljoin(
+                "https://api.terminusgps.com/",
+                reverse("terminusgps_notifications:notifications"),
+            ),
+            "link_subscription": urllib.parse.urljoin(
+                "https://api.terminusgps.com/",
+                reverse("terminusgps_notifications:subscription"),
+            ),
+        }
+        tasks.send_email.enqueue(
+            to=to, subject=subject, template_name=template, context=context
         )
