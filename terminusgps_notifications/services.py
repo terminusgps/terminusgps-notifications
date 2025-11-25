@@ -5,7 +5,10 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.urls import reverse
 from terminusgps_payments.models import CustomerProfile
 
-from terminusgps_notifications.models import TerminusgpsNotificationsCustomer
+from terminusgps_notifications.models import (
+    TerminusgpsNotificationsCustomer,
+    WialonToken,
+)
 
 
 def get_customer(
@@ -20,8 +23,10 @@ def get_customer(
     :rtype: ~terminusgps_notifications.models.TerminusgpsNotificationsCustomer | None
 
     """
-    if hasattr(user, "terminusgps_notifications_customer"):
-        return getattr(user, "terminusgps_notifications_customer")
+    try:
+        return TerminusgpsNotificationsCustomer.objects.get(user=user)
+    except TerminusgpsNotificationsCustomer.DoesNotExist:
+        return
 
 
 def get_customer_profile(user: AbstractBaseUser) -> CustomerProfile | None:
@@ -34,8 +39,10 @@ def get_customer_profile(user: AbstractBaseUser) -> CustomerProfile | None:
     :rtype: ~terminusgps_payments.models.CustomerProfile | None
 
     """
-    if hasattr(user, "customer_profile"):
-        return getattr(user, "customer_profile")
+    try:
+        return CustomerProfile.objects.get(user=user)
+    except CustomerProfile.DoesNotExist:
+        return
 
 
 def get_wialon_token(user: AbstractBaseUser) -> str | None:
@@ -48,19 +55,11 @@ def get_wialon_token(user: AbstractBaseUser) -> str | None:
     :rtype: str | None
 
     """
-    customer = get_customer(user)
-    if customer is not None and hasattr(customer, "token"):
-        return getattr(customer, "token").name
-
-
-def get_wialon_redirect_uri() -> str:
-    """Returns the redirect (callback) URI for Wialon authentication."""
-    return urllib.parse.urljoin(
-        "https://api.terminusgps.com/"
-        if not settings.DEBUG
-        else "http://127.0.0.1:8000/",
-        reverse("terminusgps_notifications:account"),
-    )
+    try:
+        token = WialonToken.objects.get(customer__user=user)
+        return getattr(token, "name", None)
+    except WialonToken.DoesNotExist:
+        return
 
 
 def get_wialon_login_parameters(username: str) -> str:
@@ -83,6 +82,11 @@ def get_wialon_login_parameters(username: str) -> str:
             "flags": 0x1,
             "user": username,
             "response_type": "token",
-            "redirect_uri": get_wialon_redirect_uri(),
+            "redirect_uri": urllib.parse.urljoin(
+                "https://api.terminusgps.com/"
+                if not settings.DEBUG
+                else "http://127.0.0.1:8000/",
+                reverse("terminusgps_notifications:account"),
+            ),
         }
     )
