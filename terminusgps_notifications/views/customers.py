@@ -24,7 +24,7 @@ from terminusgps_payments.models import (
 )
 from terminusgps_payments.services import AuthorizenetService
 
-from terminusgps_notifications import services, tasks
+from terminusgps_notifications import services
 from terminusgps_notifications.forms import CustomerSubscriptionCreationForm
 from terminusgps_notifications.models import WialonToken
 
@@ -360,7 +360,6 @@ class CustomerSubscriptionCreateView(
             subscription.save()
             self.customer.subscription = subscription
             self.customer.save()
-            tasks.refresh_subscription_status.enqueue(subscription.pk)
             return HttpResponseRedirect(
                 reverse("terminusgps_notifications:subscription")
             )
