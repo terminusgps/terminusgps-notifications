@@ -133,7 +133,7 @@ class RegisterView(HtmxTemplateResponseMixin, FormView):
         customer = TerminusgpsNotificationsCustomer(user=user)
         customer.company = form.cleaned_data["company_name"]
         customer.save()
-        # self.send_registration_complete_email(user)
+        self.send_registration_complete_email(user)
         return HttpResponseRedirect(
             reverse(
                 "terminusgps_notifications:login",

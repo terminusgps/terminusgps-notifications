@@ -32,6 +32,7 @@ DJANGO_ENCRYPTED_FIELD_KEY = base64.b64decode(
     os.getenv("DJANGO_ENCRYPTED_FIELD_KEY", "")
 )
 LANGUAGE_CODE = "en-us"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 MERCHANT_AUTH_ENVIRONMENT = Environment.SANDBOX
 MERCHANT_AUTH_LOGIN_ID = os.getenv("MERCHANT_AUTH_LOGIN_ID")
 MERCHANT_AUTH_TRANSACTION_KEY = os.getenv("MERCHANT_AUTH_TRANSACTION_KEY")
@@ -53,7 +54,6 @@ WIALON_TOKEN_ACCESS_TYPE = (
 )
 WSGI_APPLICATION = "src.wsgi.application"
 NOTIFICATIONS_SETUP_FEE = decimal.Decimal("140.00")
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 ADMINS = (
     ("Peter", "pspeckman@terminusgps.com"),
