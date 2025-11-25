@@ -443,7 +443,7 @@ class WialonNotification(models.Model):
                 "p": {
                     "url": urllib.parse.urljoin(
                         "https://api.terminusgps.com/",
-                        f"/v3/notify/{self.method}",
+                        f"/v3/notify/{self.method}/",
                     ),
                     "get": 1,  # 1 = GET request, 2 = POST request
                 },

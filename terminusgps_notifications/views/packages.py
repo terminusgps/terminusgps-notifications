@@ -156,21 +156,23 @@ class MessagePackagePriceView(
     )
 
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        if not hasattr(request, "GET") or not request.GET.get("count"):
-            return HttpResponse(status=406)
-        elif (
-            isinstance(request.GET["count"], str)
-            and not request.GET["count"].isdigit()
-        ):
-            return HttpResponse(status=406)
-        self.count = int(request.GET["count"])
+        """Adds :py:attr:`count` to the view."""
+        count_str = request.GET.get("count")
+        self.count = (
+            int(count_str)
+            if isinstance(count_str, str) and count_str.isdigit()
+            else None
+        )
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
-        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
-        context["price"] = (
+        """Adds :py:attr:`price` to the view context."""
+        price = (
             decimal.Decimal(self.count / 500) * decimal.Decimal("40.00")
-            if self.count % 500 == 0
+            if self.count is not None and self.count % 500 == 0
             else None
         )
+
+        context: dict[str, typing.Any] = super().get_context_data(**kwargs)
+        context["price"] = round(price, ndigits=2) if price else None
         return context

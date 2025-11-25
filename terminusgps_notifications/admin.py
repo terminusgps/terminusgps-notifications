@@ -33,7 +33,8 @@ class WialonTokenAdmin(admin.ModelAdmin):
 
 @admin.register(models.MessagePackage)
 class MessagePackageAdmin(admin.ModelAdmin):
-    list_display = ["customer", "price"]
+    list_display = ["customer", "count", "max", "price"]
+    list_filter = ["max", "price"]
 
 
 @admin.register(models.WialonNotification)
