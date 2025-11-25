@@ -3,8 +3,14 @@ from typing import Any
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+from django.db.models import F
 from django.template.loader import render_to_string
 from django_tasks import task
+
+from terminusgps_notifications.models import (
+    MessagePackage,
+    TerminusgpsNotificationsCustomer,
+)
 
 
 @task
@@ -55,3 +61,37 @@ def send_email(
         html_content = render_to_string(html_template_name, context=context)
         msg.attach_alternative(html_content, "text/html")
     return bool(msg.send(fail_silently=True))
+
+
+@task
+def reset_customer_messages(customer_pk: int) -> None:
+    """
+    Sets the customer's :py:attr:`messages_count` to 0.
+
+    :param customer_pk: Customer primary key.
+    :type customer_pk: int
+    :returns: Nothing.
+    :rtype: None
+
+    """
+    try:
+        customer = TerminusgpsNotificationsCustomer.objects.get(pk=customer_pk)
+        customer.messages_count = 0
+        customer.save(update_fields=["messages_count"])
+    except TerminusgpsNotificationsCustomer.DoesNotExist:
+        return
+
+
+@task
+def reset_customer_packages(customer_pk: int) -> None:
+    """
+    Deletes fully used customer packages.
+
+    :param customer_pk: Customer primary key.
+    :type customer_pk: int
+    :returns: Nothing.
+    :rtype: None
+
+    """
+    packages = MessagePackage.objects.filter(customer__pk=customer_pk)
+    packages.filter(count__gte=F("max")).delete()
