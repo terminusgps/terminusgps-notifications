@@ -428,6 +428,7 @@ class WialonNotification(models.Model):
                 "msg_time_int": str("%MSG_TIME_INT%"),
                 "message": str(self.message),
             },
+            safe="%",
             quote_via=urllib.parse.quote,
         )
 
