@@ -429,8 +429,7 @@ class WialonNotification(models.Model):
                 "message": str(self.message),
             },
             quote_via=urllib.parse.quote,
-            safe="!$%\"'()*+,-./:;<=>@[\\]^_`{|}~",
-        ).replace("%20", " ")
+        )
 
     def get_actions(self) -> list[dict[str, typing.Any]]:
         """Returns a list of notification actions (act)."""
