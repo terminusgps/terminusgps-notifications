@@ -1,5 +1,4 @@
 import json
-import logging
 import typing
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -25,8 +24,6 @@ from terminusgps.mixins import HtmxTemplateResponseMixin
 from terminusgps.wialon.session import WialonAPIError, WialonSession
 
 from terminusgps_notifications import forms, models, services
-
-logger = logging.getLogger(__name__)
 
 
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
@@ -360,8 +357,7 @@ class WialonNotificationDeleteView(
             with WialonSession(token=token) as session:
                 self.object.update_in_wialon("delete", session)
             return super().form_valid(form=form)
-        except (ValueError, WialonAPIError) as e:
-            logger.warning(e)
+        except (ValueError, WialonAPIError):
             return HttpResponse(status=406)
 
 
