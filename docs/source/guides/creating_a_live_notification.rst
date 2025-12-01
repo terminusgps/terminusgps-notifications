@@ -54,13 +54,13 @@ Creating a live notification
 
 Destination phone numbers will recieve a constructed message using what you provide here during creation.
 
-The final message is structured as follows: ``[DATETIME] [UNIT NAME] [LOCATION] MESSAGE``
+The final message is structured as follows: ``[DATETIME] [LOCATION] [UNIT NAME] MESSAGE``
 
 Example messages delivered to destination phone numbers:
 
-* ``[2025-12-31 13:04:29] [Blake's Lexus] [123 Main St] Your vehicle had its ignition switched on.``
+* ``[2025-12-31 13:04:29] [123 Main St] [Blake's Lexus] Your vehicle had its ignition switched on.``
 * ``[2025-12-31 13:04:29] [UN38203982] A driver was assigned to your vehicle.``
-* ``[2025-12-31 13:04:29] [Pete Truck] [123 Main St] Your vehicle's speed exceeded 40mph.``
+* ``[2025-12-31 13:04:29] [123 Main St] [Pete Truck] Your vehicle's speed exceeded 40mph.``
 * ``[2025-12-31 13:04:29] [Speed Demon] Your device was unhealthy.``
 
 .. note:: There should always be a date and time added to the message, but unit name and location may not be provided by Wialon when the notification is triggered.
