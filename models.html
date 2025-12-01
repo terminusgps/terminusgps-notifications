@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+
+<html :class="{'dark': darkMode === 'dark' || (darkMode === 'system' &amp;&amp; window.matchMedia('(prefers-color-scheme: dark)').matches)}" class="scroll-smooth" data-content_root="./" lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') || localStorage.setItem('darkMode', 'system'), activeSection: '' }" x-init="$watch('darkMode', val =&gt; localStorage.setItem('darkMode', val))">
+<head>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta charset="utf-8"/>
+<meta content="white" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="black" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Models | terminusgps-notifications 1.2.0 documentation</title>
+<meta content="Models | terminusgps-notifications 1.2.0 documentation" property="og:title"/>
+<meta content="Models | terminusgps-notifications 1.2.0 documentation" name="twitter:title"/>
+<link href="_static/pygments.css?v=d691ff6c" rel="stylesheet" type="text/css"/>
+<link href="_static/theme.css?v=42baaae4" rel="stylesheet" type="text/css"/>
+<link href="_static/autoclasstoc.css?v=08871587" rel="stylesheet" type="text/css"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="genindex.html" rel="index" title="Index"/>
+<link href="guides/subscribing.html" rel="prev" title="Subscribing"/>
+<script>
+    <!-- Prevent Flash of wrong theme -->
+      const userPreference = localStorage.getItem('darkMode');
+      let mode;
+      if (userPreference === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        mode = 'dark';
+        document.documentElement.classList.add('dark');
+      } else {
+        mode = 'light';
+      }
+      if (!userPreference) {localStorage.setItem('darkMode', mode)}
+    </script>
+</head>
+<body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
+<div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
+      Skip to content
+    </a><header class="sticky top-0 z-40 w-full border-b shadow-sm border-border supports-backdrop-blur:bg-background/60 bg-background/95 backdrop-blur"><div class="container flex items-center h-14">
+<div class="hidden mr-4 md:flex">
+<a class="flex items-center mr-6" href="index.html"><span class="hidden font-bold sm:inline-block text-clip whitespace-nowrap">terminusgps-notifications 1.2.0 documentation</span>
+</a></div><button @click="showSidebar = true" class="inline-flex items-center justify-center h-10 px-0 py-2 mr-2 text-base font-medium transition-colors rounded-md hover:text-accent-foreground hover:bg-transparent md:hidden" type="button">
+<svg aria-hidden="true" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M152.587 825.087q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440Zm0-203.587q-19.152 0-32.326-13.174T107.087 576q0-19.152 13.174-32.326t32.326-13.174h320q19.152 0 32.326 13.174T518.087 576q0 19.152-13.174 32.326T472.587 621.5h-320Zm0-203.587q-19.152 0-32.326-13.174t-13.174-32.326q0-19.152 13.174-32.326t32.326-13.174h440q19.152 0 32.326 13.174t13.174 32.326q0 19.152-13.174 32.326t-32.326 13.174h-440ZM708.913 576l112.174 112.174q12.674 12.674 12.674 31.826t-12.674 31.826Q808.413 764.5 789.261 764.5t-31.826-12.674l-144-144Q600 594.391 600 576t13.435-31.826l144-144q12.674-12.674 31.826-12.674t31.826 12.674q12.674 12.674 12.674 31.826t-12.674 31.826L708.913 576Z"></path>
+</svg>
+<span class="sr-only">Toggle navigation menu</span>
+</button>
+<div class="flex items-center justify-between flex-1 space-x-2 sm:space-x-4 md:justify-end">
+<div class="flex-1 w-full md:w-auto md:flex-none"><form @keydown.k.window.meta="$refs.search.focus()" action="search.html" class="relative flex items-center group" id="searchbox" method="get">
+<input aria-label="Search the docs" class="inline-flex items-center font-medium transition-colors bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent focus:bg-accent hover:text-accent-foreground focus:text-accent-foreground hover:placeholder-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64" id="search-input" name="q" placeholder="Search ..." type="search" x-ref="search"/>
+<kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none text-muted-foreground items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex group-hover:bg-accent group-hover:text-accent-foreground">
+<span class="text-xs">⌘</span>
+    K
+  </kbd>
+</form>
+</div>
+<nav class="flex items-center space-x-1">
+<button @click="darkMode = darkMode === 'light' ? 'dark' : 'light'" aria-label="Color theme switcher" class="relative inline-flex items-center justify-center px-0 text-sm font-medium transition-colors rounded-md hover:bg-accent hover:text-accent-foreground h-9 w-9" type="button">
+<svg class="absolute transition-all scale-100 rotate-0 dark:-rotate-90 dark:scale-0" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 685q45.456 0 77.228-31.772Q589 621.456 589 576q0-45.456-31.772-77.228Q525.456 467 480 467q-45.456 0-77.228 31.772Q371 530.544 371 576q0 45.456 31.772 77.228Q434.544 685 480 685Zm0 91q-83 0-141.5-58.5T280 576q0-83 58.5-141.5T480 376q83 0 141.5 58.5T680 576q0 83-58.5 141.5T480 776ZM80 621.5q-19.152 0-32.326-13.174T34.5 576q0-19.152 13.174-32.326T80 530.5h80q19.152 0 32.326 13.174T205.5 576q0 19.152-13.174 32.326T160 621.5H80Zm720 0q-19.152 0-32.326-13.174T754.5 576q0-19.152 13.174-32.326T800 530.5h80q19.152 0 32.326 13.174T925.5 576q0 19.152-13.174 32.326T880 621.5h-80Zm-320-320q-19.152 0-32.326-13.174T434.5 256v-80q0-19.152 13.174-32.326T480 130.5q19.152 0 32.326 13.174T525.5 176v80q0 19.152-13.174 32.326T480 301.5Zm0 720q-19.152 0-32.326-13.17Q434.5 995.152 434.5 976v-80q0-19.152 13.174-32.326T480 850.5q19.152 0 32.326 13.174T525.5 896v80q0 19.152-13.174 32.33-13.174 13.17-32.326 13.17ZM222.174 382.065l-43-42Q165.5 327.391 166 308.239t13.174-33.065q13.435-13.674 32.587-13.674t32.065 13.674l42.239 43q12.674 13.435 12.555 31.706-.12 18.272-12.555 31.946-12.674 13.674-31.445 13.413-18.772-.261-32.446-13.174Zm494 494.761-42.239-43q-12.674-13.435-12.674-32.087t12.674-31.565Q686.609 756.5 705.38 757q18.772.5 32.446 13.174l43 41.761Q794.5 824.609 794 843.761t-13.174 33.065Q767.391 890.5 748.239 890.5t-32.065-13.674Zm-42-494.761Q660.5 369.391 661 350.62q.5-18.772 13.174-32.446l41.761-43Q728.609 261.5 747.761 262t33.065 13.174q13.674 13.435 13.674 32.587t-13.674 32.065l-43 42.239q-13.435 12.674-31.706 12.555-18.272-.12-31.946-12.555Zm-495 494.761Q165.5 863.391 165.5 844.239t13.674-32.065l43-42.239q13.435-12.674 32.087-12.674t31.565 12.674Q299.5 782.609 299 801.38q-.5 18.772-13.174 32.446l-41.761 43Q231.391 890.5 212.239 890t-33.065-13.174ZM480 576Z"></path>
+</svg>
+<svg class="absolute transition-all scale-0 rotate-90 dark:rotate-0 dark:scale-100" fill="currentColor" height="24" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 936q-151 0-255.5-104.5T120 576q0-138 90-239.5T440 218q25-3 39 18t-1 44q-17 26-25.5 55t-8.5 61q0 90 63 153t153 63q31 0 61.5-9t54.5-25q21-14 43-1.5t19 39.5q-14 138-117.5 229T480 936Zm0-80q88 0 158-48.5T740 681q-20 5-40 8t-40 3q-123 0-209.5-86.5T364 396q0-20 3-40t8-40q-78 32-126.5 102T200 576q0 116 82 198t198 82Zm-10-270Z"></path>
+</svg>
+</button>
+</nav>
+</div>
+</div>
+</header>
+<div class="flex-1"><div class="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10"><aside :aria-hidden="!showSidebar" :class="{ 'translate-x-0': showSidebar }" class="fixed inset-y-0 left-0 md:top-14 z-50 md:z-30 bg-background md:bg-transparent transition-all duration-100 -translate-x-full md:translate-x-0 ml-0 p-6 md:p-0 md:-ml-2 md:h-[calc(100vh-3.5rem)] w-5/6 md:w-full shrink-0 overflow-y-auto border-r border-border md:sticky" id="left-sidebar">
+<a class="!justify-start text-sm md:!hidden bg-background" href="index.html"><span class="font-bold text-clip whitespace-nowrap">terminusgps-notifications 1.2.0 documentation</span>
+</a>
+<div class="relative overflow-hidden md:overflow-auto my-4 md:my-0 h-[calc(100vh-8rem)] md:h-auto">
+<div class="overflow-y-auto h-full w-full relative pr-6"><nav class="table w-full min-w-full my-6 lg:my-8">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="guides/index.html">Guides<button @click.prevent.stop="expanded = !expanded" type="button"><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul x-show="expanded">
+<li class="toctree-l2"><a class="reference internal" href="guides/connecting_your_wialon_account.html">Connecting your Wialon account</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guides/creating_a_live_notification.html">Creating a live notification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guides/creating_an_account.html">Creating an account</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guides/logging_in.html">Logging in</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guides/setting_destination_phone_numbers.html">Setting destination phone numbers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guides/subscribing.html">Subscribing</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Models</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<button @click="showSidebar = false" class="absolute md:hidden right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100" type="button">
+<svg class="h-4 w-4" fill="currentColor" height="24" stroke="none" viewbox="0 96 960 960" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M480 632 284 828q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536 576l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480 632Z"></path>
+</svg>
+</button>
+</aside>
+<main class="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px]">
+<div class="w-full min-w-0 mx-auto">
+<nav aria-label="breadcrumbs" class="flex items-center mb-4 space-x-1 text-sm text-muted-foreground">
+<a class="overflow-hidden text-ellipsis whitespace-nowrap hover:text-foreground" href="index.html">
+<span class="hidden md:inline">terminusgps-notifications 1.2.0 documentation</span>
+<svg aria-label="Home" class="md:hidden" fill="currentColor" height="18" stroke="none" viewbox="0 96 960 960" width="18" xmlns="http://www.w3.org/2000/svg">
+<path d="M240 856h120V616h240v240h120V496L480 316 240 496v360Zm-80 80V456l320-240 320 240v480H520V696h-80v240H160Zm320-350Z"></path>
+</svg>
+</a>
+<div class="mr-1">/</div><span aria-current="page" class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">Models</span>
+</nav>
+<div id="content" role="main">
+<section id="models">
+<h1>Models<a class="headerlink" href="#models" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">terminusgps_notifications.models.</span></span><span class="sig-name descname"><span class="pre">MessagePackage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#MessagePackage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.MessagePackage" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.MessagePackage'">¶</a></dt>
+<dd><div class="autoclasstoc docutils container">
+<p class="rubric">Public Data Attributes:</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">customer_id</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.MessagePackage.customer" title="terminusgps_notifications.models.MessagePackage.customer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">customer</span></code></a></p></td>
+<td><p>Associated customer.</p></td>
+</tr>
+</tbody>
+</table>
+<details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pk</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</details></div>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Public Methods:</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code>()</p></td>
+<td><p>Returns 'MessagePackage #&lt;pk&gt;'.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.MessagePackage.price" title="terminusgps_notifications.models.MessagePackage.price"><code class="xref py py-obj docutils literal notranslate"><span class="pre">price</span></code></a></p></td>
+<td><p>Message package price.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#terminusgps_notifications.models.MessagePackage.count" title="terminusgps_notifications.models.MessagePackage.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
+<td><p>Message package current execution count.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.MessagePackage.max" title="terminusgps_notifications.models.MessagePackage.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
+<td><p>Message package maximum allowed executions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p>A wrapper for a deferred-loading field.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">objects</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code>(*args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_db</span></code>(db, field_names, values)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code>()</p></td>
+<td><p>Return repr(self).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code>()</p></td>
+<td><p>Return str(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code>(other)</p></td>
+<td><p>Return self==value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__hash__</span></code>()</p></td>
+<td><p>Return hash(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__reduce__</span></code>()</p></td>
+<td><p>Helper for pickle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getstate__</span></code>()</p></td>
+<td><p>Hook to allow choosing the attributes to pickle.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setstate__</span></code>(state)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_deferred_fields</span></code>()</p></td>
+<td><p>Return a set containing names of deferred fields for this instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">refresh_from_db</span></code>([using, fields, from_queryset])</p></td>
+<td><p>Reload field values from the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">arefresh_from_db</span></code>([using, fields, from_queryset])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serializable_value</span></code>(field_name)</p></td>
+<td><p>Return the value of the field name for this instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<td><p>Save the current instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asave</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_base</span></code>([raw, force_insert, force_update, ...])</p></td>
+<td><p>Handle the parts of saving which should be done only once per save, yet need to be done in raw saves, too.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>([using, keep_parents])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">adelete</span></code>([using, keep_parents])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_database_save</span></code>(field)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean</span></code>()</p></td>
+<td><p>Hook for doing any extra model-wide validation after clean() has been called on every field by self.clean_fields.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_unique</span></code>([exclude])</p></td>
+<td><p>Check unique constraints on the model and raise ValidationError if any failed.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">date_error_message</span></code>(lookup_type, field_name, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique_error_message</span></code>(model_class, unique_check)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_constraints</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_constraints</span></code>([exclude])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">full_clean</span></code>([exclude, validate_unique, ...])</p></td>
+<td><p>Call clean_fields(), clean(), validate_unique(), and validate_constraints() on the model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_fields</span></code>([exclude])</p></td>
+<td><p>Clean all fields and raise a ValidationError containing a dict of all validation errors if any occur.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">check</span></code>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</details><details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">AltersData</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init_subclass__</span></code>(**kwargs)</p></td>
+<td><p>This method is called when a class is subclassed.</p></td>
+</tr>
+</tbody>
+</table>
+</details></div>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Private Data Attributes:</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_meta</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Private Methods:</p>
+<details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_pk_val</span></code>([meta])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_set_pk_val</span></code>(value)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_pk_set</span></code>([meta])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_save_params</span></code>(*args, method_name, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_force_insert</span></code>(force_insert)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_parents</span></code>(cls, using, update_fields, ...)</p></td>
+<td><p>Save all the parents of cls using values from self.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_table</span></code>([raw, cls, force_insert, ...])</p></td>
+<td><p>Do the heavy-lifting involved in saving.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_update</span></code>(base_qs, using, pk_val, values, ...)</p></td>
+<td><p>Try to update the model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_insert</span></code>(manager, using, fields, ...)</p></td>
+<td><p>Do an INSERT.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_prepare_related_fields_for_save</span></code>(operation_name)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_FIELD_display</span></code>(field)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_next_or_previous_by_FIELD</span></code>(field, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_next_or_previous_in_order</span></code>(is_next)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_field_expression_map</span></code>(meta[, exclude])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_unique_checks</span></code>([exclude, ...])</p></td>
+<td><p>Return a list of checks to perform.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perform_unique_checks</span></code>(unique_checks)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perform_date_checks</span></code>(date_checks)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_default_pk</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_composite_pk</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_db_table_comment</span></code>(databases)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_swappable</span></code>()</p></td>
+<td><p>Check if the swapped model exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_managers</span></code>(**kwargs)</p></td>
+<td><p>Perform all manager checks.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_fields</span></code>(**kwargs)</p></td>
+<td><p>Perform all field checks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_m2m_through_same_relationship</span></code>()</p></td>
+<td><p>Check if no relationship model is used by more than one m2m field.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_id_field</span></code>()</p></td>
+<td><p>Check if <cite>id</cite> field is a primary key.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_field_name_clashes</span></code>()</p></td>
+<td><p>Forbid field shadowing in multi-table inheritance.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_column_name_clashes</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model_name_db_lookup_clashes</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_property_name_related_field_accessor_clashes</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_single_primary_key</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_unique_together</span></code>()</p></td>
+<td><p>Check the value of "unique_together" option.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_indexes</span></code>(databases)</p></td>
+<td><p>Check fields, names, and conditions of indexes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_local_fields</span></code>(fields, option)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_ordering</span></code>()</p></td>
+<td><p>Check "ordering" option -- is it a list of strings and do all fields exist?</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_long_column_names</span></code>(databases)</p></td>
+<td><p>Check that any auto-generated column names are shorter than the limits for each database in which the model will be created.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_expr_references</span></code>(expr)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_constraints</span></code>(databases)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</details></div>
+<hr class="docutils"/>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage.DoesNotExist">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#terminusgps_notifications.models.MessagePackage.DoesNotExist" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.MessagePackage.DoesNotExist'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage.count">
+<span class="sig-name descname"><span class="pre">count</span></span><a class="headerlink" href="#terminusgps_notifications.models.MessagePackage.count" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.MessagePackage.count'">¶</a></dt>
+<dd><p>Message package current execution count.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage.customer">
+<span class="sig-name descname"><span class="pre">customer</span></span><a class="headerlink" href="#terminusgps_notifications.models.MessagePackage.customer" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.MessagePackage.customer'">¶</a></dt>
+<dd><p>Associated customer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer"><em>TerminusgpsNotificationsCustomer</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage.max">
+<span class="sig-name descname"><span class="pre">max</span></span><a class="headerlink" href="#terminusgps_notifications.models.MessagePackage.max" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.MessagePackage.max'">¶</a></dt>
+<dd><p>Message package maximum allowed executions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage.price">
+<span class="sig-name descname"><span class="pre">price</span></span><a class="headerlink" href="#terminusgps_notifications.models.MessagePackage.price" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.MessagePackage.price'">¶</a></dt>
+<dd><p>Message package price.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.14)"><em>Decimal</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">terminusgps_notifications.models.</span></span><span class="sig-name descname"><span class="pre">TerminusgpsNotificationsCustomer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#TerminusgpsNotificationsCustomer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer'">¶</a></dt>
+<dd><p>A Terminus GPS Notifications customer.</p>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Public Data Attributes:</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">user_id</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.user" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.user"><code class="xref py py-obj docutils literal notranslate"><span class="pre">user</span></code></a></p></td>
+<td><p>Django user.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">subscription_id</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subscription" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subscription"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subscription</span></code></a></p></td>
+<td><p>Associated subscription.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">packages</span></code></p></td>
+<td><p>Accessor to the related objects manager on the reverse side of a many-to-one relation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">token</span></code></p></td>
+<td><p>Accessor to the related object on the reverse side of a one-to-one relation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">notifications</span></code></p></td>
+<td><p>Accessor to the related objects manager on the reverse side of a many-to-one relation.</p></td>
+</tr>
+</tbody>
+</table>
+<details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pk</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</details></div>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Public Methods:</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code>()</p></td>
+<td><p>Returns the customer user's username.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_units_from_wialon" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_units_from_wialon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units_from_wialon</span></code></a>(resource_id, session)</p></td>
+<td><p>Returns a list of of customer Wialon unit dictionaries from the Wialon API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_resources_from_wialon</span></code></a>(session[, force, ...])</p></td>
+<td><p>Returns a list of of customer Wialon resource dictionaries from the Wialon API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.company" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.company"><code class="xref py py-obj docutils literal notranslate"><span class="pre">company</span></code></a></p></td>
+<td><p>Company name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.date_format" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.date_format"><code class="xref py py-obj docutils literal notranslate"><span class="pre">date_format</span></code></a></p></td>
+<td><p>Date format for notifications.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_date_format_display</span></code>(*[, field])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax_rate" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax_rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tax_rate</span></code></a></p></td>
+<td><p>Subscription tax rate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subtotal" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subtotal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtotal</span></code></a></p></td>
+<td><p>Subscription current subtotal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tax</span></code></a></p></td>
+<td><p>Subscription tax total.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.grand_total" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.grand_total"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grand_total</span></code></a></p></td>
+<td><p>Subscription grand total (subtotal + tax).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">messages_max</span></code></a></p></td>
+<td><p>Maximum number of notification executions in a single period.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max_base" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max_base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">messages_max_base</span></code></a></p></td>
+<td><p>Maximum base number of notification executions in a single period.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_count" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">messages_count</span></code></a></p></td>
+<td><p>Current number of notification executions this period.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p>A wrapper for a deferred-loading field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">objects</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code>(*args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_db</span></code>(db, field_names, values)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code>()</p></td>
+<td><p>Return repr(self).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code>()</p></td>
+<td><p>Return str(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code>(other)</p></td>
+<td><p>Return self==value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__hash__</span></code>()</p></td>
+<td><p>Return hash(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__reduce__</span></code>()</p></td>
+<td><p>Helper for pickle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getstate__</span></code>()</p></td>
+<td><p>Hook to allow choosing the attributes to pickle.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setstate__</span></code>(state)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_deferred_fields</span></code>()</p></td>
+<td><p>Return a set containing names of deferred fields for this instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">refresh_from_db</span></code>([using, fields, from_queryset])</p></td>
+<td><p>Reload field values from the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">arefresh_from_db</span></code>([using, fields, from_queryset])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serializable_value</span></code>(field_name)</p></td>
+<td><p>Return the value of the field name for this instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<td><p>Save the current instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asave</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_base</span></code>([raw, force_insert, force_update, ...])</p></td>
+<td><p>Handle the parts of saving which should be done only once per save, yet need to be done in raw saves, too.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>([using, keep_parents])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">adelete</span></code>([using, keep_parents])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_database_save</span></code>(field)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean</span></code>()</p></td>
+<td><p>Hook for doing any extra model-wide validation after clean() has been called on every field by self.clean_fields.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_unique</span></code>([exclude])</p></td>
+<td><p>Check unique constraints on the model and raise ValidationError if any failed.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">date_error_message</span></code>(lookup_type, field_name, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique_error_message</span></code>(model_class, unique_check)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_constraints</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_constraints</span></code>([exclude])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">full_clean</span></code>([exclude, validate_unique, ...])</p></td>
+<td><p>Call clean_fields(), clean(), validate_unique(), and validate_constraints() on the model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_fields</span></code>([exclude])</p></td>
+<td><p>Clean all fields and raise a ValidationError containing a dict of all validation errors if any occur.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">check</span></code>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</details><details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">AltersData</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init_subclass__</span></code>(**kwargs)</p></td>
+<td><p>This method is called when a class is subclassed.</p></td>
+</tr>
+</tbody>
+</table>
+</details></div>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Private Data Attributes:</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_meta</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Private Methods:</p>
+<details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_pk_val</span></code>([meta])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_set_pk_val</span></code>(value)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_pk_set</span></code>([meta])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_save_params</span></code>(*args, method_name, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_force_insert</span></code>(force_insert)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_parents</span></code>(cls, using, update_fields, ...)</p></td>
+<td><p>Save all the parents of cls using values from self.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_table</span></code>([raw, cls, force_insert, ...])</p></td>
+<td><p>Do the heavy-lifting involved in saving.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_update</span></code>(base_qs, using, pk_val, values, ...)</p></td>
+<td><p>Try to update the model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_insert</span></code>(manager, using, fields, ...)</p></td>
+<td><p>Do an INSERT.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_prepare_related_fields_for_save</span></code>(operation_name)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_FIELD_display</span></code>(field)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_next_or_previous_by_FIELD</span></code>(field, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_next_or_previous_in_order</span></code>(is_next)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_field_expression_map</span></code>(meta[, exclude])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_unique_checks</span></code>([exclude, ...])</p></td>
+<td><p>Return a list of checks to perform.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perform_unique_checks</span></code>(unique_checks)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perform_date_checks</span></code>(date_checks)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_default_pk</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_composite_pk</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_db_table_comment</span></code>(databases)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_swappable</span></code>()</p></td>
+<td><p>Check if the swapped model exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_managers</span></code>(**kwargs)</p></td>
+<td><p>Perform all manager checks.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_fields</span></code>(**kwargs)</p></td>
+<td><p>Perform all field checks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_m2m_through_same_relationship</span></code>()</p></td>
+<td><p>Check if no relationship model is used by more than one m2m field.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_id_field</span></code>()</p></td>
+<td><p>Check if <cite>id</cite> field is a primary key.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_field_name_clashes</span></code>()</p></td>
+<td><p>Forbid field shadowing in multi-table inheritance.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_column_name_clashes</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model_name_db_lookup_clashes</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_property_name_related_field_accessor_clashes</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_single_primary_key</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_unique_together</span></code>()</p></td>
+<td><p>Check the value of "unique_together" option.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_indexes</span></code>(databases)</p></td>
+<td><p>Check fields, names, and conditions of indexes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_local_fields</span></code>(fields, option)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_ordering</span></code>()</p></td>
+<td><p>Check "ordering" option -- is it a list of strings and do all fields exist?</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_long_column_names</span></code>(databases)</p></td>
+<td><p>Check that any auto-generated column names are shorter than the limits for each database in which the model will be created.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_expr_references</span></code>(expr)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_constraints</span></code>(databases)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</details></div>
+<hr class="docutils"/>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.DoesNotExist">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.DoesNotExist" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.DoesNotExist'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon">
+<span class="sig-name descname"><span class="pre">get_resources_from_wialon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session:</span> <span class="pre">~terminusgps.wialon.session.WialonSession</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">&lt;DataFlag.RESOURCE_BASE:</span> <span class="pre">1&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#TerminusgpsNotificationsCustomer.get_resources_from_wialon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon'">¶</a></dt>
+<dd><p>Returns a list of of customer Wialon resource dictionaries from the Wialon API.</p>
+<p>Default Wialon resource dictionary format (flags=1):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>key</p></th>
+<th class="head"><p>type</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"mu"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Measurement system</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"nm"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p></td>
+<td><p>Resource name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"cls"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Superclass ID: ‘avl_resource’</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"id"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Resource ID</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"uacl"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>User’s access rights</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>force</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to force a Wialon API call instead of using a cached response. Default is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> (use cache).</p></li>
+<li><p><strong>flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Response flags. Default is <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Start index. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
+<li><p><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – End index. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code> (no limit).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of Wialon resource dictionaries.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><em>Any</em></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_units_from_wialon">
+<span class="sig-name descname"><span class="pre">get_units_from_wialon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource_id:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session:</span> <span class="pre">~terminusgps.wialon.session.WialonSession</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items_type:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'avl_unit'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">&lt;DataFlag.RESOURCE_BASE:</span> <span class="pre">1&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#TerminusgpsNotificationsCustomer.get_units_from_wialon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_units_from_wialon" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_units_from_wialon'">¶</a></dt>
+<dd><p>Returns a list of of customer Wialon unit dictionaries from the Wialon API.</p>
+<p>Default Wialon unit dictionary format (flags=1):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>key</p></th>
+<th class="head"><p>type</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"mu"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Measurement system</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"nm"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p></td>
+<td><p>Unit name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"cls"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Superclass ID: ‘avl_unit’</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"id"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Unit ID</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"uacl"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>User’s access rights</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>force</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether to force a Wialon API call instead of using a cached response. Default is <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> (use cache).</p></li>
+<li><p><strong>flags</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Response flags. Default is <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Start index. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
+<li><p><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – End index. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code> (no limit).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">resource_id</span></code> was a string and contained non-digit characters.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of Wialon unit dictionaries.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><em>Any</em></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.company">
+<span class="sig-name descname"><span class="pre">company</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.company" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.company'">¶</a></dt>
+<dd><p>Company name. Optional.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.date_format">
+<span class="sig-name descname"><span class="pre">date_format</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.date_format" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.date_format'">¶</a></dt>
+<dd><p>Date format for notifications. Default is <code class="docutils literal notranslate"><span class="pre">"%Y-%m-%d</span> <span class="pre">%H:%M:%S"</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.grand_total">
+<span class="sig-name descname"><span class="pre">grand_total</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.grand_total" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.grand_total'">¶</a></dt>
+<dd><p>Subscription grand total (subtotal + tax). Automatically generated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.14)"><em>Decimal</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_count">
+<span class="sig-name descname"><span class="pre">messages_count</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_count" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_count'">¶</a></dt>
+<dd><p>Current number of notification executions this period. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max">
+<span class="sig-name descname"><span class="pre">messages_max</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max'">¶</a></dt>
+<dd><p>Maximum number of notification executions in a single period. Default is <code class="docutils literal notranslate"><span class="pre">500</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max_base">
+<span class="sig-name descname"><span class="pre">messages_max_base</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max_base" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max_base'">¶</a></dt>
+<dd><p>Maximum base number of notification executions in a single period. Default is <code class="docutils literal notranslate"><span class="pre">500</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subscription">
+<span class="sig-name descname"><span class="pre">subscription</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subscription" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subscription'">¶</a></dt>
+<dd><p>Associated subscription. Optional.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>terminusgps_payments.models.Subscription | None</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subtotal">
+<span class="sig-name descname"><span class="pre">subtotal</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subtotal" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subtotal'">¶</a></dt>
+<dd><p>Subscription current subtotal. Default is <code class="docutils literal notranslate"><span class="pre">60.00</span></code> ($60.00).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.14)"><em>Decimal</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax">
+<span class="sig-name descname"><span class="pre">tax</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax'">¶</a></dt>
+<dd><p>Subscription tax total. Automatically generated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.14)"><em>Decimal</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax_rate">
+<span class="sig-name descname"><span class="pre">tax_rate</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax_rate" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax_rate'">¶</a></dt>
+<dd><p>Subscription tax rate. Default is <code class="docutils literal notranslate"><span class="pre">0.0825</span></code> (8.25%).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.14)"><em>Decimal</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.user">
+<span class="sig-name descname"><span class="pre">user</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.user" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.user'">¶</a></dt>
+<dd><p>Django user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.djangoproject.com/en/5.2/topics/auth/customizing/#django.contrib.auth.models.AbstractBaseUser" title="(in Django v5.2)"><em>AbstractBaseUser</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonToken">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">terminusgps_notifications.models.</span></span><span class="sig-name descname"><span class="pre">WialonToken</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonToken"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonToken" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonToken'">¶</a></dt>
+<dd><p>Wialon API token.</p>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Public Data Attributes:</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">customer_id</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.WialonToken.customer" title="terminusgps_notifications.models.WialonToken.customer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">customer</span></code></a></p></td>
+<td><p>Associated customer.</p></td>
+</tr>
+</tbody>
+</table>
+<details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pk</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</details></div>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Public Methods:</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code>()</p></td>
+<td><p>Returns '&lt;customer email&gt;'s WialonToken'.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#terminusgps_notifications.models.WialonToken.name" title="terminusgps_notifications.models.WialonToken.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Encrypted Wialon API token name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#terminusgps_notifications.models.WialonToken.flags" title="terminusgps_notifications.models.WialonToken.flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flags</span></code></a></p></td>
+<td><p>Wialon token flags.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p>A wrapper for a deferred-loading field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">objects</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code>(*args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_db</span></code>(db, field_names, values)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code>()</p></td>
+<td><p>Return repr(self).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code>()</p></td>
+<td><p>Return str(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code>(other)</p></td>
+<td><p>Return self==value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__hash__</span></code>()</p></td>
+<td><p>Return hash(self).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__reduce__</span></code>()</p></td>
+<td><p>Helper for pickle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getstate__</span></code>()</p></td>
+<td><p>Hook to allow choosing the attributes to pickle.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setstate__</span></code>(state)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_deferred_fields</span></code>()</p></td>
+<td><p>Return a set containing names of deferred fields for this instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">refresh_from_db</span></code>([using, fields, from_queryset])</p></td>
+<td><p>Reload field values from the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">arefresh_from_db</span></code>([using, fields, from_queryset])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serializable_value</span></code>(field_name)</p></td>
+<td><p>Return the value of the field name for this instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<td><p>Save the current instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asave</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_base</span></code>([raw, force_insert, force_update, ...])</p></td>
+<td><p>Handle the parts of saving which should be done only once per save, yet need to be done in raw saves, too.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>([using, keep_parents])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">adelete</span></code>([using, keep_parents])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_database_save</span></code>(field)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean</span></code>()</p></td>
+<td><p>Hook for doing any extra model-wide validation after clean() has been called on every field by self.clean_fields.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_unique</span></code>([exclude])</p></td>
+<td><p>Check unique constraints on the model and raise ValidationError if any failed.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">date_error_message</span></code>(lookup_type, field_name, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique_error_message</span></code>(model_class, unique_check)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_constraints</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_constraints</span></code>([exclude])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">full_clean</span></code>([exclude, validate_unique, ...])</p></td>
+<td><p>Call clean_fields(), clean(), validate_unique(), and validate_constraints() on the model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_fields</span></code>([exclude])</p></td>
+<td><p>Clean all fields and raise a ValidationError containing a dict of all validation errors if any occur.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">check</span></code>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</details><details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">AltersData</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init_subclass__</span></code>(**kwargs)</p></td>
+<td><p>This method is called when a class is subclassed.</p></td>
+</tr>
+</tbody>
+</table>
+</details></div>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Private Data Attributes:</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_meta</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="autoclasstoc docutils container">
+<p class="rubric">Private Methods:</p>
+<details><summary>Inherited from <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></summary><table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_pk_val</span></code>([meta])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_set_pk_val</span></code>(value)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_pk_set</span></code>([meta])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_save_params</span></code>(*args, method_name, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_force_insert</span></code>(force_insert)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_parents</span></code>(cls, using, update_fields, ...)</p></td>
+<td><p>Save all the parents of cls using values from self.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_table</span></code>([raw, cls, force_insert, ...])</p></td>
+<td><p>Do the heavy-lifting involved in saving.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_update</span></code>(base_qs, using, pk_val, values, ...)</p></td>
+<td><p>Try to update the model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_insert</span></code>(manager, using, fields, ...)</p></td>
+<td><p>Do an INSERT.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_prepare_related_fields_for_save</span></code>(operation_name)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_FIELD_display</span></code>(field)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_next_or_previous_by_FIELD</span></code>(field, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_next_or_previous_in_order</span></code>(is_next)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_field_expression_map</span></code>(meta[, exclude])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_unique_checks</span></code>([exclude, ...])</p></td>
+<td><p>Return a list of checks to perform.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perform_unique_checks</span></code>(unique_checks)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perform_date_checks</span></code>(date_checks)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_default_pk</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_composite_pk</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_db_table_comment</span></code>(databases)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_swappable</span></code>()</p></td>
+<td><p>Check if the swapped model exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_managers</span></code>(**kwargs)</p></td>
+<td><p>Perform all manager checks.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_fields</span></code>(**kwargs)</p></td>
+<td><p>Perform all field checks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_m2m_through_same_relationship</span></code>()</p></td>
+<td><p>Check if no relationship model is used by more than one m2m field.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_id_field</span></code>()</p></td>
+<td><p>Check if <cite>id</cite> field is a primary key.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_field_name_clashes</span></code>()</p></td>
+<td><p>Forbid field shadowing in multi-table inheritance.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_column_name_clashes</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model_name_db_lookup_clashes</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_property_name_related_field_accessor_clashes</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_single_primary_key</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_unique_together</span></code>()</p></td>
+<td><p>Check the value of "unique_together" option.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_indexes</span></code>(databases)</p></td>
+<td><p>Check fields, names, and conditions of indexes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_local_fields</span></code>(fields, option)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_ordering</span></code>()</p></td>
+<td><p>Check "ordering" option -- is it a list of strings and do all fields exist?</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_long_column_names</span></code>(databases)</p></td>
+<td><p>Check that any auto-generated column names are shorter than the limits for each database in which the model will be created.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_expr_references</span></code>(expr)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_constraints</span></code>(databases)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</details></div>
+<hr class="docutils"/>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonToken.DoesNotExist">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonToken.DoesNotExist" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonToken.DoesNotExist'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonToken.MultipleObjectsReturned">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonToken.MultipleObjectsReturned" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonToken.MultipleObjectsReturned'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonToken.customer">
+<span class="sig-name descname"><span class="pre">customer</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonToken.customer" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonToken.customer'">¶</a></dt>
+<dd><p>Associated customer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer" title="terminusgps_notifications.models.TerminusgpsNotificationsCustomer"><em>TerminusgpsNotificationsCustomer</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonToken.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonToken.flags" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonToken.flags'">¶</a></dt>
+<dd><p>Wialon token flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonToken.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonToken.name" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonToken.name'">¶</a></dt>
+<dd><p>Encrypted Wialon API token name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">terminusgps_notifications.models.</span></span><span class="sig-name descname"><span class="pre">WialonNotification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification'">¶</a></dt>
+<dd><p>Wialon notification.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.DoesNotExist">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DoesNotExist</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.DoesNotExist" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.DoesNotExist'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.WialonNotificationMethod">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WialonNotificationMethod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.WialonNotificationMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.WialonNotificationMethod" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.WialonNotificationMethod'">¶</a></dt>
+<dd><p>Wialon notification method.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.get_absolute_url">
+<span class="sig-name descname"><span class="pre">get_absolute_url</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.get_absolute_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.get_absolute_url" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.get_absolute_url'">¶</a></dt>
+<dd><p>Returns a URL pointing to the notification’s detail view.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.get_actions">
+<span class="sig-name descname"><span class="pre">get_actions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.get_actions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.get_actions" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.get_actions'">¶</a></dt>
+<dd><p>Returns a list of notification actions (act).</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.get_data_from_wialon">
+<span class="sig-name descname"><span class="pre">get_data_from_wialon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WialonSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.get_data_from_wialon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.get_data_from_wialon" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.get_data_from_wialon'">¶</a></dt>
+<dd><p>Returns the notification data from Wialon using the Wialon API.</p>
+<p>Notification data format:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>key</p></th>
+<th class="head"><p>type</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"id"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Notification ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"n"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p></td>
+<td><p>Notification name</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"txt"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Notification text</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"ta"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Activation time (UNIX timestamp)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"td"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Deactivation time (UNIX timestamp)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"ma"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Maximum number of alarms (0 = unlimited)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"mmtd"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Maximum time interval between messages (sec)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"cdt"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Alarm timeout (sec)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"mast"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Minimum duration of the alarm state (sec)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"mpst"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Minimum duration of previous state (sec)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"cp"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Control period relative to current time (sec)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"fl"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Notification flags</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"tz"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Notification timezone</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"la"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p></td>
+<td><p>Notification language code</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"ac"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Alarms count</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"d"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p></td>
+<td><p>Notification description</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"sch"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p></td>
+<td><p>Notification schedule (see below)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"ctrl_sch"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p></td>
+<td><p>Notification control schedule (see below)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"un"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></p></td>
+<td><p>List of unit/unit group IDs</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"act"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></p></td>
+<td><p>List of notification actions (see below)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"trg"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p></td>
+<td><p>Notification trigger (see below)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"ct"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Creation time (UNIX timestamp)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"mt"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Last modification time (UNIX timestamp)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Notification schedule/control schedule format:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>key</p></th>
+<th class="head"><p>type</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"f1"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Beginning of interval 1 (minutes from midnight)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"f2"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Beginning of interval 2 (minutes from midnight)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"t1"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>End of interval 1 (minutes from midnight)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"t2"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>End of interval 2 (minutes from midnight)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"m"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Mask of the days of the month (1: 2<sup>0</sup>, 31: 2<sup>30</sup>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"y"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Mask of months (Jan: 2<sup>0</sup>, Dec: 2<sup>11</sup>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"w"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Mask of days of the week (Mon: 2<sup>0</sup>, Sun: 2<sup>6</sup>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"f"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></td>
+<td><p>Schedule flags</p></td>
+</tr>
+</tbody>
+</table>
+<p>Notification <a class="reference external" href="https://wialon-help.link/bb04a9a5">action</a> format (each item in the <code class="docutils literal notranslate"><span class="pre">act</span></code> list):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>key</p></th>
+<th class="head"><p>type</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"t"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p></td>
+<td><p>Action type</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"p"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p></td>
+<td><p>Action parameters</p></td>
+</tr>
+</tbody>
+</table>
+<p>Notification <a class="reference external" href="https://wialon-help.link/9d54585d">trigger</a> format:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>key</p></th>
+<th class="head"><p>type</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"t"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p></td>
+<td><p>Trigger type</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"p"</span></code></p></td>
+<td><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p></td>
+<td><p>Trigger parameters</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>session</strong> (<em>WialonSession</em>) – A valid Wialon API session.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>WialonAPIError</strong> – If something went wrong calling the Wialon API.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The notification data from Wialon.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><em>Any</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.get_text">
+<span class="sig-name descname"><span class="pre">get_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.get_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.get_text" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.get_text'">¶</a></dt>
+<dd><p>Returns the notification text (txt).</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.get_wialon_parameters">
+<span class="sig-name descname"><span class="pre">get_wialon_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">call_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.get_wialon_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.get_wialon_parameters" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.get_wialon_parameters'">¶</a></dt>
+<dd><p>Returns parameters for Wialon notification API calls.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>call_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – A Wialon API update notification call mode.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of Wialon API update notification parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><em>Any</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.update_in_wialon">
+<span class="sig-name descname"><span class="pre">update_in_wialon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">call_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WialonNotificationUpdateCallModeType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WialonSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.update_in_wialon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.update_in_wialon" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.update_in_wialon'">¶</a></dt>
+<dd><p>Updates the notification in Wialon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>call_mode</strong> (<em>WialonNotificationUpdateCallMode</em>) – Call mode to use when calling <code class="docutils literal notranslate"><span class="pre">resource/update_notification</span></code>.</p></li>
+<li><p><strong>session</strong> (<em>WialonSession</em>) – A valid Wialon API session.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>WialonAPIError</strong> – If something went wrong calling the Wialon API.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary of notification data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><em>Any</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.actions">
+<span class="sig-name descname"><span class="pre">actions</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.actions" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.actions'">¶</a></dt>
+<dd><p>Actions.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.activation_time">
+<span class="sig-name descname"><span class="pre">activation_time</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.activation_time" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.activation_time'">¶</a></dt>
+<dd><p>Activation date/time. Optional.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><em>datetime</em></a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.activations">
+<span class="sig-name descname"><span class="pre">activations</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.activations" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.activations'">¶</a></dt>
+<dd><p>Activation count.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.alarm_timeout">
+<span class="sig-name descname"><span class="pre">alarm_timeout</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.alarm_timeout" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.alarm_timeout'">¶</a></dt>
+<dd><p>Alarm timeout in seconds. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>. Max is <code class="docutils literal notranslate"><span class="pre">1800</span></code> (30 minutes in seconds).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.control_period">
+<span class="sig-name descname"><span class="pre">control_period</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.control_period" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.control_period'">¶</a></dt>
+<dd><p>Control period relative to current time in seconds. Default is <code class="docutils literal notranslate"><span class="pre">3600</span></code>.</p>
+<p>Options are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>value</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Any time</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">60</span></code></p></td>
+<td><p>Last minute</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">600</span></code></p></td>
+<td><p>Last 10 minutes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">3600</span></code></p></td>
+<td><p>Last hour</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">86400</span></code></p></td>
+<td><p>Last day</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.control_schedule">
+<span class="sig-name descname"><span class="pre">control_schedule</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.control_schedule" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.control_schedule'">¶</a></dt>
+<dd><p>Control schedule.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.customer">
+<span class="sig-name descname"><span class="pre">customer</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.customer" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.customer'">¶</a></dt>
+<dd><p>Associated customer.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.date_created">
+<span class="sig-name descname"><span class="pre">date_created</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.date_created" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.date_created'">¶</a></dt>
+<dd><p>Date created.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.deactivation_time">
+<span class="sig-name descname"><span class="pre">deactivation_time</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.deactivation_time" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.deactivation_time'">¶</a></dt>
+<dd><p>Deactivation date/time. Optional.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><em>datetime</em></a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.enabled">
+<span class="sig-name descname"><span class="pre">enabled</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.enabled" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.enabled'">¶</a></dt>
+<dd><p>Whether the notification is enabled in Wialon.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.flags" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.flags'">¶</a></dt>
+<dd><p>Flags. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+<p>Options are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>value</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Trigger on first message</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Trigger on every message</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
+<td><p>Disabled</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.language">
+<span class="sig-name descname"><span class="pre">language</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.language" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.language'">¶</a></dt>
+<dd><p>2-letter language code. Default is <code class="docutils literal notranslate"><span class="pre">"en"</span></code>.</p>
+<p>Options are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>value</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"en"</span></code></p></td>
+<td><p>English</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.max_alarms">
+<span class="sig-name descname"><span class="pre">max_alarms</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.max_alarms" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.max_alarms'">¶</a></dt>
+<dd><p>Maximum number of alarms (0 = unlimited). Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.max_message_interval">
+<span class="sig-name descname"><span class="pre">max_message_interval</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.max_message_interval" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.max_message_interval'">¶</a></dt>
+<dd><p>Max time interval between messages. Default is <code class="docutils literal notranslate"><span class="pre">3600</span></code>.</p>
+<p>Options are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>value</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p>Any time</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">60</span></code></p></td>
+<td><p>1 minute</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">600</span></code></p></td>
+<td><p>10 minutes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1800</span></code></p></td>
+<td><p>30 minutes</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">3600</span></code></p></td>
+<td><p>1 hour</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">21600</span></code></p></td>
+<td><p>6 hours</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">43200</span></code></p></td>
+<td><p>12 hours</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">86400</span></code></p></td>
+<td><p>1 day</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">864000</span></code></p></td>
+<td><p>10 days</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.message">
+<span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.message" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.message'">¶</a></dt>
+<dd><p>Notification message. 1024 characters max.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.method">
+<span class="sig-name descname"><span class="pre">method</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.method" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.method'">¶</a></dt>
+<dd><p>Notification method. Default is <code class="docutils literal notranslate"><span class="pre">"sms"</span></code>.</p>
+<p>Options are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>value</p></th>
+<th class="head"><p>desc</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"sms"</span></code></p></td>
+<td><p>Deliver via SMS</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"voice"</span></code></p></td>
+<td><p>Deliver via TTS voice</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.min_duration_alarm">
+<span class="sig-name descname"><span class="pre">min_duration_alarm</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.min_duration_alarm" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.min_duration_alarm'">¶</a></dt>
+<dd><p>Minimum duration of alarm state in seconds. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>. Max is <code class="docutils literal notranslate"><span class="pre">86400</span></code> (1 day).</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.min_duration_prev">
+<span class="sig-name descname"><span class="pre">min_duration_prev</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.min_duration_prev" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.min_duration_prev'">¶</a></dt>
+<dd><p>Minimum duration of previous state in seconds. Default is <code class="docutils literal notranslate"><span class="pre">0</span></code>. Max is <code class="docutils literal notranslate"><span class="pre">86400</span></code> (1 day).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.name" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.name'">¶</a></dt>
+<dd><p>Notification name. 64 characters max.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.resource_id">
+<span class="sig-name descname"><span class="pre">resource_id</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.resource_id" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.resource_id'">¶</a></dt>
+<dd><p>Resource id.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.schedule">
+<span class="sig-name descname"><span class="pre">schedule</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.schedule" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.schedule'">¶</a></dt>
+<dd><p>Schedule.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.text">
+<span class="sig-name descname"><span class="pre">text</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.text" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.text'">¶</a></dt>
+<dd><p>Text.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.timezone">
+<span class="sig-name descname"><span class="pre">timezone</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.timezone" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.timezone'">¶</a></dt>
+<dd><p>Timezone.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.trigger_parameters">
+<span class="sig-name descname"><span class="pre">trigger_parameters</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.trigger_parameters" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.trigger_parameters'">¶</a></dt>
+<dd><p>Trigger parameters.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.trigger_type">
+<span class="sig-name descname"><span class="pre">trigger_type</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.trigger_type" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.trigger_type'">¶</a></dt>
+<dd><p>Trigger type.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.unit_list">
+<span class="sig-name descname"><span class="pre">unit_list</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.unit_list" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.unit_list'">¶</a></dt>
+<dd><p>List of Wialon units.</p>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.wialon_id">
+<span class="sig-name descname"><span class="pre">wialon_id</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.wialon_id" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.wialon_id'">¶</a></dt>
+<dd><p>Wialon id.</p>
+</dd></dl>
+</dd></dl>
+</section>
+</div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
+<div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
+<ul>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage"><code class="docutils literal notranslate"><span class="pre">MessagePackage</span></code></a><ul>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.DoesNotExist'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">MessagePackage.DoesNotExist</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">MessagePackage.MultipleObjectsReturned</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.count'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.count"><code class="docutils literal notranslate"><span class="pre">MessagePackage.count</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.customer'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.customer"><code class="docutils literal notranslate"><span class="pre">MessagePackage.customer</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.max'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.max"><code class="docutils literal notranslate"><span class="pre">MessagePackage.max</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.price'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.price"><code class="docutils literal notranslate"><span class="pre">MessagePackage.price</span></code></a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer</span></code></a><ul>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.DoesNotExist'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.DoesNotExist</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.MultipleObjectsReturned</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.get_resources_from_wialon()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_units_from_wialon'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_units_from_wialon"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.get_units_from_wialon()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.company'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.company"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.company</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.date_format'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.date_format"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.date_format</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.grand_total'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.grand_total"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.grand_total</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_count'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_count"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.messages_count</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.messages_max</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max_base'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.messages_max_base"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.messages_max_base</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subscription'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subscription"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.subscription</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subtotal'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.subtotal"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.subtotal</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.tax</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax_rate'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.tax_rate"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.tax_rate</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.user'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.user"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.user</span></code></a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken'" class="reference internal" href="#terminusgps_notifications.models.WialonToken"><code class="docutils literal notranslate"><span class="pre">WialonToken</span></code></a><ul>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.DoesNotExist'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">WialonToken.DoesNotExist</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.MultipleObjectsReturned'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">WialonToken.MultipleObjectsReturned</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.customer'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.customer"><code class="docutils literal notranslate"><span class="pre">WialonToken.customer</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.flags'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.flags"><code class="docutils literal notranslate"><span class="pre">WialonToken.flags</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.name'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.name"><code class="docutils literal notranslate"><span class="pre">WialonToken.name</span></code></a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification"><code class="docutils literal notranslate"><span class="pre">WialonNotification</span></code></a><ul>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.DoesNotExist'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">WialonNotification.DoesNotExist</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">WialonNotification.MultipleObjectsReturned</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.WialonNotificationMethod'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.WialonNotificationMethod"><code class="docutils literal notranslate"><span class="pre">WialonNotification.WialonNotificationMethod</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_absolute_url'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_absolute_url"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_absolute_url()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_actions'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_actions"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_actions()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_data_from_wialon'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_data_from_wialon"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_data_from_wialon()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_text'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_text"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_text()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_wialon_parameters'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_wialon_parameters"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_wialon_parameters()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.update_in_wialon'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.update_in_wialon"><code class="docutils literal notranslate"><span class="pre">WialonNotification.update_in_wialon()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.actions'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.actions"><code class="docutils literal notranslate"><span class="pre">WialonNotification.actions</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.activation_time'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.activation_time"><code class="docutils literal notranslate"><span class="pre">WialonNotification.activation_time</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.activations'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.activations"><code class="docutils literal notranslate"><span class="pre">WialonNotification.activations</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.alarm_timeout'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.alarm_timeout"><code class="docutils literal notranslate"><span class="pre">WialonNotification.alarm_timeout</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.control_period'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.control_period"><code class="docutils literal notranslate"><span class="pre">WialonNotification.control_period</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.control_schedule'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.control_schedule"><code class="docutils literal notranslate"><span class="pre">WialonNotification.control_schedule</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.customer'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.customer"><code class="docutils literal notranslate"><span class="pre">WialonNotification.customer</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.date_created'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.date_created"><code class="docutils literal notranslate"><span class="pre">WialonNotification.date_created</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.deactivation_time'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.deactivation_time"><code class="docutils literal notranslate"><span class="pre">WialonNotification.deactivation_time</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.enabled'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.enabled"><code class="docutils literal notranslate"><span class="pre">WialonNotification.enabled</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.flags'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.flags"><code class="docutils literal notranslate"><span class="pre">WialonNotification.flags</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.language'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.language"><code class="docutils literal notranslate"><span class="pre">WialonNotification.language</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.max_alarms'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.max_alarms"><code class="docutils literal notranslate"><span class="pre">WialonNotification.max_alarms</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.max_message_interval'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.max_message_interval"><code class="docutils literal notranslate"><span class="pre">WialonNotification.max_message_interval</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.message'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.message"><code class="docutils literal notranslate"><span class="pre">WialonNotification.message</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.method'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.method"><code class="docutils literal notranslate"><span class="pre">WialonNotification.method</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.min_duration_alarm'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.min_duration_alarm"><code class="docutils literal notranslate"><span class="pre">WialonNotification.min_duration_alarm</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.min_duration_prev'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.min_duration_prev"><code class="docutils literal notranslate"><span class="pre">WialonNotification.min_duration_prev</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.name'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.name"><code class="docutils literal notranslate"><span class="pre">WialonNotification.name</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.resource_id'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.resource_id"><code class="docutils literal notranslate"><span class="pre">WialonNotification.resource_id</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.schedule'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.schedule"><code class="docutils literal notranslate"><span class="pre">WialonNotification.schedule</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.text'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.text"><code class="docutils literal notranslate"><span class="pre">WialonNotification.text</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.timezone'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.timezone"><code class="docutils literal notranslate"><span class="pre">WialonNotification.timezone</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.trigger_parameters'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.trigger_parameters"><code class="docutils literal notranslate"><span class="pre">WialonNotification.trigger_parameters</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.trigger_type'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.trigger_type"><code class="docutils literal notranslate"><span class="pre">WialonNotification.trigger_type</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.unit_list'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.unit_list"><code class="docutils literal notranslate"><span class="pre">WialonNotification.unit_list</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.wialon_id'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.wialon_id"><code class="docutils literal notranslate"><span class="pre">WialonNotification.wialon_id</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</aside>
+</main>
+</div>
+</div><footer class="py-6 border-t border-border md:py-0">
+<div class="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+<div class="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
+<p class="text-sm leading-loose text-center text-muted-foreground md:text-left">© 2025, Terminus GPS, LLC Built with <a class="font-medium underline underline-offset-4" href="https://www.sphinx-doc.org" rel="noreferrer">Sphinx 8.2.3</a></p>
+</div>
+</div>
+</footer>
+</div>
+<script src="_static/documentation_options.js?v=6efca38a"></script>
+<script src="_static/doctools.js?v=9bcbadda"></script>
+<script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+<script defer="defer" src="_static/theme.js?v=073f68d9"></script>
+</body>
+</html>
