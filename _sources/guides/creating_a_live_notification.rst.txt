@@ -63,7 +63,7 @@ Example messages delivered to destination phone numbers:
 * ``[2025-12-31 13:04:29] [123 Main St] [Pete Truck] Your vehicle's speed exceeded 40mph.``
 * ``[2025-12-31 13:04:29] [Speed Demon] Your device was unhealthy.``
 
-.. note:: There should always be a date and time added to the message, but unit name and location may not be provided by Wialon when the notification is triggered.
+.. note:: There should always be a date and time added to the message, but unit name and location are optional. Depending on your notification configuration, Wialon may or may not provide these when your notification is triggered.
 
 13. Click the *Create Notification* button. You'll see a message confirming notification creation before you're redirected back to your `notification list`_.
 
