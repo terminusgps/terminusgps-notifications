@@ -26,6 +26,12 @@ class SourceCodeView(RedirectView):
     url = "https://github.com/terminusgps/terminusgps-notifications/"
 
 
+class DocumentationView(RedirectView):
+    http_method_names = ["get"]
+    permanent = True
+    url = "https://terminusgps.github.io/terminusgps-notifications/"
+
+
 @method_decorator(cache_page(timeout=60 * 15), name="dispatch")
 @method_decorator(cache_control(private=True), name="dispatch")
 class NavbarView(HtmxTemplateResponseMixin, TemplateView):

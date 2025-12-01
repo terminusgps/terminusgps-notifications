@@ -26,6 +26,7 @@ from .packages import (
 )
 from .public import (
     ContactView,
+    DocumentationView,
     HomeView,
     LoginView,
     LogoutView,
