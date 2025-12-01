@@ -1,7 +1,7 @@
 Creating an account
 ===================
 
-1. Navigate to the Terminus GPS Notifications `register`_ page.
+1. Navigate to the *Terminus GPS Notifications* `register`_ page.
 
 .. image:: ../images/register_page.png
 
