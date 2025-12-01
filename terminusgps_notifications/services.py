@@ -24,7 +24,8 @@ def get_customer(
 
     """
     try:
-        return TerminusgpsNotificationsCustomer.objects.get(user=user)
+        if user.is_authenticated:
+            return TerminusgpsNotificationsCustomer.objects.get(user=user)
     except TerminusgpsNotificationsCustomer.DoesNotExist:
         return
 
@@ -40,7 +41,8 @@ def get_customer_profile(user: AbstractBaseUser) -> CustomerProfile | None:
 
     """
     try:
-        return CustomerProfile.objects.get(user=user)
+        if user.is_authenticated:
+            return CustomerProfile.objects.get(user=user)
     except CustomerProfile.DoesNotExist:
         return
 

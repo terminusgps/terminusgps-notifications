@@ -1,0 +1,23 @@
+.. _connect-wialon-account:
+
+Connect your Wialon account
+===========================
+
+To connect your Wialon account to your Terminus GPS Notifications account, you must have already :ref:`created a Terminus GPS Notifications account <create-an-account>`.
+
+1. `Login`_ to the Terminus GPS Notifications platform.
+
+2. Navigate to the `account`_ page.
+
+3. Click the *Connect to Wialon* button.
+
+4. Enter your **Wialon credentials** into the form.
+
+5. Refresh the page once you have been redirected back to the `account`_ page.
+
+After connecting your Wialon account, your `dashboard`_ will be updated to reflect your connected Wialon account.
+
+.. _account: https://api.terminusgps.com/account/
+.. _dashboard: https://api.terminusgps.com/dashboard/
+.. _login: https://api.terminusgps.com/login/
+.. _subscription: https://api.terminusgps.com/subscription/

@@ -1,0 +1,12 @@
+.. _log-in:
+
+Log in
+======
+
+1. :ref:`Create an account <create-an-account>`, if you haven't already.
+
+2. Navigate to the Terminus GPS Notifications `login`_ page.
+
+3. Enter the email address and password associated with your account.
+
+.. _login: https://api.terminusgps.com/login/

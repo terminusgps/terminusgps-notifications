@@ -1,0 +1,4 @@
+Creating a live notification
+============================
+
+.. warning:: Without an active subscription, notification messages **will not be delivered** to any destination phone numbers.

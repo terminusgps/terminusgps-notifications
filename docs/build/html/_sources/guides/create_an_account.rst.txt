@@ -1,0 +1,17 @@
+.. _create-an-account:
+
+Create an account
+=================
+
+1. Navigate to the Terminus GPS Notifications `register`_ page.
+
+2. Complete the "Are you a human?" challenge.
+
+3. Enter your personal information into the registration form.
+
+4. Click the *Register* button at the bottom of the form.
+
+5. `Login`_ using the credentials you used in step 3.
+
+.. _register: https://api.terminusgps.com/register/
+.. _login: https://api.terminusgps.com/login/
