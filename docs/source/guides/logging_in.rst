@@ -1,9 +1,7 @@
-.. _logging-in:
-
 Logging in
 ==========
 
-1. :ref:`Create an account <creating-an-account>` if you haven't already.
+1. :doc:`Create an account <creating_an_account>` if you haven't already.
 
 2. Navigate to the Terminus GPS Notifications `login`_ page.
 

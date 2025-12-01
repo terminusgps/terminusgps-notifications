@@ -1,7 +1,7 @@
 Creating a live notification
 ============================
 
-.. warning:: Without an :ref:`active subscription <subscribing>`, notification messages **will not be delivered** to any destination phone numbers.
+.. warning:: Without an :doc:`active subscription <subscribing>`, notification messages **will not be delivered** to any destination phone numbers.
 
 1. `Login`_ to the platform.
 

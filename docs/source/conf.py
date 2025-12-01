@@ -8,7 +8,12 @@
 import os
 import sys
 
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "src.settings.prod")
 sys.path.insert(0, os.path.abspath("../../"))
+django.setup()
+
 project = "terminusgps-notifications"
 copyright = "2025, Terminus GPS, LLC"
 author = "Terminus GPS, LLC"

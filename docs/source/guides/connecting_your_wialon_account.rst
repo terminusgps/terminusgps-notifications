@@ -1,9 +1,7 @@
-.. _connecting-your-wialon-account:
-
 Connecting your Wialon account
 ==============================
 
-To connect your Wialon account to your Terminus GPS Notifications account, you must have already :ref:`created a Terminus GPS Notifications account <creating-an-account>`.
+To connect your Wialon account to your *Terminus GPS Notifications* account, you must have already :doc:`created a Terminus GPS Notifications account <creating_an_account>`.
 
 1. `Login`_ to the platform.
 

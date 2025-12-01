@@ -1,17 +1,15 @@
-.. _setting-destination-phone-numbers:
-
 Setting destination phone numbers
 =================================
 
 When your notifications are triggered, our `notification dispatcher`_ uses the `Wialon API`_ to retrieve a list of destination phone numbers.
 
-Phone numbers retrieved from :ref:`custom field <custom-field>` and :ref:`attached driver <attached-driver>` are combined into a list by the notification dispatcher. Duplicate phone numbers are discarded during this combination step.
+Phone numbers retrieved from :ref:`custom field <custom-field>` and/or :ref:`attached driver <attached-driver>` are combined into a list by the notification dispatcher. Duplicate phone numbers are discarded during this combination step.
 
 Each destination phone number recieves a message, i.e. **one notification trigger** with **three destination phone numbers** is counted as **three messages**.
 
 .. important:: All phone numbers must be in `E.164 format <E.164>`_. Example: ``+17135555555``
 
-.. note:: The notification dispatcher caches data retrieved from the Wialon API for 15 minutes.
+.. note:: Our notification dispatcher caches data retrieved from the Wialon API for 15 minutes.
 
    If you update custom field ``to_number`` or attach/detach a driver, you may have to wait up to 15 minutes before those changes are reflected by our notification dispatcher.
 

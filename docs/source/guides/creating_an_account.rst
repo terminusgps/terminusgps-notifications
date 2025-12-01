@@ -1,5 +1,3 @@
-.. _creating-an-account:
-
 Creating an account
 ===================
 

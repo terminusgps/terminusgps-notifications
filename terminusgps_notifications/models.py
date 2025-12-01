@@ -26,11 +26,21 @@ class TerminusgpsNotificationsCustomer(models.Model):
         on_delete=models.CASCADE,
         related_name="terminusgps_notifications_customer",
     )
-    """Django user."""
+    """
+    Django user.
+
+    :type: ~django.contrib.auth.models.AbstractBaseUser
+
+    """
     company = models.CharField(
         max_length=64, null=True, blank=True, default=None
     )
-    """Company name."""
+    """
+    Company name. Optional.
+
+    :type: str | None
+
+    """
     date_format = models.CharField(
         choices=[
             ("%Y-%m-%d %H:%M:%S", "YYYY-MM-DD HH:MM:SS"),
@@ -40,35 +50,60 @@ class TerminusgpsNotificationsCustomer(models.Model):
         help_text="Select a date format for notification messages.",
         max_length=24,
     )
-    """Date format for notifications."""
+    """
+    Date format for notifications. Default is ``"%Y-%m-%d %H:%M:%S"``.
+
+    :type: str
+
+    """
     tax_rate = models.DecimalField(
         max_digits=9,
         decimal_places=4,
         default=0.0825,
         help_text="Enter a tax rate as a decimal.",
     )
-    """Subscription tax rate."""
+    """
+    Subscription tax rate. Default is ``0.0825`` (8.25%).
+
+    :type: ~decimal.Decimal
+
+    """
     subtotal = models.DecimalField(
         max_digits=9,
         decimal_places=2,
         default=60.00,
         help_text="Programatically generated customer subtotal amount (base + packages).",
     )
-    """Subscription current subtotal."""
+    """
+    Subscription current subtotal. Default is ``60.00`` ($60.00).
+
+    :type: ~decimal.Decimal
+
+    """
     tax = models.GeneratedField(
         expression=(F("subtotal") * (F("tax_rate") + 1)) - F("subtotal"),
         output_field=models.DecimalField(max_digits=9, decimal_places=2),
         db_persist=True,
         help_text="Automatically generated tax amount.",
     )
-    """Subscription tax total."""
+    """
+    Subscription tax total. Automatically generated.
+
+    :type: ~decimal.Decimal
+
+    """
     grand_total = models.GeneratedField(
         expression=F("subtotal") * (F("tax_rate") + 1),
         output_field=models.DecimalField(max_digits=9, decimal_places=2),
         db_persist=True,
         help_text="Automatically generated grand total amount (subtotal+tax).",
     )
-    """Subscription grand total (subtotal + tax)."""
+    """
+    Subscription grand total (subtotal + tax). Automatically generated.
+
+    :type: ~decimal.Decimal
+
+    """
     subscription = models.ForeignKey(
         "terminusgps_payments.Subscription",
         on_delete=models.SET_NULL,
@@ -77,20 +112,40 @@ class TerminusgpsNotificationsCustomer(models.Model):
         blank=True,
         default=None,
     )
-    """Associated subscription."""
+    """
+    Associated subscription. Optional.
+
+    :type: terminusgps_payments.models.Subscription | None
+
+    """
 
     messages_max = models.PositiveIntegerField(
         verbose_name="maximum executions", default=500
     )
-    """Maximum number of notification executions in a single period."""
+    """
+    Maximum number of notification executions in a single period. Default is ``500``.
+
+    :type: int
+
+    """
     messages_max_base = models.PositiveIntegerField(
         verbose_name="maximum executions base", default=500
     )
-    """Maximum base number of notification executions in a single period."""
+    """
+    Maximum base number of notification executions in a single period. Default is ``500``.
+
+    :type: int
+
+    """
     messages_count = models.PositiveIntegerField(
         verbose_name="current executions", default=0
     )
-    """Current number of notification executions this period."""
+    """
+    Current number of notification executions this period. Default is ``0``.
+
+    :type: int
+
+    """
 
     class Meta:
         verbose_name = _("customer")
@@ -220,23 +275,44 @@ class TerminusgpsNotificationsCustomer(models.Model):
 
 class MessagePackage(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2, default=40.00)
-    """Message package price."""
+    """
+    Message package price.
+
+    :type: ~decimal.Decimal
+
+    """
     count = models.IntegerField(default=0)
-    """Message package current execution count."""
+    """
+    Message package current execution count.
+
+    :type: int
+
+    """
     max = models.IntegerField(default=500)
-    """Message package maximum allowed executions."""
+    """
+    Message package maximum allowed executions.
+
+    :type: int
+
+    """
     customer = models.ForeignKey(
         "terminusgps_notifications.TerminusgpsNotificationsCustomer",
         on_delete=models.CASCADE,
         related_name="packages",
     )
-    """Associated customer."""
+    """
+    Associated customer.
+
+    :type: ~terminusgps_notifications.models.TerminusgpsNotificationsCustomer
+
+    """
 
     class Meta:
         verbose_name = _("message package")
         verbose_name_plural = _("message packages")
 
     def __str__(self) -> str:
+        """Returns 'MessagePackage #<pk>'."""
         return f"MessagePackage #{self.pk}"
 
 
@@ -248,14 +324,29 @@ class WialonToken(models.Model):
         on_delete=models.CASCADE,
         related_name="token",
     )
-    """Associated customer."""
+    """
+    Associated customer.
+    
+    :type: ~terminusgps_notifications.models.TerminusgpsNotificationsCustomer
+
+    """
 
     name = EncryptedField(max_length=72)
-    """Wialon API token name."""
+    """
+    Encrypted Wialon API token name.
+
+    :type: str
+
+    """
     flags = models.PositiveIntegerField(
         default=settings.WIALON_TOKEN_ACCESS_TYPE
     )
-    """Wialon token flags."""
+    """
+    Wialon token flags.
+
+    :type: int
+
+    """
 
     def __str__(self) -> str:
         """Returns '<customer email>'s WialonToken'."""
@@ -274,16 +365,41 @@ class WialonNotification(models.Model):
     name = models.CharField(
         max_length=64, help_text="Provide a memorable name."
     )
-    """Notification name."""
+    """
+    Notification name. 64 characters max.
+
+    :type: str
+
+    """
     message = models.CharField(max_length=1024, help_text="Enter a message.")
-    """Notification message."""
+    """
+    Notification message. 1024 characters max.
+
+    :type: str
+
+    """
     method = models.CharField(
         choices=WialonNotificationMethod.choices,
         default=WialonNotificationMethod.SMS,
         help_text="Select a delivery method.",
         max_length=5,
     )
-    """Notification method."""
+    """
+    Notification method. Default is ``"sms"``.
+
+    Options are:
+
+    +-------------+-----------------------+
+    | value       | desc                  |
+    +=============+=======================+
+    | ``"sms"``   | Deliver via SMS       |
+    +-------------+-----------------------+
+    | ``"voice"`` | Deliver via TTS voice |
+    +-------------+-----------------------+
+        
+    :type: str
+
+    """
 
     activation_time = models.DateTimeField(
         blank=True,
@@ -291,19 +407,34 @@ class WialonNotification(models.Model):
         help_text="Provide a valid date and time in the format: YYYY-MM-DD HH:MM:SS. Leave this blank to activate immediately.",
         null=True,
     )
-    """Activation date/time."""
+    """
+    Activation date/time. Optional.
+
+    :type: ~datetime.datetime | None
+
+    """
     deactivation_time = models.DateTimeField(
         blank=True,
         default=None,
         help_text="Provide a valid date and time in the format: YYYY-MM-DD HH:MM:SS. Leave this blank to never deactivate.",
         null=True,
     )
-    """Deactivation date/time."""
+    """
+    Deactivation date/time. Optional.
+
+    :type: ~datetime.datetime | None
+
+    """
     max_alarms = models.PositiveIntegerField(
         default=0,
         help_text="Provide the maximum number of alarms. 0 = unlimited alarms.",
     )
-    """Maximum number of alarms (0 = unlimited)."""
+    """
+    Maximum number of alarms (0 = unlimited). Default is ``0``.
+
+    :type: int
+
+    """
     max_message_interval = models.PositiveIntegerField(
         default=3600,
         choices=[
@@ -319,13 +450,47 @@ class WialonNotification(models.Model):
         ],
         help_text="Select the maximum allowed time between messages.",
     )
-    """Max time interval between messages."""
+    """
+    Max time interval between messages. Default is ``3600``.
+
+    Options are:
+
+    +------------+------------+
+    | value      | desc       |
+    +============+============+
+    | ``0``      | Any time   |
+    +------------+------------+
+    | ``60``     | 1 minute   |
+    +------------+------------+
+    | ``600``    | 10 minutes |
+    +------------+------------+
+    | ``1800``   | 30 minutes |
+    +------------+------------+
+    | ``3600``   | 1 hour     |
+    +------------+------------+
+    | ``21600``  | 6 hours    |
+    +------------+------------+
+    | ``43200``  | 12 hours   |
+    +------------+------------+
+    | ``86400``  | 1 day      |
+    +------------+------------+
+    | ``864000`` | 10 days    |
+    +------------+------------+
+        
+    :type: int
+
+    """
     alarm_timeout = models.PositiveIntegerField(
         default=0,
         validators=[MaxValueValidator(1800)],
         help_text="Provide the alarm timeout in seconds. 0 = never timeout.",
     )
-    """Alarm timeout in seconds. Max is ``1800`` (30 minutes in seconds)."""
+    """
+    Alarm timeout in seconds. Default is ``0``. Max is ``1800`` (30 minutes in seconds).
+
+    :type: int
+
+    """
     control_period = models.PositiveIntegerField(
         default=3600,
         choices=[
@@ -337,24 +502,68 @@ class WialonNotification(models.Model):
         ],
         help_text="Select a control period relative to current time.",
     )
-    """Control period relative to current time in seconds."""
+    """
+    Control period relative to current time in seconds. Default is ``3600``.
+
+    Options are:
+
+    +-------------+-----------------+
+    | value       | desc            |
+    +=============+=================+
+    | ``0``       | Any time        |
+    +-------------+-----------------+
+    | ``60``      | Last minute     |
+    +-------------+-----------------+
+    | ``600``     | Last 10 minutes |
+    +-------------+-----------------+
+    | ``3600``    | Last hour       |
+    +-------------+-----------------+
+    | ``86400``   | Last day        |
+    +-------------+-----------------+
+
+    :type int:
+
+    """
     min_duration_alarm = models.PositiveIntegerField(
         default=0,
         validators=[MaxValueValidator(86400)],
         help_text="Provide the minimum duration of alarm state in seconds.",
     )
-    """Minimum duration of alarm state in seconds. Max is ``86400`` (1 day)."""
+    """
+    Minimum duration of alarm state in seconds. Default is ``0``. Max is ``86400`` (1 day).
+
+    :type int:
+
+    """
     min_duration_prev = models.PositiveIntegerField(
         default=0, validators=[MaxValueValidator(86400)]
     )
-    """Minimum duration of previous state in seconds. Max is ``86400`` (1 day)."""
+    """
+    Minimum duration of previous state in seconds. Default is ``0``. Max is ``86400`` (1 day).
+
+    :type: int
+
+    """
     language = models.CharField(
         max_length=2,
         default="en",
         choices=[("en", _("English"))],
         help_text="Select a valid language.",
     )
-    """2-letter language code."""
+    """
+    2-letter language code. Default is ``"en"``.
+
+    Options are:
+
+    +----------+---------+
+    | value    | desc    |
+    +==========+=========+
+    | ``"en"`` | English |
+    +----------+---------+
+
+    :type: str
+
+    """
     flags = models.PositiveSmallIntegerField(
         default=0,
         choices=[
@@ -363,7 +572,24 @@ class WialonNotification(models.Model):
             (2, _("Disabled")),
         ],
     )
-    """Flags."""
+    """
+    Flags. Default is ``0``.
+
+    Options are:
+
+    +-------+--------------------------+
+    | value | desc                     |
+    +=======+==========================+
+    | ``0`` | Trigger on first message |
+    +-------+--------------------------+
+    | ``1`` | Trigger on every message |
+    +-------+--------------------------+
+    | ``2`` | Disabled                 |
+    +-------+--------------------------+
+
+    :type int:
+
+    """
 
     timezone = models.IntegerField(default=0)
     """Timezone."""
@@ -518,11 +744,11 @@ class WialonNotification(models.Model):
         +----------+---------------+--------------------------------------------------------------------+
         | ``"t2"`` | :py:obj:`int` | End of interval 2 (minutes from midnight)                          |
         +----------+---------------+--------------------------------------------------------------------+
-        | ``"m"``  | :py:obj:`int` | Mask of the days of the month (1: 2:\\ sup:`0`, 31: 2\\ :sup:`30`) |
+        | ``"m"``  | :py:obj:`int` | Mask of the days of the month (1: 2\\ :sup:`0`, 31: 2\\ :sup:`30`)   |
         +----------+---------------+--------------------------------------------------------------------+
-        | ``"y"``  | :py:obj:`int` | Mask of months (Jan: 2\\ :sup:`0`, Dec: 2:\\ sup:`11`)             |
+        | ``"y"``  | :py:obj:`int` | Mask of months (Jan: 2\\ :sup:`0`, Dec: 2\\ :sup:`11`)               |
         +----------+---------------+--------------------------------------------------------------------+
-        | ``"w"``  | :py:obj:`int` | Mask of days of the week (Mon: 2\\ :sup:`0`, Sun: 2\\ :sup:`6`)    |
+        | ``"w"``  | :py:obj:`int` | Mask of days of the week (Mon: 2\\ :sup:`0`, Sun: 2\\ :sup:`6`)      |
         +----------+---------------+--------------------------------------------------------------------+
         | ``"f"``  | :py:obj:`int` | Schedule flags                                                     |
         +----------+---------------+--------------------------------------------------------------------+
