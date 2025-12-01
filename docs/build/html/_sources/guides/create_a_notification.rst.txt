@@ -1,6 +1,0 @@
-Creating a notification
-=======================
-
-Creating a notification that can dispatch a message to an end-user's phone number is a multi-step process.
-
-First,
