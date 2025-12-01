@@ -59,7 +59,7 @@ The final message is structured as follows: ``[DATETIME] [LOCATION] [UNIT NAME] 
 Example messages delivered to destination phone numbers:
 
 * ``[2025-12-31 13:04:29] [123 Main St] [Blake's Lexus] Your vehicle had its ignition switched on.``
-* ``[2025-12-31 13:04:29] [UN38203982] A driver was assigned to your vehicle.``
+* ``[2025-12-31 13:04:29] [UN38203982] A driver was assigned to this vehicle.``
 * ``[2025-12-31 13:04:29] [123 Main St] [Pete Truck] Your vehicle's speed exceeded 40mph.``
 * ``[2025-12-31 13:04:29] [Speed Demon] Your device was unhealthy.``
 
