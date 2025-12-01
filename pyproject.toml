@@ -76,3 +76,8 @@ deploy = [
     "psycopg2-binary>=2.9.11",
     "psycopg[binary,pool]>=3.2.11",
 ]
+docs = [
+    "autoclasstoc>=1.7.0",
+    "sphinx>=8.2.3",
+    "sphinxawesome-theme>=5.3.2",
+]
