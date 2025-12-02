@@ -23,7 +23,7 @@ class MessagePackageCountField(forms.TypedChoiceField):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.choices = [
-            (500, _("500 Messages")),
+            (500, _("500 messages")),
             (1000, _("1000 messages")),
             (5000, _("5000 messages")),
         ]
