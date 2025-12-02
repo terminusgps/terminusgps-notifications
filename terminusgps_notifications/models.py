@@ -3,7 +3,7 @@ import urllib.parse
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, MinLengthValidator
 from django.db import models
 from django.db.models import F
 from django.urls import reverse
@@ -363,7 +363,9 @@ class WialonNotification(models.Model):
         VOICE = "voice", _("Voice")
 
     name = models.CharField(
-        max_length=64, help_text="Provide a memorable name."
+        max_length=64,
+        help_text="Provide a memorable name.",
+        validators=[MinLengthValidator(4)],
     )
     """
     Notification name. 64 characters max.
