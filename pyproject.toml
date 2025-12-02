@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/terminusgps/terminusgps-notifications"
+Documentation = "https://terminusgps.github.io/terminusgps-notifications/"
 Repository = "https://github.com/terminusgps/terminusgps-notifications"
 
 [build-system]
