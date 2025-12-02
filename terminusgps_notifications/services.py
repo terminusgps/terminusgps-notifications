@@ -58,8 +58,9 @@ def get_wialon_token(user: AbstractBaseUser) -> str | None:
 
     """
     try:
-        token = WialonToken.objects.get(customer__user=user)
-        return getattr(token, "name", None)
+        if user.is_authenticated:
+            token = WialonToken.objects.get(customer__user=user)
+            return getattr(token, "name", None)
     except WialonToken.DoesNotExist:
         return
 
