@@ -1,4 +1,14 @@
 <form class="flex flex-col gap-4" action="{% url 'terminusgps_notifications:register' %}" method="post">
+    {% if form.non_field_errors %}
+    <div class="p-2 bg-red-200 text-red-700 animate-jiggle border border-current rounded">
+        <div class="flex gap-2 items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-red-700 fill-red-50 animate-pulse">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
+            {{ form.non_field_errors }}
+        </div>
+    </div>
+    {% endif %}
     {% csrf_token %}
     <section class="flex gap-2 justify-between">
         <section class="flex flex-col gap-2 w-full">
