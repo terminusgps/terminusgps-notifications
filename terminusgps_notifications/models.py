@@ -368,7 +368,7 @@ class WialonNotification(models.Model):
         validators=[MinLengthValidator(4)],
     )
     """
-    Notification name. 64 characters max.
+    Notification name. 4 characters min. 64 characters max.
 
     :type: str
 
