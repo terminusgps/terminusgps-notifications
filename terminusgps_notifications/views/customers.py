@@ -153,12 +153,11 @@ class SubscriptionView(
 
     def setup(self, request: HttpRequest, *args, **kwargs) -> None:
         """Adds :py:attr:`customer` to the view."""
-        customer = (
+        self.customer = (
             services.get_customer(request.user)
             if hasattr(request, "user")
             else None
         )
-        self.customer = customer
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:
@@ -181,21 +180,18 @@ class NotificationsView(
 
     def setup(self, request: HttpRequest, *args, **kwargs) -> None:
         """Adds :py:attr:`customer`, :py:attr:`has_token` and :py:attr:`has_subscription` to the view."""
-        customer = (
+        self.customer = (
             services.get_customer(request.user)
             if hasattr(request, "user")
             else None
         )
-        token = (
+        self.has_token = bool(
             services.get_wialon_token(request.user)
             if hasattr(request, "user")
             else None
         )
-
-        self.customer = customer
-        self.has_token = bool(token)
         self.has_subscription = (
-            bool(customer.subscription) if customer else False
+            bool(self.customer.subscription) if self.customer else False
         )
         return super().setup(request, *args, **kwargs)
 
@@ -225,12 +221,11 @@ class CustomerSubscriptionCreateView(
 
     def setup(self, request: HttpRequest, *args, **kwargs) -> None:
         """Adds :py:attr:`customer` and :py:attr:`anet_service` to the view."""
-        customer = (
+        self.customer = (
             services.get_customer(request.user)
             if hasattr(request, "user")
             else None
         )
-        self.customer = customer
         self.anet_service = AuthorizenetService()
         return super().setup(request, *args, **kwargs)
 
@@ -389,18 +384,16 @@ class CustomerStatsView(
 
     def setup(self, request: HttpRequest, *args, **kwargs) -> None:
         """Adds :py:attr:`customer` and :py:attr:`has_token` to the view."""
-        customer = (
+        self.customer = (
             services.get_customer(request.user)
             if hasattr(request, "user")
             else None
         )
-        token = (
+        self.has_token = bool(
             services.get_wialon_token(request.user)
             if hasattr(request, "user")
             else None
         )
-        self.customer = customer
-        self.has_token = bool(token)
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs) -> dict[str, typing.Any]:

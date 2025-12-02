@@ -149,7 +149,6 @@ class RegisterView(HtmxTemplateResponseMixin, FormView):
 
     @staticmethod
     def send_registration_complete_email(user: AbstractBaseUser) -> None:
-        to = [user.email]
         subject = "Terminus GPS Notifications - Registration Complete"
         template = "terminusgps_notifications/emails/registration_complete.txt"
         context = {
@@ -176,5 +175,8 @@ class RegisterView(HtmxTemplateResponseMixin, FormView):
             ),
         }
         tasks.send_email.enqueue(
-            to=to, subject=subject, template_name=template, context=context
+            to=[user.email],
+            subject=subject,
+            template_name=template,
+            context=context,
         )
