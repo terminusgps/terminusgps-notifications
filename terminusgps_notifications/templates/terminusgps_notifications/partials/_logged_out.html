@@ -1,1 +1,7 @@
-<p class="p-2 bg-gray-300 rounded border">You were logged out successfully. See you next time!</p>
+{% extends "terminusgps_notifications/layout.html" %}
+{% block content %}
+<div class="flex flex-col gap-2">
+    <p>You were logged out successfully.</p>
+    <p>See you next time!</p>
+</div>
+{% endblock content %}
