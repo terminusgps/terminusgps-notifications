@@ -1,30 +1,40 @@
-<form class="flex flex-col gap-4" action="{% url 'terminusgps_notifications:login' %}" method="post">
-    {% if form.non_field_errors %}
-    <div class="p-2 bg-red-200 text-red-700 animate-jiggle border border-current rounded">
-        <div class="flex gap-2 items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-red-700 fill-red-50 animate-pulse">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-            </svg>
-            {{ form.non_field_errors }}
+<div class="flex flex-col gap-8">
+    {% if next %}
+        {% if user.is_authenticated %}
+        <div class="flex flex-col gap-2">
+            <p>You don't have access to view this content.</p>
+            <p>Please login to an account that has access in order to view this content.</p>
         </div>
-    </div>
+        {% else %}
+        <p>Please login to view this content.</p>
+        {% endif %}
     {% endif %}
-    {% csrf_token %}
-    <section class="flex flex-col gap-2">
-        {{ form.username }}
-        <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.username.id_for_label }}">Username</label>
-        <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.username.id_for_label }}_helptext">{{ form.username.help_text }}</p>
-        {% if form.username.errors %}<div class="animate-jiggle font-italic">{{ form.username.errors }}</div>{% endif %}
-    </section>
-    <section class="flex flex-col gap-2">
-        {{ form.password }}
-        <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.password.id_for_label }}">Password</label>
-        <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.password.id_for_label }}_helptext">{{ form.password.help_text }}</p>
-        {% if form.password.errors %}<div class="animate-jiggle font-italic">{{ form.password.errors }}</div>{% endif %}
-    </section>
-    {% for hidden in form.hidden_fields %}
-    {{ hidden }}
-    {% endfor %}
-    <button type="submit" class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400">Login</button>
-    <p class="text-center">Don't have an account? Click <a href="{% url 'terminusgps_notifications:register' %}" hx-boost="true" hx-inherit="false" class="w-fit decoration text-terminus-red-200 underline decoration-terminus-black underline-offset-4 hover:text-terminus-red-100 hover:decoration-dotted dark:decoration-white">here</a> to register.</p>
-</form>
+    <form class="flex flex-col gap-4" action="{% url 'terminusgps_notifications:login' %}" method="post">
+        {% if form.non_field_errors %}
+        <div class="p-2 bg-red-200 text-red-700 animate-jiggle border border-current rounded">
+            <div class="flex gap-2 items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-red-700 fill-red-50 animate-pulse">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+                {{ form.non_field_errors }}
+            </div>
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        <section class="flex flex-col gap-2">
+            {{ form.username }}
+            <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.username.id_for_label }}">Username</label>
+            <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.username.id_for_label }}_helptext">{{ form.username.help_text }}</p>
+            {% if form.username.errors %}<div class="animate-jiggle font-italic">{{ form.username.errors }}</div>{% endif %}
+        </section>
+        <section class="flex flex-col gap-2">
+            {{ form.password }}
+            <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.password.id_for_label }}">Password</label>
+            <p class="text-sm peer-user-invalid:text-red-600" id="{{ form.password.id_for_label }}_helptext">{{ form.password.help_text }}</p>
+            {% if form.password.errors %}<div class="animate-jiggle font-italic">{{ form.password.errors }}</div>{% endif %}
+        </section>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400">Login</button>
+        <p class="text-center">Don't have an account? Click <a href="{% url 'terminusgps_notifications:register' %}" hx-boost="true" hx-inherit="false" class="w-fit decoration text-terminus-red-200 underline decoration-terminus-black underline-offset-4 hover:text-terminus-red-100 hover:decoration-dotted dark:decoration-white">here</a> to register.</p>
+    </form>
+</div>
