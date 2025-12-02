@@ -159,7 +159,7 @@
 </span><span id="line-3">
 </span><span id="line-4"><span class="kn">from</span><span class="w"> </span><span class="nn">django.conf</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
 </span><span id="line-5"><span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_user_model</span>
-</span><span id="line-6"><span class="kn">from</span><span class="w"> </span><span class="nn">django.core.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxValueValidator</span>
+</span><span id="line-6"><span class="kn">from</span><span class="w"> </span><span class="nn">django.core.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaxValueValidator</span><span class="p">,</span> <span class="n">MinLengthValidator</span>
 </span><span id="line-7"><span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
 </span><span id="line-8"><span class="kn">from</span><span class="w"> </span><span class="nn">django.db.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">F</span>
 </span><span id="line-9"><span class="kn">from</span><span class="w"> </span><span class="nn">django.urls</span><span class="w"> </span><span class="kn">import</span> <span class="n">reverse</span>
@@ -539,497 +539,499 @@
 
 </span><span id="line-364">
 </span><span id="line-365">    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
-</span><span id="line-366">        <span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide a memorable name.&quot;</span>
-</span><span id="line-367">    <span class="p">)</span>
-</span><span id="line-368"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-369"><span class="sd">    Notification name. 64 characters max.</span>
-</span><span id="line-370">
-</span><span id="line-371"><span class="sd">    :type: str</span>
+</span><span id="line-366">        <span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+</span><span id="line-367">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide a memorable name.&quot;</span><span class="p">,</span>
+</span><span id="line-368">        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinLengthValidator</span><span class="p">(</span><span class="mi">4</span><span class="p">)],</span>
+</span><span id="line-369">    <span class="p">)</span>
+</span><span id="line-370"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-371"><span class="sd">    Notification name. 64 characters max.</span>
 </span><span id="line-372">
-</span><span id="line-373"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-374">    <span class="n">message</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Enter a message.&quot;</span><span class="p">)</span>
-</span><span id="line-375"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-376"><span class="sd">    Notification message. 1024 characters max.</span>
-</span><span id="line-377">
-</span><span id="line-378"><span class="sd">    :type: str</span>
+</span><span id="line-373"><span class="sd">    :type: str</span>
+</span><span id="line-374">
+</span><span id="line-375"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-376">    <span class="n">message</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Enter a message.&quot;</span><span class="p">)</span>
+</span><span id="line-377"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-378"><span class="sd">    Notification message. 1024 characters max.</span>
 </span><span id="line-379">
-</span><span id="line-380"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-381">    <span class="n">method</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
-</span><span id="line-382">        <span class="n">choices</span><span class="o">=</span><span class="n">WialonNotificationMethod</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span>
-</span><span id="line-383">        <span class="n">default</span><span class="o">=</span><span class="n">WialonNotificationMethod</span><span class="o">.</span><span class="n">SMS</span><span class="p">,</span>
-</span><span id="line-384">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Select a delivery method.&quot;</span><span class="p">,</span>
-</span><span id="line-385">        <span class="n">max_length</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-</span><span id="line-386">    <span class="p">)</span>
-</span><span id="line-387"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-388"><span class="sd">    Notification method. Default is ``&quot;sms&quot;``.</span>
-</span><span id="line-389">
-</span><span id="line-390"><span class="sd">    Options are:</span>
+</span><span id="line-380"><span class="sd">    :type: str</span>
+</span><span id="line-381">
+</span><span id="line-382"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-383">    <span class="n">method</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+</span><span id="line-384">        <span class="n">choices</span><span class="o">=</span><span class="n">WialonNotificationMethod</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span>
+</span><span id="line-385">        <span class="n">default</span><span class="o">=</span><span class="n">WialonNotificationMethod</span><span class="o">.</span><span class="n">SMS</span><span class="p">,</span>
+</span><span id="line-386">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Select a delivery method.&quot;</span><span class="p">,</span>
+</span><span id="line-387">        <span class="n">max_length</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+</span><span id="line-388">    <span class="p">)</span>
+</span><span id="line-389"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-390"><span class="sd">    Notification method. Default is ``&quot;sms&quot;``.</span>
 </span><span id="line-391">
-</span><span id="line-392"><span class="sd">    +-------------+-----------------------+</span>
-</span><span id="line-393"><span class="sd">    | value       | desc                  |</span>
-</span><span id="line-394"><span class="sd">    +=============+=======================+</span>
-</span><span id="line-395"><span class="sd">    | ``&quot;sms&quot;``   | Deliver via SMS       |</span>
-</span><span id="line-396"><span class="sd">    +-------------+-----------------------+</span>
-</span><span id="line-397"><span class="sd">    | ``&quot;voice&quot;`` | Deliver via TTS voice |</span>
+</span><span id="line-392"><span class="sd">    Options are:</span>
+</span><span id="line-393">
+</span><span id="line-394"><span class="sd">    +-------------+-----------------------+</span>
+</span><span id="line-395"><span class="sd">    | value       | desc                  |</span>
+</span><span id="line-396"><span class="sd">    +=============+=======================+</span>
+</span><span id="line-397"><span class="sd">    | ``&quot;sms&quot;``   | Deliver via SMS       |</span>
 </span><span id="line-398"><span class="sd">    +-------------+-----------------------+</span>
-</span><span id="line-399"><span class="sd">        </span>
-</span><span id="line-400"><span class="sd">    :type: str</span>
-</span><span id="line-401">
-</span><span id="line-402"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-399"><span class="sd">    | ``&quot;voice&quot;`` | Deliver via TTS voice |</span>
+</span><span id="line-400"><span class="sd">    +-------------+-----------------------+</span>
+</span><span id="line-401"><span class="sd">        </span>
+</span><span id="line-402"><span class="sd">    :type: str</span>
 </span><span id="line-403">
-</span><span id="line-404">    <span class="n">activation_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
-</span><span id="line-405">        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="line-406">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="line-407">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide a valid date and time in the format: YYYY-MM-DD HH:MM:SS. Leave this blank to activate immediately.&quot;</span><span class="p">,</span>
-</span><span id="line-408">        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="line-409">    <span class="p">)</span>
-</span><span id="line-410"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-411"><span class="sd">    Activation date/time. Optional.</span>
-</span><span id="line-412">
-</span><span id="line-413"><span class="sd">    :type: ~datetime.datetime | None</span>
+</span><span id="line-404"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-405">
+</span><span id="line-406">    <span class="n">activation_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+</span><span id="line-407">        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="line-408">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="line-409">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide a valid date and time in the format: YYYY-MM-DD HH:MM:SS. Leave this blank to activate immediately.&quot;</span><span class="p">,</span>
+</span><span id="line-410">        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="line-411">    <span class="p">)</span>
+</span><span id="line-412"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-413"><span class="sd">    Activation date/time. Optional.</span>
 </span><span id="line-414">
-</span><span id="line-415"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-416">    <span class="n">deactivation_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
-</span><span id="line-417">        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="line-418">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="line-419">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide a valid date and time in the format: YYYY-MM-DD HH:MM:SS. Leave this blank to never deactivate.&quot;</span><span class="p">,</span>
-</span><span id="line-420">        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="line-421">    <span class="p">)</span>
-</span><span id="line-422"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-423"><span class="sd">    Deactivation date/time. Optional.</span>
-</span><span id="line-424">
-</span><span id="line-425"><span class="sd">    :type: ~datetime.datetime | None</span>
+</span><span id="line-415"><span class="sd">    :type: ~datetime.datetime | None</span>
+</span><span id="line-416">
+</span><span id="line-417"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-418">    <span class="n">deactivation_time</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+</span><span id="line-419">        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="line-420">        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="line-421">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide a valid date and time in the format: YYYY-MM-DD HH:MM:SS. Leave this blank to never deactivate.&quot;</span><span class="p">,</span>
+</span><span id="line-422">        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="line-423">    <span class="p">)</span>
+</span><span id="line-424"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-425"><span class="sd">    Deactivation date/time. Optional.</span>
 </span><span id="line-426">
-</span><span id="line-427"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-428">    <span class="n">max_alarms</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
-</span><span id="line-429">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="line-430">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide the maximum number of alarms. 0 = unlimited alarms.&quot;</span><span class="p">,</span>
-</span><span id="line-431">    <span class="p">)</span>
-</span><span id="line-432"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-433"><span class="sd">    Maximum number of alarms (0 = unlimited). Default is ``0``.</span>
-</span><span id="line-434">
-</span><span id="line-435"><span class="sd">    :type: int</span>
+</span><span id="line-427"><span class="sd">    :type: ~datetime.datetime | None</span>
+</span><span id="line-428">
+</span><span id="line-429"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-430">    <span class="n">max_alarms</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
+</span><span id="line-431">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="line-432">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide the maximum number of alarms. 0 = unlimited alarms.&quot;</span><span class="p">,</span>
+</span><span id="line-433">    <span class="p">)</span>
+</span><span id="line-434"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-435"><span class="sd">    Maximum number of alarms (0 = unlimited). Default is ``0``.</span>
 </span><span id="line-436">
-</span><span id="line-437"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-438">    <span class="n">max_message_interval</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
-</span><span id="line-439">        <span class="n">default</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
-</span><span id="line-440">        <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
-</span><span id="line-441">            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Any time&quot;</span><span class="p">)),</span>
-</span><span id="line-442">            <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;1 minute&quot;</span><span class="p">)),</span>
-</span><span id="line-443">            <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;10 minutes&quot;</span><span class="p">)),</span>
-</span><span id="line-444">            <span class="p">(</span><span class="mi">1800</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;30 minutes&quot;</span><span class="p">)),</span>
-</span><span id="line-445">            <span class="p">(</span><span class="mi">3600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;1 hour&quot;</span><span class="p">)),</span>
-</span><span id="line-446">            <span class="p">(</span><span class="mi">21600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;6 hours&quot;</span><span class="p">)),</span>
-</span><span id="line-447">            <span class="p">(</span><span class="mi">43200</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;12 hours&quot;</span><span class="p">)),</span>
-</span><span id="line-448">            <span class="p">(</span><span class="mi">86400</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;1 day&quot;</span><span class="p">)),</span>
-</span><span id="line-449">            <span class="p">(</span><span class="mi">864000</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;10 days&quot;</span><span class="p">)),</span>
-</span><span id="line-450">        <span class="p">],</span>
-</span><span id="line-451">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Select the maximum allowed time between messages.&quot;</span><span class="p">,</span>
-</span><span id="line-452">    <span class="p">)</span>
-</span><span id="line-453"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-454"><span class="sd">    Max time interval between messages. Default is ``3600``.</span>
-</span><span id="line-455">
-</span><span id="line-456"><span class="sd">    Options are:</span>
+</span><span id="line-437"><span class="sd">    :type: int</span>
+</span><span id="line-438">
+</span><span id="line-439"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-440">    <span class="n">max_message_interval</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
+</span><span id="line-441">        <span class="n">default</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
+</span><span id="line-442">        <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
+</span><span id="line-443">            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Any time&quot;</span><span class="p">)),</span>
+</span><span id="line-444">            <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;1 minute&quot;</span><span class="p">)),</span>
+</span><span id="line-445">            <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;10 minutes&quot;</span><span class="p">)),</span>
+</span><span id="line-446">            <span class="p">(</span><span class="mi">1800</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;30 minutes&quot;</span><span class="p">)),</span>
+</span><span id="line-447">            <span class="p">(</span><span class="mi">3600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;1 hour&quot;</span><span class="p">)),</span>
+</span><span id="line-448">            <span class="p">(</span><span class="mi">21600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;6 hours&quot;</span><span class="p">)),</span>
+</span><span id="line-449">            <span class="p">(</span><span class="mi">43200</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;12 hours&quot;</span><span class="p">)),</span>
+</span><span id="line-450">            <span class="p">(</span><span class="mi">86400</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;1 day&quot;</span><span class="p">)),</span>
+</span><span id="line-451">            <span class="p">(</span><span class="mi">864000</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;10 days&quot;</span><span class="p">)),</span>
+</span><span id="line-452">        <span class="p">],</span>
+</span><span id="line-453">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Select the maximum allowed time between messages.&quot;</span><span class="p">,</span>
+</span><span id="line-454">    <span class="p">)</span>
+</span><span id="line-455"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-456"><span class="sd">    Max time interval between messages. Default is ``3600``.</span>
 </span><span id="line-457">
-</span><span id="line-458"><span class="sd">    +------------+------------+</span>
-</span><span id="line-459"><span class="sd">    | value      | desc       |</span>
-</span><span id="line-460"><span class="sd">    +============+============+</span>
-</span><span id="line-461"><span class="sd">    | ``0``      | Any time   |</span>
-</span><span id="line-462"><span class="sd">    +------------+------------+</span>
-</span><span id="line-463"><span class="sd">    | ``60``     | 1 minute   |</span>
+</span><span id="line-458"><span class="sd">    Options are:</span>
+</span><span id="line-459">
+</span><span id="line-460"><span class="sd">    +------------+------------+</span>
+</span><span id="line-461"><span class="sd">    | value      | desc       |</span>
+</span><span id="line-462"><span class="sd">    +============+============+</span>
+</span><span id="line-463"><span class="sd">    | ``0``      | Any time   |</span>
 </span><span id="line-464"><span class="sd">    +------------+------------+</span>
-</span><span id="line-465"><span class="sd">    | ``600``    | 10 minutes |</span>
+</span><span id="line-465"><span class="sd">    | ``60``     | 1 minute   |</span>
 </span><span id="line-466"><span class="sd">    +------------+------------+</span>
-</span><span id="line-467"><span class="sd">    | ``1800``   | 30 minutes |</span>
+</span><span id="line-467"><span class="sd">    | ``600``    | 10 minutes |</span>
 </span><span id="line-468"><span class="sd">    +------------+------------+</span>
-</span><span id="line-469"><span class="sd">    | ``3600``   | 1 hour     |</span>
+</span><span id="line-469"><span class="sd">    | ``1800``   | 30 minutes |</span>
 </span><span id="line-470"><span class="sd">    +------------+------------+</span>
-</span><span id="line-471"><span class="sd">    | ``21600``  | 6 hours    |</span>
+</span><span id="line-471"><span class="sd">    | ``3600``   | 1 hour     |</span>
 </span><span id="line-472"><span class="sd">    +------------+------------+</span>
-</span><span id="line-473"><span class="sd">    | ``43200``  | 12 hours   |</span>
+</span><span id="line-473"><span class="sd">    | ``21600``  | 6 hours    |</span>
 </span><span id="line-474"><span class="sd">    +------------+------------+</span>
-</span><span id="line-475"><span class="sd">    | ``86400``  | 1 day      |</span>
+</span><span id="line-475"><span class="sd">    | ``43200``  | 12 hours   |</span>
 </span><span id="line-476"><span class="sd">    +------------+------------+</span>
-</span><span id="line-477"><span class="sd">    | ``864000`` | 10 days    |</span>
+</span><span id="line-477"><span class="sd">    | ``86400``  | 1 day      |</span>
 </span><span id="line-478"><span class="sd">    +------------+------------+</span>
-</span><span id="line-479"><span class="sd">        </span>
-</span><span id="line-480"><span class="sd">    :type: int</span>
-</span><span id="line-481">
-</span><span id="line-482"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-483">    <span class="n">alarm_timeout</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
-</span><span id="line-484">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="line-485">        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MaxValueValidator</span><span class="p">(</span><span class="mi">1800</span><span class="p">)],</span>
-</span><span id="line-486">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide the alarm timeout in seconds. 0 = never timeout.&quot;</span><span class="p">,</span>
-</span><span id="line-487">    <span class="p">)</span>
-</span><span id="line-488"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-489"><span class="sd">    Alarm timeout in seconds. Default is ``0``. Max is ``1800`` (30 minutes in seconds).</span>
-</span><span id="line-490">
-</span><span id="line-491"><span class="sd">    :type: int</span>
+</span><span id="line-479"><span class="sd">    | ``864000`` | 10 days    |</span>
+</span><span id="line-480"><span class="sd">    +------------+------------+</span>
+</span><span id="line-481"><span class="sd">        </span>
+</span><span id="line-482"><span class="sd">    :type: int</span>
+</span><span id="line-483">
+</span><span id="line-484"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-485">    <span class="n">alarm_timeout</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
+</span><span id="line-486">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="line-487">        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MaxValueValidator</span><span class="p">(</span><span class="mi">1800</span><span class="p">)],</span>
+</span><span id="line-488">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide the alarm timeout in seconds. 0 = never timeout.&quot;</span><span class="p">,</span>
+</span><span id="line-489">    <span class="p">)</span>
+</span><span id="line-490"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-491"><span class="sd">    Alarm timeout in seconds. Default is ``0``. Max is ``1800`` (30 minutes in seconds).</span>
 </span><span id="line-492">
-</span><span id="line-493"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-494">    <span class="n">control_period</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
-</span><span id="line-495">        <span class="n">default</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
-</span><span id="line-496">        <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
-</span><span id="line-497">            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Any time&quot;</span><span class="p">)),</span>
-</span><span id="line-498">            <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Last minute&quot;</span><span class="p">)),</span>
-</span><span id="line-499">            <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Last 10 minutes&quot;</span><span class="p">)),</span>
-</span><span id="line-500">            <span class="p">(</span><span class="mi">3600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Last hour&quot;</span><span class="p">)),</span>
-</span><span id="line-501">            <span class="p">(</span><span class="mi">86400</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Last day&quot;</span><span class="p">)),</span>
-</span><span id="line-502">        <span class="p">],</span>
-</span><span id="line-503">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Select a control period relative to current time.&quot;</span><span class="p">,</span>
-</span><span id="line-504">    <span class="p">)</span>
-</span><span id="line-505"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-506"><span class="sd">    Control period relative to current time in seconds. Default is ``3600``.</span>
-</span><span id="line-507">
-</span><span id="line-508"><span class="sd">    Options are:</span>
+</span><span id="line-493"><span class="sd">    :type: int</span>
+</span><span id="line-494">
+</span><span id="line-495"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-496">    <span class="n">control_period</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
+</span><span id="line-497">        <span class="n">default</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
+</span><span id="line-498">        <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
+</span><span id="line-499">            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Any time&quot;</span><span class="p">)),</span>
+</span><span id="line-500">            <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Last minute&quot;</span><span class="p">)),</span>
+</span><span id="line-501">            <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Last 10 minutes&quot;</span><span class="p">)),</span>
+</span><span id="line-502">            <span class="p">(</span><span class="mi">3600</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Last hour&quot;</span><span class="p">)),</span>
+</span><span id="line-503">            <span class="p">(</span><span class="mi">86400</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Last day&quot;</span><span class="p">)),</span>
+</span><span id="line-504">        <span class="p">],</span>
+</span><span id="line-505">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Select a control period relative to current time.&quot;</span><span class="p">,</span>
+</span><span id="line-506">    <span class="p">)</span>
+</span><span id="line-507"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-508"><span class="sd">    Control period relative to current time in seconds. Default is ``3600``.</span>
 </span><span id="line-509">
-</span><span id="line-510"><span class="sd">    +-------------+-----------------+</span>
-</span><span id="line-511"><span class="sd">    | value       | desc            |</span>
-</span><span id="line-512"><span class="sd">    +=============+=================+</span>
-</span><span id="line-513"><span class="sd">    | ``0``       | Any time        |</span>
-</span><span id="line-514"><span class="sd">    +-------------+-----------------+</span>
-</span><span id="line-515"><span class="sd">    | ``60``      | Last minute     |</span>
+</span><span id="line-510"><span class="sd">    Options are:</span>
+</span><span id="line-511">
+</span><span id="line-512"><span class="sd">    +-------------+-----------------+</span>
+</span><span id="line-513"><span class="sd">    | value       | desc            |</span>
+</span><span id="line-514"><span class="sd">    +=============+=================+</span>
+</span><span id="line-515"><span class="sd">    | ``0``       | Any time        |</span>
 </span><span id="line-516"><span class="sd">    +-------------+-----------------+</span>
-</span><span id="line-517"><span class="sd">    | ``600``     | Last 10 minutes |</span>
+</span><span id="line-517"><span class="sd">    | ``60``      | Last minute     |</span>
 </span><span id="line-518"><span class="sd">    +-------------+-----------------+</span>
-</span><span id="line-519"><span class="sd">    | ``3600``    | Last hour       |</span>
+</span><span id="line-519"><span class="sd">    | ``600``     | Last 10 minutes |</span>
 </span><span id="line-520"><span class="sd">    +-------------+-----------------+</span>
-</span><span id="line-521"><span class="sd">    | ``86400``   | Last day        |</span>
+</span><span id="line-521"><span class="sd">    | ``3600``    | Last hour       |</span>
 </span><span id="line-522"><span class="sd">    +-------------+-----------------+</span>
-</span><span id="line-523">
-</span><span id="line-524"><span class="sd">    :type int:</span>
+</span><span id="line-523"><span class="sd">    | ``86400``   | Last day        |</span>
+</span><span id="line-524"><span class="sd">    +-------------+-----------------+</span>
 </span><span id="line-525">
-</span><span id="line-526"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-527">    <span class="n">min_duration_alarm</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
-</span><span id="line-528">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="line-529">        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MaxValueValidator</span><span class="p">(</span><span class="mi">86400</span><span class="p">)],</span>
-</span><span id="line-530">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide the minimum duration of alarm state in seconds.&quot;</span><span class="p">,</span>
-</span><span id="line-531">    <span class="p">)</span>
-</span><span id="line-532"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-533"><span class="sd">    Minimum duration of alarm state in seconds. Default is ``0``. Max is ``86400`` (1 day).</span>
-</span><span id="line-534">
-</span><span id="line-535"><span class="sd">    :type int:</span>
+</span><span id="line-526"><span class="sd">    :type int:</span>
+</span><span id="line-527">
+</span><span id="line-528"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-529">    <span class="n">min_duration_alarm</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
+</span><span id="line-530">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="line-531">        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MaxValueValidator</span><span class="p">(</span><span class="mi">86400</span><span class="p">)],</span>
+</span><span id="line-532">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Provide the minimum duration of alarm state in seconds.&quot;</span><span class="p">,</span>
+</span><span id="line-533">    <span class="p">)</span>
+</span><span id="line-534"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-535"><span class="sd">    Minimum duration of alarm state in seconds. Default is ``0``. Max is ``86400`` (1 day).</span>
 </span><span id="line-536">
-</span><span id="line-537"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-538">    <span class="n">min_duration_prev</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
-</span><span id="line-539">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MaxValueValidator</span><span class="p">(</span><span class="mi">86400</span><span class="p">)]</span>
-</span><span id="line-540">    <span class="p">)</span>
-</span><span id="line-541"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-542"><span class="sd">    Minimum duration of previous state in seconds. Default is ``0``. Max is ``86400`` (1 day).</span>
-</span><span id="line-543">
-</span><span id="line-544"><span class="sd">    :type: int</span>
+</span><span id="line-537"><span class="sd">    :type int:</span>
+</span><span id="line-538">
+</span><span id="line-539"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-540">    <span class="n">min_duration_prev</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span>
+</span><span id="line-541">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MaxValueValidator</span><span class="p">(</span><span class="mi">86400</span><span class="p">)]</span>
+</span><span id="line-542">    <span class="p">)</span>
+</span><span id="line-543"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-544"><span class="sd">    Minimum duration of previous state in seconds. Default is ``0``. Max is ``86400`` (1 day).</span>
 </span><span id="line-545">
-</span><span id="line-546"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-547">    <span class="n">language</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
-</span><span id="line-548">        <span class="n">max_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-</span><span id="line-549">        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span>
-</span><span id="line-550">        <span class="n">choices</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;English&quot;</span><span class="p">))],</span>
-</span><span id="line-551">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Select a valid language.&quot;</span><span class="p">,</span>
-</span><span id="line-552">    <span class="p">)</span>
-</span><span id="line-553"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-554"><span class="sd">    2-letter language code. Default is ``&quot;en&quot;``.</span>
-</span><span id="line-555">
-</span><span id="line-556"><span class="sd">    Options are:</span>
+</span><span id="line-546"><span class="sd">    :type: int</span>
+</span><span id="line-547">
+</span><span id="line-548"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-549">    <span class="n">language</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+</span><span id="line-550">        <span class="n">max_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="line-551">        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span>
+</span><span id="line-552">        <span class="n">choices</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;English&quot;</span><span class="p">))],</span>
+</span><span id="line-553">        <span class="n">help_text</span><span class="o">=</span><span class="s2">&quot;Select a valid language.&quot;</span><span class="p">,</span>
+</span><span id="line-554">    <span class="p">)</span>
+</span><span id="line-555"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-556"><span class="sd">    2-letter language code. Default is ``&quot;en&quot;``.</span>
 </span><span id="line-557">
-</span><span id="line-558"><span class="sd">    +----------+---------+</span>
-</span><span id="line-559"><span class="sd">    | value    | desc    |</span>
-</span><span id="line-560"><span class="sd">    +==========+=========+</span>
-</span><span id="line-561"><span class="sd">    | ``&quot;en&quot;`` | English |</span>
-</span><span id="line-562"><span class="sd">    +----------+---------+</span>
-</span><span id="line-563">
-</span><span id="line-564"><span class="sd">    :type: str</span>
+</span><span id="line-558"><span class="sd">    Options are:</span>
+</span><span id="line-559">
+</span><span id="line-560"><span class="sd">    +----------+---------+</span>
+</span><span id="line-561"><span class="sd">    | value    | desc    |</span>
+</span><span id="line-562"><span class="sd">    +==========+=========+</span>
+</span><span id="line-563"><span class="sd">    | ``&quot;en&quot;`` | English |</span>
+</span><span id="line-564"><span class="sd">    +----------+---------+</span>
 </span><span id="line-565">
-</span><span id="line-566"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="line-567">    <span class="n">flags</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveSmallIntegerField</span><span class="p">(</span>
-</span><span id="line-568">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-</span><span id="line-569">        <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
-</span><span id="line-570">            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Trigger on first message&quot;</span><span class="p">)),</span>
-</span><span id="line-571">            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Trigger on every message&quot;</span><span class="p">)),</span>
-</span><span id="line-572">            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Disabled&quot;</span><span class="p">)),</span>
-</span><span id="line-573">        <span class="p">],</span>
-</span><span id="line-574">    <span class="p">)</span>
-</span><span id="line-575"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-576"><span class="sd">    Flags. Default is ``0``.</span>
-</span><span id="line-577">
-</span><span id="line-578"><span class="sd">    Options are:</span>
+</span><span id="line-566"><span class="sd">    :type: str</span>
+</span><span id="line-567">
+</span><span id="line-568"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-569">    <span class="n">flags</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveSmallIntegerField</span><span class="p">(</span>
+</span><span id="line-570">        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+</span><span id="line-571">        <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
+</span><span id="line-572">            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Trigger on first message&quot;</span><span class="p">)),</span>
+</span><span id="line-573">            <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Trigger on every message&quot;</span><span class="p">)),</span>
+</span><span id="line-574">            <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Disabled&quot;</span><span class="p">)),</span>
+</span><span id="line-575">        <span class="p">],</span>
+</span><span id="line-576">    <span class="p">)</span>
+</span><span id="line-577"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-578"><span class="sd">    Flags. Default is ``0``.</span>
 </span><span id="line-579">
-</span><span id="line-580"><span class="sd">    +-------+--------------------------+</span>
-</span><span id="line-581"><span class="sd">    | value | desc                     |</span>
-</span><span id="line-582"><span class="sd">    +=======+==========================+</span>
-</span><span id="line-583"><span class="sd">    | ``0`` | Trigger on first message |</span>
-</span><span id="line-584"><span class="sd">    +-------+--------------------------+</span>
-</span><span id="line-585"><span class="sd">    | ``1`` | Trigger on every message |</span>
+</span><span id="line-580"><span class="sd">    Options are:</span>
+</span><span id="line-581">
+</span><span id="line-582"><span class="sd">    +-------+--------------------------+</span>
+</span><span id="line-583"><span class="sd">    | value | desc                     |</span>
+</span><span id="line-584"><span class="sd">    +=======+==========================+</span>
+</span><span id="line-585"><span class="sd">    | ``0`` | Trigger on first message |</span>
 </span><span id="line-586"><span class="sd">    +-------+--------------------------+</span>
-</span><span id="line-587"><span class="sd">    | ``2`` | Disabled                 |</span>
+</span><span id="line-587"><span class="sd">    | ``1`` | Trigger on every message |</span>
 </span><span id="line-588"><span class="sd">    +-------+--------------------------+</span>
-</span><span id="line-589">
-</span><span id="line-590"><span class="sd">    :type int:</span>
+</span><span id="line-589"><span class="sd">    | ``2`` | Disabled                 |</span>
+</span><span id="line-590"><span class="sd">    +-------+--------------------------+</span>
 </span><span id="line-591">
-</span><span id="line-592"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-592"><span class="sd">    :type int:</span>
 </span><span id="line-593">
-</span><span id="line-594">    <span class="n">timezone</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="line-595"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Timezone.&quot;&quot;&quot;</span>
-</span><span id="line-596">    <span class="n">unit_list</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="line-597"><span class="w">    </span><span class="sd">&quot;&quot;&quot;List of Wialon units.&quot;&quot;&quot;</span>
-</span><span id="line-598">    <span class="n">trigger_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
-</span><span id="line-599">        <span class="n">choices</span><span class="o">=</span><span class="n">WialonNotificationTriggerType</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span>
-</span><span id="line-600">        <span class="n">default</span><span class="o">=</span><span class="n">WialonNotificationTriggerType</span><span class="o">.</span><span class="n">SENSOR</span><span class="p">,</span>
-</span><span id="line-601">    <span class="p">)</span>
-</span><span id="line-602"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger type.&quot;&quot;&quot;</span>
-</span><span id="line-603">    <span class="n">trigger_parameters</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="line-604"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger parameters.&quot;&quot;&quot;</span>
-</span><span id="line-605">    <span class="n">schedule</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="line-606"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Schedule.&quot;&quot;&quot;</span>
-</span><span id="line-607">    <span class="n">control_schedule</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="line-608"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Control schedule.&quot;&quot;&quot;</span>
-</span><span id="line-609">    <span class="n">actions</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="line-610"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Actions.&quot;&quot;&quot;</span>
-</span><span id="line-611">    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="line-612"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Text.&quot;&quot;&quot;</span>
-</span><span id="line-613">    <span class="n">activations</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="line-614"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Activation count.&quot;&quot;&quot;</span>
-</span><span id="line-615">    <span class="n">enabled</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="line-616"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the notification is enabled in Wialon.&quot;&quot;&quot;</span>
-</span><span id="line-617">    <span class="n">date_created</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="line-618"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Date created.&quot;&quot;&quot;</span>
-</span><span id="line-619">
-</span><span id="line-620">    <span class="n">wialon_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveBigIntegerField</span><span class="p">()</span>
-</span><span id="line-621"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Wialon id.&quot;&quot;&quot;</span>
-</span><span id="line-622">    <span class="n">resource_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveBigIntegerField</span><span class="p">()</span>
-</span><span id="line-623"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Resource id.&quot;&quot;&quot;</span>
-</span><span id="line-624">    <span class="n">customer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
-</span><span id="line-625">        <span class="s2">&quot;terminusgps_notifications.TerminusgpsNotificationsCustomer&quot;</span><span class="p">,</span>
-</span><span id="line-626">        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
-</span><span id="line-627">        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;notifications&quot;</span><span class="p">,</span>
-</span><span id="line-628">    <span class="p">)</span>
-</span><span id="line-629"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Associated customer.&quot;&quot;&quot;</span>
-</span><span id="line-630">
-</span><span id="line-631">    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
-</span><span id="line-632">        <span class="n">verbose_name</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;wialon notification&quot;</span><span class="p">)</span>
-</span><span id="line-633">        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;wialon notifications&quot;</span><span class="p">)</span>
-</span><span id="line-634">
-</span><span id="line-635">    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-636"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the notification name.&quot;&quot;&quot;</span>
-</span><span id="line-637">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span id="line-638">
+</span><span id="line-594"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="line-595">
+</span><span id="line-596">    <span class="n">timezone</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="line-597"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Timezone.&quot;&quot;&quot;</span>
+</span><span id="line-598">    <span class="n">unit_list</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="line-599"><span class="w">    </span><span class="sd">&quot;&quot;&quot;List of Wialon units.&quot;&quot;&quot;</span>
+</span><span id="line-600">    <span class="n">trigger_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+</span><span id="line-601">        <span class="n">choices</span><span class="o">=</span><span class="n">WialonNotificationTriggerType</span><span class="o">.</span><span class="n">choices</span><span class="p">,</span>
+</span><span id="line-602">        <span class="n">default</span><span class="o">=</span><span class="n">WialonNotificationTriggerType</span><span class="o">.</span><span class="n">SENSOR</span><span class="p">,</span>
+</span><span id="line-603">    <span class="p">)</span>
+</span><span id="line-604"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger type.&quot;&quot;&quot;</span>
+</span><span id="line-605">    <span class="n">trigger_parameters</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-606"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Trigger parameters.&quot;&quot;&quot;</span>
+</span><span id="line-607">    <span class="n">schedule</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-608"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Schedule.&quot;&quot;&quot;</span>
+</span><span id="line-609">    <span class="n">control_schedule</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-610"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Control schedule.&quot;&quot;&quot;</span>
+</span><span id="line-611">    <span class="n">actions</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-612"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Actions.&quot;&quot;&quot;</span>
+</span><span id="line-613">    <span class="n">text</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-614"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Text.&quot;&quot;&quot;</span>
+</span><span id="line-615">    <span class="n">activations</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="line-616"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Activation count.&quot;&quot;&quot;</span>
+</span><span id="line-617">    <span class="n">enabled</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-618"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the notification is enabled in Wialon.&quot;&quot;&quot;</span>
+</span><span id="line-619">    <span class="n">date_created</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-620"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Date created.&quot;&quot;&quot;</span>
+</span><span id="line-621">
+</span><span id="line-622">    <span class="n">wialon_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveBigIntegerField</span><span class="p">()</span>
+</span><span id="line-623"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Wialon id.&quot;&quot;&quot;</span>
+</span><span id="line-624">    <span class="n">resource_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveBigIntegerField</span><span class="p">()</span>
+</span><span id="line-625"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Resource id.&quot;&quot;&quot;</span>
+</span><span id="line-626">    <span class="n">customer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+</span><span id="line-627">        <span class="s2">&quot;terminusgps_notifications.TerminusgpsNotificationsCustomer&quot;</span><span class="p">,</span>
+</span><span id="line-628">        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+</span><span id="line-629">        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;notifications&quot;</span><span class="p">,</span>
+</span><span id="line-630">    <span class="p">)</span>
+</span><span id="line-631"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Associated customer.&quot;&quot;&quot;</span>
+</span><span id="line-632">
+</span><span id="line-633">    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
+</span><span id="line-634">        <span class="n">verbose_name</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;wialon notification&quot;</span><span class="p">)</span>
+</span><span id="line-635">        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;wialon notifications&quot;</span><span class="p">)</span>
+</span><span id="line-636">
+</span><span id="line-637">    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-638"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the notification name.&quot;&quot;&quot;</span>
+</span><span id="line-639">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span id="line-640">
 <div class="viewcode-block" id="WialonNotification.get_absolute_url">
 <a class="viewcode-back" href="../../models.html#terminusgps_notifications.models.WialonNotification.get_absolute_url">[docs]</a>
-</span><span id="line-639">    <span class="k">def</span><span class="w"> </span><span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-640"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a URL pointing to the notification&#39;s detail view.&quot;&quot;&quot;</span>
-</span><span id="line-641">        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span>
-</span><span id="line-642">            <span class="s2">&quot;terminusgps_notifications:detail notifications&quot;</span><span class="p">,</span>
-</span><span id="line-643">            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;notification_pk&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">},</span>
-</span><span id="line-644">        <span class="p">)</span></div>
+</span><span id="line-641">    <span class="k">def</span><span class="w"> </span><span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-642"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a URL pointing to the notification&#39;s detail view.&quot;&quot;&quot;</span>
+</span><span id="line-643">        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span>
+</span><span id="line-644">            <span class="s2">&quot;terminusgps_notifications:detail notifications&quot;</span><span class="p">,</span>
+</span><span id="line-645">            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;notification_pk&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">},</span>
+</span><span id="line-646">        <span class="p">)</span></div>
 
-</span><span id="line-645">
+</span><span id="line-647">
 <div class="viewcode-block" id="WialonNotification.get_text">
 <a class="viewcode-back" href="../../models.html#terminusgps_notifications.models.WialonNotification.get_text">[docs]</a>
-</span><span id="line-646">    <span class="k">def</span><span class="w"> </span><span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-647"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the notification text (txt).&quot;&quot;&quot;</span>
-</span><span id="line-648">        <span class="k">return</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span>
-</span><span id="line-649">            <span class="p">{</span>
-</span><span id="line-650">                <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">pk</span><span class="p">),</span>
-</span><span id="line-651">                <span class="s2">&quot;unit_id&quot;</span><span class="p">:</span> <span class="s2">&quot;%UNIT_ID%&quot;</span><span class="p">,</span>
-</span><span id="line-652">                <span class="s2">&quot;unit_name&quot;</span><span class="p">:</span> <span class="s2">&quot;%UNIT%&quot;</span><span class="p">,</span>
-</span><span id="line-653">                <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;%LOCATION%&quot;</span><span class="p">,</span>
-</span><span id="line-654">                <span class="s2">&quot;msg_time_int&quot;</span><span class="p">:</span> <span class="s2">&quot;%MSG_TIME_INT%&quot;</span><span class="p">,</span>
-</span><span id="line-655">                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">),</span>
-</span><span id="line-656">            <span class="p">},</span>
-</span><span id="line-657">            <span class="n">safe</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
-</span><span id="line-658">            <span class="n">quote_via</span><span class="o">=</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">,</span>
-</span><span id="line-659">        <span class="p">)</span></div>
+</span><span id="line-648">    <span class="k">def</span><span class="w"> </span><span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-649"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the notification text (txt).&quot;&quot;&quot;</span>
+</span><span id="line-650">        <span class="k">return</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span>
+</span><span id="line-651">            <span class="p">{</span>
+</span><span id="line-652">                <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">pk</span><span class="p">),</span>
+</span><span id="line-653">                <span class="s2">&quot;unit_id&quot;</span><span class="p">:</span> <span class="s2">&quot;%UNIT_ID%&quot;</span><span class="p">,</span>
+</span><span id="line-654">                <span class="s2">&quot;unit_name&quot;</span><span class="p">:</span> <span class="s2">&quot;%UNIT%&quot;</span><span class="p">,</span>
+</span><span id="line-655">                <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="s2">&quot;%LOCATION%&quot;</span><span class="p">,</span>
+</span><span id="line-656">                <span class="s2">&quot;msg_time_int&quot;</span><span class="p">:</span> <span class="s2">&quot;%MSG_TIME_INT%&quot;</span><span class="p">,</span>
+</span><span id="line-657">                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">),</span>
+</span><span id="line-658">            <span class="p">},</span>
+</span><span id="line-659">            <span class="n">safe</span><span class="o">=</span><span class="s2">&quot;%&quot;</span><span class="p">,</span>
+</span><span id="line-660">            <span class="n">quote_via</span><span class="o">=</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">,</span>
+</span><span id="line-661">        <span class="p">)</span></div>
 
-</span><span id="line-660">
+</span><span id="line-662">
 <div class="viewcode-block" id="WialonNotification.get_actions">
 <a class="viewcode-back" href="../../models.html#terminusgps_notifications.models.WialonNotification.get_actions">[docs]</a>
-</span><span id="line-661">    <span class="k">def</span><span class="w"> </span><span class="nf">get_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
-</span><span id="line-662"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of notification actions (act).&quot;&quot;&quot;</span>
-</span><span id="line-663">        <span class="k">return</span> <span class="p">[</span>
-</span><span id="line-664">            <span class="p">{</span>
-</span><span id="line-665">                <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;push_messages&quot;</span><span class="p">,</span>
-</span><span id="line-666">                <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="line-667">                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span>
-</span><span id="line-668">                        <span class="s2">&quot;https://api.terminusgps.com/&quot;</span><span class="p">,</span>
-</span><span id="line-669">                        <span class="sa">f</span><span class="s2">&quot;/v3/notify/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">,</span>
-</span><span id="line-670">                    <span class="p">),</span>
-</span><span id="line-671">                    <span class="s2">&quot;get&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># 1 = GET request, 2 = POST request</span>
-</span><span id="line-672">                <span class="p">},</span>
-</span><span id="line-673">            <span class="p">}</span>
-</span><span id="line-674">        <span class="p">]</span></div>
+</span><span id="line-663">    <span class="k">def</span><span class="w"> </span><span class="nf">get_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]]:</span>
+</span><span id="line-664"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of notification actions (act).&quot;&quot;&quot;</span>
+</span><span id="line-665">        <span class="k">return</span> <span class="p">[</span>
+</span><span id="line-666">            <span class="p">{</span>
+</span><span id="line-667">                <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;push_messages&quot;</span><span class="p">,</span>
+</span><span id="line-668">                <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="line-669">                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span>
+</span><span id="line-670">                        <span class="s2">&quot;https://api.terminusgps.com/&quot;</span><span class="p">,</span>
+</span><span id="line-671">                        <span class="sa">f</span><span class="s2">&quot;/v3/notify/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">,</span>
+</span><span id="line-672">                    <span class="p">),</span>
+</span><span id="line-673">                    <span class="s2">&quot;get&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># 1 = GET request, 2 = POST request</span>
+</span><span id="line-674">                <span class="p">},</span>
+</span><span id="line-675">            <span class="p">}</span>
+</span><span id="line-676">        <span class="p">]</span></div>
 
-</span><span id="line-675">
+</span><span id="line-677">
 <div class="viewcode-block" id="WialonNotification.get_data_from_wialon">
 <a class="viewcode-back" href="../../models.html#terminusgps_notifications.models.WialonNotification.get_data_from_wialon">[docs]</a>
-</span><span id="line-676">    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_from_wialon</span><span class="p">(</span>
-</span><span id="line-677">        <span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">WialonSession</span>
-</span><span id="line-678">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-</span><span id="line-679"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-680"><span class="sd">        Returns the notification data from Wialon using the Wialon API.</span>
-</span><span id="line-681">
-</span><span id="line-682"><span class="sd">        Notification data format:</span>
+</span><span id="line-678">    <span class="k">def</span><span class="w"> </span><span class="nf">get_data_from_wialon</span><span class="p">(</span>
+</span><span id="line-679">        <span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">WialonSession</span>
+</span><span id="line-680">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+</span><span id="line-681"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-682"><span class="sd">        Returns the notification data from Wialon using the Wialon API.</span>
 </span><span id="line-683">
-</span><span id="line-684"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-685"><span class="sd">        | key            | type           | desc                                          |</span>
-</span><span id="line-686"><span class="sd">        +================+================+===============================================+</span>
-</span><span id="line-687"><span class="sd">        | ``&quot;id&quot;``       | :py:obj:`int`  | Notification ID                               |</span>
-</span><span id="line-688"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-689"><span class="sd">        | ``&quot;n&quot;``        | :py:obj:`str`  | Notification name                             |</span>
+</span><span id="line-684"><span class="sd">        Notification data format:</span>
+</span><span id="line-685">
+</span><span id="line-686"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
+</span><span id="line-687"><span class="sd">        | key            | type           | desc                                          |</span>
+</span><span id="line-688"><span class="sd">        +================+================+===============================================+</span>
+</span><span id="line-689"><span class="sd">        | ``&quot;id&quot;``       | :py:obj:`int`  | Notification ID                               |</span>
 </span><span id="line-690"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-691"><span class="sd">        | ``&quot;txt&quot;``      | :py:obj:`int`  | Notification text                             |</span>
+</span><span id="line-691"><span class="sd">        | ``&quot;n&quot;``        | :py:obj:`str`  | Notification name                             |</span>
 </span><span id="line-692"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-693"><span class="sd">        | ``&quot;ta&quot;``       | :py:obj:`int`  | Activation time (UNIX timestamp)              |</span>
+</span><span id="line-693"><span class="sd">        | ``&quot;txt&quot;``      | :py:obj:`int`  | Notification text                             |</span>
 </span><span id="line-694"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-695"><span class="sd">        | ``&quot;td&quot;``       | :py:obj:`int`  | Deactivation time (UNIX timestamp)            |</span>
+</span><span id="line-695"><span class="sd">        | ``&quot;ta&quot;``       | :py:obj:`int`  | Activation time (UNIX timestamp)              |</span>
 </span><span id="line-696"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-697"><span class="sd">        | ``&quot;ma&quot;``       | :py:obj:`int`  | Maximum number of alarms (0 = unlimited)      |</span>
+</span><span id="line-697"><span class="sd">        | ``&quot;td&quot;``       | :py:obj:`int`  | Deactivation time (UNIX timestamp)            |</span>
 </span><span id="line-698"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-699"><span class="sd">        | ``&quot;mmtd&quot;``     | :py:obj:`int`  | Maximum time interval between messages (sec)  |</span>
+</span><span id="line-699"><span class="sd">        | ``&quot;ma&quot;``       | :py:obj:`int`  | Maximum number of alarms (0 = unlimited)      |</span>
 </span><span id="line-700"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-701"><span class="sd">        | ``&quot;cdt&quot;``      | :py:obj:`int`  | Alarm timeout (sec)                           |</span>
+</span><span id="line-701"><span class="sd">        | ``&quot;mmtd&quot;``     | :py:obj:`int`  | Maximum time interval between messages (sec)  |</span>
 </span><span id="line-702"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-703"><span class="sd">        | ``&quot;mast&quot;``     | :py:obj:`int`  | Minimum duration of the alarm state (sec)     |</span>
+</span><span id="line-703"><span class="sd">        | ``&quot;cdt&quot;``      | :py:obj:`int`  | Alarm timeout (sec)                           |</span>
 </span><span id="line-704"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-705"><span class="sd">        | ``&quot;mpst&quot;``     | :py:obj:`int`  | Minimum duration of previous state (sec)      |</span>
+</span><span id="line-705"><span class="sd">        | ``&quot;mast&quot;``     | :py:obj:`int`  | Minimum duration of the alarm state (sec)     |</span>
 </span><span id="line-706"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-707"><span class="sd">        | ``&quot;cp&quot;``       | :py:obj:`int`  | Control period relative to current time (sec) |</span>
+</span><span id="line-707"><span class="sd">        | ``&quot;mpst&quot;``     | :py:obj:`int`  | Minimum duration of previous state (sec)      |</span>
 </span><span id="line-708"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-709"><span class="sd">        | ``&quot;fl&quot;``       | :py:obj:`int`  | Notification flags                            |</span>
+</span><span id="line-709"><span class="sd">        | ``&quot;cp&quot;``       | :py:obj:`int`  | Control period relative to current time (sec) |</span>
 </span><span id="line-710"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-711"><span class="sd">        | ``&quot;tz&quot;``       | :py:obj:`int`  | Notification timezone                         |</span>
+</span><span id="line-711"><span class="sd">        | ``&quot;fl&quot;``       | :py:obj:`int`  | Notification flags                            |</span>
 </span><span id="line-712"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-713"><span class="sd">        | ``&quot;la&quot;``       | :py:obj:`str`  | Notification language code                    |</span>
+</span><span id="line-713"><span class="sd">        | ``&quot;tz&quot;``       | :py:obj:`int`  | Notification timezone                         |</span>
 </span><span id="line-714"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-715"><span class="sd">        | ``&quot;ac&quot;``       | :py:obj:`int`  | Alarms count                                  |</span>
+</span><span id="line-715"><span class="sd">        | ``&quot;la&quot;``       | :py:obj:`str`  | Notification language code                    |</span>
 </span><span id="line-716"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-717"><span class="sd">        | ``&quot;d&quot;``        | :py:obj:`str`  | Notification description                      |</span>
+</span><span id="line-717"><span class="sd">        | ``&quot;ac&quot;``       | :py:obj:`int`  | Alarms count                                  |</span>
 </span><span id="line-718"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-719"><span class="sd">        | ``&quot;sch&quot;``      | :py:obj:`dict` | Notification schedule (see below)             |</span>
+</span><span id="line-719"><span class="sd">        | ``&quot;d&quot;``        | :py:obj:`str`  | Notification description                      |</span>
 </span><span id="line-720"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-721"><span class="sd">        | ``&quot;ctrl_sch&quot;`` | :py:obj:`dict` | Notification control schedule (see below)     |</span>
+</span><span id="line-721"><span class="sd">        | ``&quot;sch&quot;``      | :py:obj:`dict` | Notification schedule (see below)             |</span>
 </span><span id="line-722"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-723"><span class="sd">        | ``&quot;un&quot;``       | :py:obj:`list` | List of unit/unit group IDs                   |</span>
+</span><span id="line-723"><span class="sd">        | ``&quot;ctrl_sch&quot;`` | :py:obj:`dict` | Notification control schedule (see below)     |</span>
 </span><span id="line-724"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-725"><span class="sd">        | ``&quot;act&quot;``      | :py:obj:`list` | List of notification actions (see below)      |</span>
+</span><span id="line-725"><span class="sd">        | ``&quot;un&quot;``       | :py:obj:`list` | List of unit/unit group IDs                   |</span>
 </span><span id="line-726"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-727"><span class="sd">        | ``&quot;trg&quot;``      | :py:obj:`dict` | Notification trigger (see below)              |</span>
+</span><span id="line-727"><span class="sd">        | ``&quot;act&quot;``      | :py:obj:`list` | List of notification actions (see below)      |</span>
 </span><span id="line-728"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-729"><span class="sd">        | ``&quot;ct&quot;``       | :py:obj:`int`  | Creation time (UNIX timestamp)                |</span>
+</span><span id="line-729"><span class="sd">        | ``&quot;trg&quot;``      | :py:obj:`dict` | Notification trigger (see below)              |</span>
 </span><span id="line-730"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-731"><span class="sd">        | ``&quot;mt&quot;``       | :py:obj:`int`  | Last modification time (UNIX timestamp)       |</span>
+</span><span id="line-731"><span class="sd">        | ``&quot;ct&quot;``       | :py:obj:`int`  | Creation time (UNIX timestamp)                |</span>
 </span><span id="line-732"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
-</span><span id="line-733">
-</span><span id="line-734"><span class="sd">        Notification schedule/control schedule format:</span>
+</span><span id="line-733"><span class="sd">        | ``&quot;mt&quot;``       | :py:obj:`int`  | Last modification time (UNIX timestamp)       |</span>
+</span><span id="line-734"><span class="sd">        +----------------+----------------+-----------------------------------------------+</span>
 </span><span id="line-735">
-</span><span id="line-736"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
-</span><span id="line-737"><span class="sd">        | key      | type          | desc                                                               |</span>
-</span><span id="line-738"><span class="sd">        +==========+===============+====================================================================+</span>
-</span><span id="line-739"><span class="sd">        | ``&quot;f1&quot;`` | :py:obj:`int` | Beginning of interval 1 (minutes from midnight)                    |</span>
-</span><span id="line-740"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
-</span><span id="line-741"><span class="sd">        | ``&quot;f2&quot;`` | :py:obj:`int` | Beginning of interval 2 (minutes from midnight)                    |</span>
+</span><span id="line-736"><span class="sd">        Notification schedule/control schedule format:</span>
+</span><span id="line-737">
+</span><span id="line-738"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
+</span><span id="line-739"><span class="sd">        | key      | type          | desc                                                               |</span>
+</span><span id="line-740"><span class="sd">        +==========+===============+====================================================================+</span>
+</span><span id="line-741"><span class="sd">        | ``&quot;f1&quot;`` | :py:obj:`int` | Beginning of interval 1 (minutes from midnight)                    |</span>
 </span><span id="line-742"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
-</span><span id="line-743"><span class="sd">        | ``&quot;t1&quot;`` | :py:obj:`int` | End of interval 1 (minutes from midnight)                          |</span>
+</span><span id="line-743"><span class="sd">        | ``&quot;f2&quot;`` | :py:obj:`int` | Beginning of interval 2 (minutes from midnight)                    |</span>
 </span><span id="line-744"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
-</span><span id="line-745"><span class="sd">        | ``&quot;t2&quot;`` | :py:obj:`int` | End of interval 2 (minutes from midnight)                          |</span>
+</span><span id="line-745"><span class="sd">        | ``&quot;t1&quot;`` | :py:obj:`int` | End of interval 1 (minutes from midnight)                          |</span>
 </span><span id="line-746"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
-</span><span id="line-747"><span class="sd">        | ``&quot;m&quot;``  | :py:obj:`int` | Mask of the days of the month (1: 2\\ :sup:`0`, 31: 2\\ :sup:`30`)   |</span>
+</span><span id="line-747"><span class="sd">        | ``&quot;t2&quot;`` | :py:obj:`int` | End of interval 2 (minutes from midnight)                          |</span>
 </span><span id="line-748"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
-</span><span id="line-749"><span class="sd">        | ``&quot;y&quot;``  | :py:obj:`int` | Mask of months (Jan: 2\\ :sup:`0`, Dec: 2\\ :sup:`11`)               |</span>
+</span><span id="line-749"><span class="sd">        | ``&quot;m&quot;``  | :py:obj:`int` | Mask of the days of the month (1: 2\\ :sup:`0`, 31: 2\\ :sup:`30`)   |</span>
 </span><span id="line-750"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
-</span><span id="line-751"><span class="sd">        | ``&quot;w&quot;``  | :py:obj:`int` | Mask of days of the week (Mon: 2\\ :sup:`0`, Sun: 2\\ :sup:`6`)      |</span>
+</span><span id="line-751"><span class="sd">        | ``&quot;y&quot;``  | :py:obj:`int` | Mask of months (Jan: 2\\ :sup:`0`, Dec: 2\\ :sup:`11`)               |</span>
 </span><span id="line-752"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
-</span><span id="line-753"><span class="sd">        | ``&quot;f&quot;``  | :py:obj:`int` | Schedule flags                                                     |</span>
+</span><span id="line-753"><span class="sd">        | ``&quot;w&quot;``  | :py:obj:`int` | Mask of days of the week (Mon: 2\\ :sup:`0`, Sun: 2\\ :sup:`6`)      |</span>
 </span><span id="line-754"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
-</span><span id="line-755">
-</span><span id="line-756"><span class="sd">        Notification `action &lt;https://wialon-help.link/bb04a9a5&gt;`_ format (each item in the ``act`` list):</span>
+</span><span id="line-755"><span class="sd">        | ``&quot;f&quot;``  | :py:obj:`int` | Schedule flags                                                     |</span>
+</span><span id="line-756"><span class="sd">        +----------+---------------+--------------------------------------------------------------------+</span>
 </span><span id="line-757">
-</span><span id="line-758"><span class="sd">        +----------+-----------------+-------------------+</span>
-</span><span id="line-759"><span class="sd">        | key      | type            | desc              |</span>
-</span><span id="line-760"><span class="sd">        +==========+=================+===================+</span>
-</span><span id="line-761"><span class="sd">        | ``&quot;t&quot;``  | :py:obj:`str`   | Action type       |</span>
-</span><span id="line-762"><span class="sd">        +----------+-----------------+-------------------+</span>
-</span><span id="line-763"><span class="sd">        | ``&quot;p&quot;``  | :py:obj:`dict`  | Action parameters |</span>
+</span><span id="line-758"><span class="sd">        Notification `action &lt;https://wialon-help.link/bb04a9a5&gt;`_ format (each item in the ``act`` list):</span>
+</span><span id="line-759">
+</span><span id="line-760"><span class="sd">        +----------+-----------------+-------------------+</span>
+</span><span id="line-761"><span class="sd">        | key      | type            | desc              |</span>
+</span><span id="line-762"><span class="sd">        +==========+=================+===================+</span>
+</span><span id="line-763"><span class="sd">        | ``&quot;t&quot;``  | :py:obj:`str`   | Action type       |</span>
 </span><span id="line-764"><span class="sd">        +----------+-----------------+-------------------+</span>
-</span><span id="line-765">
-</span><span id="line-766"><span class="sd">        Notification `trigger &lt;https://wialon-help.link/9d54585d&gt;`_ format:</span>
+</span><span id="line-765"><span class="sd">        | ``&quot;p&quot;``  | :py:obj:`dict`  | Action parameters |</span>
+</span><span id="line-766"><span class="sd">        +----------+-----------------+-------------------+</span>
 </span><span id="line-767">
-</span><span id="line-768"><span class="sd">        +----------+-----------------+--------------------+</span>
-</span><span id="line-769"><span class="sd">        | key      | type            | desc               |</span>
-</span><span id="line-770"><span class="sd">        +==========+=================+====================+</span>
-</span><span id="line-771"><span class="sd">        | ``&quot;t&quot;``  | :py:obj:`str`   | Trigger type       |</span>
-</span><span id="line-772"><span class="sd">        +----------+-----------------+--------------------+</span>
-</span><span id="line-773"><span class="sd">        | ``&quot;p&quot;``  | :py:obj:`dict`  | Trigger parameters |</span>
+</span><span id="line-768"><span class="sd">        Notification `trigger &lt;https://wialon-help.link/9d54585d&gt;`_ format:</span>
+</span><span id="line-769">
+</span><span id="line-770"><span class="sd">        +----------+-----------------+--------------------+</span>
+</span><span id="line-771"><span class="sd">        | key      | type            | desc               |</span>
+</span><span id="line-772"><span class="sd">        +==========+=================+====================+</span>
+</span><span id="line-773"><span class="sd">        | ``&quot;t&quot;``  | :py:obj:`str`   | Trigger type       |</span>
 </span><span id="line-774"><span class="sd">        +----------+-----------------+--------------------+</span>
-</span><span id="line-775">
-</span><span id="line-776"><span class="sd">        :param session: A valid Wialon API session.</span>
-</span><span id="line-777"><span class="sd">        :type session: ~terminusgps.wialon.session.WialonSession</span>
-</span><span id="line-778"><span class="sd">        :raises WialonAPIError: If something went wrong calling the Wialon API.</span>
-</span><span id="line-779"><span class="sd">        :returns: The notification data from Wialon.</span>
-</span><span id="line-780"><span class="sd">        :rtype: dict[str, ~typing.Any]</span>
-</span><span id="line-781">
-</span><span id="line-782"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="line-783">        <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">wialon_api</span><span class="o">.</span><span class="n">resource_get_notification_data</span><span class="p">(</span>
-</span><span id="line-784">            <span class="o">**</span><span class="p">{</span><span class="s2">&quot;itemId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_id</span><span class="p">,</span> <span class="s2">&quot;col&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wialon_id</span><span class="p">]}</span>
-</span><span id="line-785">        <span class="p">)</span></div>
+</span><span id="line-775"><span class="sd">        | ``&quot;p&quot;``  | :py:obj:`dict`  | Trigger parameters |</span>
+</span><span id="line-776"><span class="sd">        +----------+-----------------+--------------------+</span>
+</span><span id="line-777">
+</span><span id="line-778"><span class="sd">        :param session: A valid Wialon API session.</span>
+</span><span id="line-779"><span class="sd">        :type session: ~terminusgps.wialon.session.WialonSession</span>
+</span><span id="line-780"><span class="sd">        :raises WialonAPIError: If something went wrong calling the Wialon API.</span>
+</span><span id="line-781"><span class="sd">        :returns: The notification data from Wialon.</span>
+</span><span id="line-782"><span class="sd">        :rtype: dict[str, ~typing.Any]</span>
+</span><span id="line-783">
+</span><span id="line-784"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="line-785">        <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">wialon_api</span><span class="o">.</span><span class="n">resource_get_notification_data</span><span class="p">(</span>
+</span><span id="line-786">            <span class="o">**</span><span class="p">{</span><span class="s2">&quot;itemId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_id</span><span class="p">,</span> <span class="s2">&quot;col&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wialon_id</span><span class="p">]}</span>
+</span><span id="line-787">        <span class="p">)</span></div>
 
-</span><span id="line-786">
+</span><span id="line-788">
 <div class="viewcode-block" id="WialonNotification.update_in_wialon">
 <a class="viewcode-back" href="../../models.html#terminusgps_notifications.models.WialonNotification.update_in_wialon">[docs]</a>
-</span><span id="line-787">    <span class="k">def</span><span class="w"> </span><span class="nf">update_in_wialon</span><span class="p">(</span>
-</span><span id="line-788">        <span class="bp">self</span><span class="p">,</span>
-</span><span id="line-789">        <span class="n">call_mode</span><span class="p">:</span> <span class="n">WialonNotificationUpdateCallModeType</span><span class="p">,</span>
-</span><span id="line-790">        <span class="n">session</span><span class="p">:</span> <span class="n">WialonSession</span><span class="p">,</span>
-</span><span id="line-791">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-</span><span id="line-792"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-793"><span class="sd">        Updates the notification in Wialon.</span>
-</span><span id="line-794">
-</span><span id="line-795"><span class="sd">        :param call_mode: Call mode to use when calling ``resource/update_notification``.</span>
-</span><span id="line-796"><span class="sd">        :type call_mode: ~terminusgps_notifications.constants.WialonNotificationUpdateCallMode</span>
-</span><span id="line-797"><span class="sd">        :param session: A valid Wialon API session.</span>
-</span><span id="line-798"><span class="sd">        :type session: ~terminusgps.wialon.session.WialonSession</span>
-</span><span id="line-799"><span class="sd">        :raises WialonAPIError: If something went wrong calling the Wialon API.</span>
-</span><span id="line-800"><span class="sd">        :returns: A dictionary of notification data.</span>
-</span><span id="line-801"><span class="sd">        :rtype: dict[str, ~typing.Any]</span>
-</span><span id="line-802">
-</span><span id="line-803"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="line-804">        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wialon_parameters</span><span class="p">(</span><span class="n">call_mode</span><span class="o">=</span><span class="n">call_mode</span><span class="p">)</span>
-</span><span id="line-805">        <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">wialon_api</span><span class="o">.</span><span class="n">resource_update_notification</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
+</span><span id="line-789">    <span class="k">def</span><span class="w"> </span><span class="nf">update_in_wialon</span><span class="p">(</span>
+</span><span id="line-790">        <span class="bp">self</span><span class="p">,</span>
+</span><span id="line-791">        <span class="n">call_mode</span><span class="p">:</span> <span class="n">WialonNotificationUpdateCallModeType</span><span class="p">,</span>
+</span><span id="line-792">        <span class="n">session</span><span class="p">:</span> <span class="n">WialonSession</span><span class="p">,</span>
+</span><span id="line-793">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+</span><span id="line-794"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-795"><span class="sd">        Updates the notification in Wialon.</span>
+</span><span id="line-796">
+</span><span id="line-797"><span class="sd">        :param call_mode: Call mode to use when calling ``resource/update_notification``.</span>
+</span><span id="line-798"><span class="sd">        :type call_mode: ~terminusgps_notifications.constants.WialonNotificationUpdateCallMode</span>
+</span><span id="line-799"><span class="sd">        :param session: A valid Wialon API session.</span>
+</span><span id="line-800"><span class="sd">        :type session: ~terminusgps.wialon.session.WialonSession</span>
+</span><span id="line-801"><span class="sd">        :raises WialonAPIError: If something went wrong calling the Wialon API.</span>
+</span><span id="line-802"><span class="sd">        :returns: A dictionary of notification data.</span>
+</span><span id="line-803"><span class="sd">        :rtype: dict[str, ~typing.Any]</span>
+</span><span id="line-804">
+</span><span id="line-805"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="line-806">        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_wialon_parameters</span><span class="p">(</span><span class="n">call_mode</span><span class="o">=</span><span class="n">call_mode</span><span class="p">)</span>
+</span><span id="line-807">        <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">wialon_api</span><span class="o">.</span><span class="n">resource_update_notification</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
-</span><span id="line-806">
+</span><span id="line-808">
 <div class="viewcode-block" id="WialonNotification.get_wialon_parameters">
 <a class="viewcode-back" href="../../models.html#terminusgps_notifications.models.WialonNotification.get_wialon_parameters">[docs]</a>
-</span><span id="line-807">    <span class="k">def</span><span class="w"> </span><span class="nf">get_wialon_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
-</span><span id="line-808"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="line-809"><span class="sd">        Returns parameters for Wialon notification API calls.</span>
-</span><span id="line-810">
-</span><span id="line-811"><span class="sd">        :param call_mode: A Wialon API update notification call mode.</span>
-</span><span id="line-812"><span class="sd">        :type call_mode: str</span>
-</span><span id="line-813"><span class="sd">        :returns: A dictionary of Wialon API update notification parameters.</span>
-</span><span id="line-814"><span class="sd">        :rtype: dict[str, ~typing.Any]</span>
-</span><span id="line-815">
-</span><span id="line-816"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="line-817">        <span class="k">return</span> <span class="p">{</span>
-</span><span id="line-818">            <span class="s2">&quot;itemId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_id</span><span class="p">,</span>
-</span><span id="line-819">            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">call_mode</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">wialon_id</span><span class="p">,</span>
-</span><span id="line-820">            <span class="s2">&quot;callMode&quot;</span><span class="p">:</span> <span class="n">call_mode</span><span class="p">,</span>
-</span><span id="line-821">            <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="line-822">            <span class="s2">&quot;txt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-</span><span id="line-823">            <span class="s2">&quot;ta&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># TODO: Convert ta/td attributes to timestamps</span>
-</span><span id="line-824">            <span class="s2">&quot;td&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-</span><span id="line-825">            <span class="s2">&quot;ma&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_alarms</span><span class="p">,</span>
-</span><span id="line-826">            <span class="s2">&quot;mmtd&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_message_interval</span><span class="p">,</span>
-</span><span id="line-827">            <span class="s2">&quot;cdt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alarm_timeout</span><span class="p">,</span>
-</span><span id="line-828">            <span class="s2">&quot;mast&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_duration_alarm</span><span class="p">,</span>
-</span><span id="line-829">            <span class="s2">&quot;mpst&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_duration_prev</span><span class="p">,</span>
-</span><span id="line-830">            <span class="s2">&quot;cp&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_period</span><span class="p">,</span>
-</span><span id="line-831">            <span class="s2">&quot;fl&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span>
-</span><span id="line-832">            <span class="s2">&quot;la&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">language</span><span class="p">,</span>
-</span><span id="line-833">            <span class="s2">&quot;tz&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">timezone</span><span class="p">,</span>
-</span><span id="line-834">            <span class="s2">&quot;un&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit_list</span><span class="p">,</span>
-</span><span id="line-835">            <span class="s2">&quot;trg&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger_type</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger_parameters</span><span class="p">},</span>
-</span><span id="line-836">            <span class="s2">&quot;act&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">,</span>
-</span><span id="line-837">            <span class="s2">&quot;sch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">,</span>
-</span><span id="line-838">            <span class="s2">&quot;ctrl_sch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_schedule</span><span class="p">,</span>
-</span><span id="line-839">        <span class="p">}</span></div>
+</span><span id="line-809">    <span class="k">def</span><span class="w"> </span><span class="nf">get_wialon_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]:</span>
+</span><span id="line-810"><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="line-811"><span class="sd">        Returns parameters for Wialon notification API calls.</span>
+</span><span id="line-812">
+</span><span id="line-813"><span class="sd">        :param call_mode: A Wialon API update notification call mode.</span>
+</span><span id="line-814"><span class="sd">        :type call_mode: str</span>
+</span><span id="line-815"><span class="sd">        :returns: A dictionary of Wialon API update notification parameters.</span>
+</span><span id="line-816"><span class="sd">        :rtype: dict[str, ~typing.Any]</span>
+</span><span id="line-817">
+</span><span id="line-818"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="line-819">        <span class="k">return</span> <span class="p">{</span>
+</span><span id="line-820">            <span class="s2">&quot;itemId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_id</span><span class="p">,</span>
+</span><span id="line-821">            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">call_mode</span> <span class="o">==</span> <span class="s2">&quot;create&quot;</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">wialon_id</span><span class="p">,</span>
+</span><span id="line-822">            <span class="s2">&quot;callMode&quot;</span><span class="p">:</span> <span class="n">call_mode</span><span class="p">,</span>
+</span><span id="line-823">            <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="line-824">            <span class="s2">&quot;txt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+</span><span id="line-825">            <span class="s2">&quot;ta&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># TODO: Convert ta/td attributes to timestamps</span>
+</span><span id="line-826">            <span class="s2">&quot;td&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span id="line-827">            <span class="s2">&quot;ma&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_alarms</span><span class="p">,</span>
+</span><span id="line-828">            <span class="s2">&quot;mmtd&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_message_interval</span><span class="p">,</span>
+</span><span id="line-829">            <span class="s2">&quot;cdt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">alarm_timeout</span><span class="p">,</span>
+</span><span id="line-830">            <span class="s2">&quot;mast&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_duration_alarm</span><span class="p">,</span>
+</span><span id="line-831">            <span class="s2">&quot;mpst&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_duration_prev</span><span class="p">,</span>
+</span><span id="line-832">            <span class="s2">&quot;cp&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_period</span><span class="p">,</span>
+</span><span id="line-833">            <span class="s2">&quot;fl&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span>
+</span><span id="line-834">            <span class="s2">&quot;la&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">language</span><span class="p">,</span>
+</span><span id="line-835">            <span class="s2">&quot;tz&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">timezone</span><span class="p">,</span>
+</span><span id="line-836">            <span class="s2">&quot;un&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit_list</span><span class="p">,</span>
+</span><span id="line-837">            <span class="s2">&quot;trg&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger_type</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger_parameters</span><span class="p">},</span>
+</span><span id="line-838">            <span class="s2">&quot;act&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">,</span>
+</span><span id="line-839">            <span class="s2">&quot;sch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule</span><span class="p">,</span>
+</span><span id="line-840">            <span class="s2">&quot;ctrl_sch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">control_schedule</span><span class="p">,</span>
+</span><span id="line-841">        <span class="p">}</span></div>
 </div>
 
 </span></code></pre></div>
