@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
@@ -218,6 +218,9 @@ class CustomerSubscriptionCreateView(
     template_name = (
         "terminusgps_notifications/customers/create_subscription.html"
     )
+    success_url = reverse_lazy(
+        "terminusgps_notifications:create subscriptions success"
+    )
 
     def setup(self, request: HttpRequest, *args, **kwargs) -> None:
         """Adds :py:attr:`customer` and :py:attr:`anet_service` to the view."""
@@ -356,10 +359,22 @@ class CustomerSubscriptionCreateView(
             self.customer.subscription = subscription
             self.customer.save()
             return HttpResponseRedirect(
-                reverse("terminusgps_notifications:subscription")
+                reverse(
+                    "terminusgps_notifications:create subscriptions success"
+                )
             )
         except AuthorizenetControllerExecutionError as e:
             match e.code:
+                case "E00027":
+                    form.add_error(
+                        None,
+                        ValidationError(
+                            _(
+                                "Whoops! The transaction was unsuccessful. Please try again later."
+                            ),
+                            code="invalid",
+                        ),
+                    )
                 case _:
                     form.add_error(
                         None,
@@ -370,6 +385,17 @@ class CustomerSubscriptionCreateView(
                         ),
                     )
             return self.form_invalid(form=form)
+
+
+class CustomerSubscriptionCreateSuccessView(
+    LoginRequiredMixin, HtmxTemplateResponseMixin, TemplateView
+):
+    content_type = "text/html"
+    http_method_names = ["get"]
+    template_name = (
+        "terminusgps_notifications/customers/create_subscription_success.html"
+    )
+    partial_template_name = "terminusgps_notifications/customers/partials/_create_subscription_success.html"
 
 
 class CustomerStatsView(

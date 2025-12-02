@@ -1,10 +1,21 @@
-<div class="flex flex-col gap-8">
+<div class="p-4 flex flex-col gap-4 border-2 rounded bg-gray-50" hx-target="this" hx-swap="outerHTML">
+    <h3 class="font-semibold text-lg text-terminus-red-500 dark:text-terminus-red-100">Subscribe</h3>
     <div class="flex flex-col gap-2">
         <p>Terminus GPS Notifications Subscription: ${{ customer.subtotal }}/mo</p>
         <p>One-time setup fee: ${{ setup_fee }}</p>
         <p>Today you pay: <span class="font-semibold">${{ total }}</span></p>
     </div>
-    <form id="create-form" class="flex flex-col gap-4" hx-post="{% url 'terminusgps_notifications:create subscriptions' %}" method="post" hx-target="this" hx-select="#create-form">
+    <form id="create-form" class="flex flex-col gap-4" hx-post="{% url 'terminusgps_notifications:create subscriptions' %}" method="post">
+        {% if form.non_field_errors %}
+        <div class="p-2 bg-red-50 text-red-700 animate-jiggle border border-current rounded">
+            <div class="flex gap-2 items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-red-700 fill-red-50">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+                {{ form.non_field_errors }}
+            </div>
+        </div>
+        {% endif %}
         {% csrf_token %}
         <section class="flex flex-col gap-2">
             {{ form.payment_profile }}
