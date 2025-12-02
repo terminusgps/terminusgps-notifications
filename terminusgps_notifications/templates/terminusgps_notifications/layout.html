@@ -10,16 +10,16 @@
         <script src="{% static 'terminusgps_notifications/js/htmx.min.js' %}" defer></script>
     </head>
     <body class="text-gray-800 dark:text-gray-100" style='background-image: url("{% static 'terminusgps_notifications/img/background-light.png' %}");'>
-        <nav class="flex justify-between bg-stone-100 text-gray-800 drop-shadow dark:bg-zinc-600" hx-get="{% url 'terminusgps_notifications:navbar' %}" hx-target="this" hx-trigger="load" hx-swap="outerHTML">
+        <nav class="flex justify-between bg-stone-100 text-gray-800 drop-shadow dark:bg-gray-800" hx-get="{% url 'terminusgps_notifications:navbar' %}" hx-target="this" hx-trigger="load" hx-swap="outerHTML">
             <a href="{% url 'terminusgps_notifications:home' %}" class="group flex items-center space-x-1">
                 <img src="{% static 'terminusgps_notifications/icon/logo-waypoint.svg' %}" class="size-16 animate-coin-slow group-hover:animate-none">
                 <img src="{% static 'terminusgps_notifications/icon/logo-text.svg' %}" class="size-24">
             </a>
             <div class="mx-4 flex items-center gap-2"></div>
         </nav>
-        <main class="container mx-auto -mt-2 max-w-screen-lg">
-            <div class="border-lr mx-8 border-gray-600 bg-stone-100 dark:bg-terminus-gray-800">
-                <section class="mt-2 flex flex-col gap-2 bg-gray-200 p-8 shadow-inner dark:bg-terminus-gray-700">
+        <main class="container mx-auto -mt-2 max-w-screen-lg" hx-indicator="#loading">
+            <div class="border-lr mx-8 border-gray-600 bg-stone-100 dark:bg-gray-800">
+                <section class="mt-2 flex flex-col gap-2 bg-gray-200 p-8 shadow-inner dark:bg-gray-600">
                     <div class="flex items-center gap-2">
                         <h2 class="text-xl font-bold md:text-2xl">{{ title }}</h2>
                         <svg id="loading" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="htmx-indicator size-8 animate-spin">
@@ -28,7 +28,7 @@
                     </div>
                     {% if subtitle %}<h3 class="font-light md:text-lg">{{ subtitle }}</h3>{% endif %}
                 </section>
-                <section class="p-8" hx-indicator="#loading">
+                <section class="p-8">
                     {% block content %}{% endblock content %}
                 </section>
             </div>

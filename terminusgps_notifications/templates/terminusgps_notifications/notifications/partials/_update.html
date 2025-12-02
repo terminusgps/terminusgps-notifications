@@ -1,4 +1,4 @@
-<form class="flex flex-col gap-4 bg-gray-200" hx-post="{% url 'terminusgps_notifications:update notifications' wialonnotification.pk %}" method="post" hx-swap="outerHTML">
+<form class="flex flex-col gap-4 bg-gray-50 dark:bg-gray-900" hx-post="{% url 'terminusgps_notifications:update notifications' wialonnotification.pk %}" method="post" hx-swap="outerHTML">
     {% csrf_token %}
     <section class="flex flex-col gap-2">
         {{ form.method }}

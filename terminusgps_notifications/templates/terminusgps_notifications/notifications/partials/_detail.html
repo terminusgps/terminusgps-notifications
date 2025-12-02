@@ -1,4 +1,4 @@
-<section id="{{ wialonnotification.pk }}" hx-target="this" hx-indicator="#loading" class="p-4 flex flex-col gap-4 border rounded bg-gray-200">
+<section id="{{ wialonnotification.pk }}" hx-target="this" hx-indicator="#loading" class="p-4 flex flex-col gap-4 border rounded bg-gray-50 dark:bg-gray-900">
     <section class="flex items-center justify-between">
         <h3 class="font-semibold">{{ wialonnotification.name }}</h3>
         <p>{{ wialonnotification.enabled|yesno:'Enabled,Disabled' }}</p>
