@@ -10,7 +10,7 @@
     </div>
     {% endif %}
     {% csrf_token %}
-    <section class="flex gap-2 justify-between">
+    <section class="flex flex-col gap-2 justify-between md:flex-row">
         <section class="flex flex-col gap-2 w-full">
             {{ form.first_name }}
             <label class="order-first font-semibold peer-user-invalid:text-red-800" for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
