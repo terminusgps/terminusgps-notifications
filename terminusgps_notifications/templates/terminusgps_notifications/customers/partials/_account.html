@@ -1,5 +1,5 @@
 <section id="account" class="flex flex-col gap-8">
-    <section id="wialon-token" class="flex flex-col gap-4 border-2 border-current p-4 rounded bg-gray-200 dark:bg-gray-900">
+    <section id="wialon-token" class="flex flex-col gap-4 border-2 border-current p-4 rounded bg-gray-50 dark:bg-gray-900">
         <div class="flex gap-2 items-center justify-between">
             <h3 class="text-lg font-semibold">Wialon API Token</h3>
             {% if has_token %}
@@ -25,7 +25,7 @@
             >{% if has_token %}Refresh{% else %}Connect{% endif %}
         </a>
     </section>
-    <section id="payment-methods" class="flex flex-col gap-4 border-2 border-current p-4 rounded bg-gray-200 dark:bg-gray-900">
+    <section id="payment-methods" class="flex flex-col gap-4 border-2 border-current p-4 rounded bg-gray-50 dark:bg-gray-900">
         <h3 class="text-lg font-semibold">Payment Methods</h3>
         <section
             id="payment-profiles-list"
@@ -38,7 +38,7 @@
             <button class="flex w-full cursor-pointer items-center justify-center gap-2 rounded border border-terminus-red-900 bg-terminus-red-800 p-2 text-center text-white transition-colors duration-300 ease-in-out hover:bg-terminus-red-400" disabled>New Payment Method</button>
         </section>
     </section>
-    <section id="shipping-addresses" class="flex flex-col gap-4 border-2 border-current p-4 rounded bg-gray-200 dark:bg-gray-900">
+    <section id="shipping-addresses" class="flex flex-col gap-4 border-2 border-current p-4 rounded bg-gray-50 dark:bg-gray-900">
         <h3 class="text-lg font-semibold">Shipping Addresses</h3>
         <section
             id="address-profiles-list"
