@@ -4,7 +4,7 @@
     {% else %}
     <section clsas="flex flex-col gap-4 p-4 border-2 rounded" id="subscription" hx-get="{% url 'terminusgps_notifications:create subscriptions' %}" hx-target="this" hx-trigger="load once"></section>
     {% endif %}
-    <section id="message-packages" class="p-4 flex flex-col gap-4 border-2 rounded bg-gray-50">
+    <section id="message-packages" class="p-4 flex flex-col gap-4 border-2 rounded bg-gray-50 dark:bg-gray-800">
         <h2 class="font-semibold text-lg text-terminus-red-500 dark:text-terminus-red-100">Message Packages</h2>
         <section id="message-packages-list" hx-get="{% url 'terminusgps_notifications:list packages' %}" hx-target="this" hx-trigger="load once" hx-swap="outerHTML"></section>
     </section>
