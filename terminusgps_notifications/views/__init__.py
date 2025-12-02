@@ -1,6 +1,7 @@
 from .customers import (
     AccountView,
     CustomerStatsView,
+    CustomerSubscriptionCreateSuccessView,
     CustomerSubscriptionCreateView,
     DashboardView,
     NotificationsView,

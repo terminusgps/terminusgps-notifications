@@ -1,11 +1,11 @@
-<section class="flex flex-col gap-8" hx-target="this">
+<section class="flex flex-col gap-4" hx-target="this">
     {% if customer.subscription != None %}
     <section class="flex flex-col gap-4 p-4 border-2 rounded" id="subscription" hx-get="{% url 'terminusgps_payments:detail subscription' customer.subscription.pk %}" hx-target="this" hx-trigger="load"></section>
     {% else %}
     <section clsas="flex flex-col gap-4 p-4 border-2 rounded" id="subscription" hx-get="{% url 'terminusgps_notifications:create subscriptions' %}" hx-target="this" hx-trigger="load once"></section>
     {% endif %}
-    <section id="message-packages" class="flex flex-col gap-4 p-4 border-2 rounded">
-        <h2 class="font-semibold text-lg">Message Packages</h2>
+    <section id="message-packages" class="p-4 flex flex-col gap-4 border-2 rounded bg-gray-50">
+        <h2 class="font-semibold text-lg text-terminus-red-500 dark:text-terminus-red-100">Message Packages</h2>
         <section id="message-packages-list" hx-get="{% url 'terminusgps_notifications:list packages' %}" hx-target="this" hx-trigger="load once" hx-swap="outerHTML"></section>
     </section>
 </section>

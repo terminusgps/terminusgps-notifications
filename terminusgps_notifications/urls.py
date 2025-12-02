@@ -26,6 +26,11 @@ urlpatterns = [
         name="create subscriptions",
     ),
     path(
+        "subscriptions/create/success/",
+        views.CustomerSubscriptionCreateSuccessView.as_view(),
+        name="create subscriptions success",
+    ),
+    path(
         "notifications/",
         views.NotificationsView.as_view(),
         name="notifications",
