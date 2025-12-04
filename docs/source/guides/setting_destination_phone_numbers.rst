@@ -9,9 +9,9 @@ Each destination phone number recieves a message, i.e. **one notification trigge
 
 .. important:: All phone numbers must be in `E.164 format <E.164>`_. Example: ``+17135555555``
 
-.. note:: Our notification dispatcher caches data retrieved from the Wialon API for 15 minutes.
+.. note:: Our notification dispatcher caches data retrieved from the Wialon API for 5 minutes.
 
-   If you update custom field ``to_number`` or attach/detach a driver, you may have to wait up to 15 minutes before those changes are reflected by our notification dispatcher.
+   If you update custom field ``to_number`` or attach/detach a driver, you may have to wait up to 5 minutes before those changes are reflected by our notification dispatcher.
 
 
 .. _custom-field:
