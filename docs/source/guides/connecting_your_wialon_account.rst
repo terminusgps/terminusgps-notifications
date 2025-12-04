@@ -21,7 +21,7 @@ To connect your Wialon account to your *Terminus GPS Notifications* account, you
 
 5. Refresh the page once you have been redirected back to the `account`_ page.
 
-If properly connected, your `dashboard`_ will be reflect your connected Wialon account!
+If properly connected, your `dashboard`_ will be updated to reflect your connected Wialon account.
 
 .. image:: ../images/dashboard_page.png
 
