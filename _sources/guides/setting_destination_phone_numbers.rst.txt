@@ -7,7 +7,7 @@ Phone numbers retrieved from :ref:`custom field <custom-field>` and/or :ref:`att
 
 Each destination phone number recieves a message, i.e. **one notification trigger** with **three destination phone numbers** is counted as **three messages**.
 
-.. important:: All phone numbers must be in `E.164 format <E.164>`_. Example: ``+17135555555``
+.. important:: All phone numbers must be in `E.164`_ format. Example: ``+17135555555``
 
 .. note:: Our notification dispatcher caches data retrieved from the Wialon API for 5 minutes.
 
@@ -22,7 +22,7 @@ Custom field
 
 If the triggering Wialon unit has a custom field of key ``to_number``, its value is retrieved for delivery.
 
-The value of this custom field may be a single `E.164 formatted <E.164>`_ phone number or a comma-separated list of E.164 formatted phone numbers.
+The value of this custom field may be a single `E.164`_ formatted phone number or a comma-separated list of E.164 formatted phone numbers.
 
 **ACCEPTABLE**:
 
@@ -45,7 +45,7 @@ Attached Driver
 
 If the triggering Wialon unit has an attached driver, the attached driver phone number is retrieved for delivery.
 
-As with :ref:`custom field <custom-field>`, driver phone number must be in `E.164 format <E.164>`_.
+As with :ref:`custom field <custom-field>`, driver phone number must be in `E.164`_ format.
 
 .. image:: ../images/wialon_driver.png
 
