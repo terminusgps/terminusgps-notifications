@@ -192,10 +192,10 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serializable_value</span></code>(field_name)</p></td>
 <td><p>Return the value of the field name for this instance.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*[, force_insert, force_update, using, ...])</p></td>
 <td><p>Save the current instance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asave</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asave</span></code>(*[, force_insert, force_update, ...])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_base</span></code>([raw, force_insert, force_update, ...])</p></td>
@@ -270,23 +270,23 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_pk_set</span></code>([meta])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_save_params</span></code>(*args, method_name, **kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_force_insert</span></code>(force_insert)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_force_insert</span></code>(force_insert)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_parents</span></code>(cls, using, update_fields, ...)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_parents</span></code>(cls, using, update_fields, ...)</p></td>
 <td><p>Save all the parents of cls using values from self.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_table</span></code>([raw, cls, force_insert, ...])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_table</span></code>([raw, cls, force_insert, ...])</p></td>
 <td><p>Do the heavy-lifting involved in saving.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_update</span></code>(base_qs, using, pk_val, values, ...)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_update</span></code>(base_qs, using, pk_val, values, ...)</p></td>
 <td><p>Try to update the model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_insert</span></code>(manager, using, fields, ...)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_insert</span></code>(manager, using, fields, ...)</p></td>
 <td><p>Do an INSERT.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_assign_returned_values</span></code>(returned_values, ...)</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_prepare_related_fields_for_save</span></code>(operation_name)</p></td>
 <td><p></p></td>
@@ -312,67 +312,64 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perform_date_checks</span></code>(date_checks)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_default_pk</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_composite_pk</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_composite_pk</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_db_table_comment</span></code>(databases)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_db_table_comment</span></code>(databases)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_swappable</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_swappable</span></code>()</p></td>
 <td><p>Check if the swapped model exists.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_managers</span></code>(**kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_managers</span></code>(**kwargs)</p></td>
 <td><p>Perform all manager checks.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_fields</span></code>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_fields</span></code>(**kwargs)</p></td>
 <td><p>Perform all field checks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_m2m_through_same_relationship</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_m2m_through_same_relationship</span></code>()</p></td>
 <td><p>Check if no relationship model is used by more than one m2m field.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_id_field</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_id_field</span></code>()</p></td>
 <td><p>Check if <cite>id</cite> field is a primary key.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_field_name_clashes</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_field_name_clashes</span></code>()</p></td>
 <td><p>Forbid field shadowing in multi-table inheritance.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_column_name_clashes</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_column_name_clashes</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model_name_db_lookup_clashes</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model_name_db_lookup_clashes</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_property_name_related_field_accessor_clashes</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_property_name_related_field_accessor_clashes</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_single_primary_key</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_single_primary_key</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_unique_together</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_unique_together</span></code>()</p></td>
 <td><p>Check the value of "unique_together" option.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_indexes</span></code>(databases)</p></td>
-<td><p>Check fields, names, and conditions of indexes.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_local_fields</span></code>(fields, option)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_indexes</span></code>(databases)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_ordering</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_local_fields</span></code>(fields, option)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_ordering</span></code>()</p></td>
 <td><p>Check "ordering" option -- is it a list of strings and do all fields exist?</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_long_column_names</span></code>(databases)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_long_column_names</span></code>(databases)</p></td>
 <td><p>Check that any auto-generated column names are shorter than the limits for each database in which the model will be created.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_expr_references</span></code>(expr)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_expr_references</span></code>(expr)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_constraints</span></code>(databases)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_constraints</span></code>(databases)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -386,6 +383,10 @@
 <dl class="py exception">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned">
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage.NotUpdated">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#terminusgps_notifications.models.MessagePackage.NotUpdated" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.MessagePackage.NotUpdated'">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.MessagePackage.count">
@@ -559,10 +560,10 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serializable_value</span></code>(field_name)</p></td>
 <td><p>Return the value of the field name for this instance.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*[, force_insert, force_update, using, ...])</p></td>
 <td><p>Save the current instance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asave</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asave</span></code>(*[, force_insert, force_update, ...])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_base</span></code>([raw, force_insert, force_update, ...])</p></td>
@@ -637,23 +638,23 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_pk_set</span></code>([meta])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_save_params</span></code>(*args, method_name, **kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_force_insert</span></code>(force_insert)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_force_insert</span></code>(force_insert)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_parents</span></code>(cls, using, update_fields, ...)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_parents</span></code>(cls, using, update_fields, ...)</p></td>
 <td><p>Save all the parents of cls using values from self.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_table</span></code>([raw, cls, force_insert, ...])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_table</span></code>([raw, cls, force_insert, ...])</p></td>
 <td><p>Do the heavy-lifting involved in saving.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_update</span></code>(base_qs, using, pk_val, values, ...)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_update</span></code>(base_qs, using, pk_val, values, ...)</p></td>
 <td><p>Try to update the model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_insert</span></code>(manager, using, fields, ...)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_insert</span></code>(manager, using, fields, ...)</p></td>
 <td><p>Do an INSERT.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_assign_returned_values</span></code>(returned_values, ...)</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_prepare_related_fields_for_save</span></code>(operation_name)</p></td>
 <td><p></p></td>
@@ -679,67 +680,64 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perform_date_checks</span></code>(date_checks)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_default_pk</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_composite_pk</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_composite_pk</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_db_table_comment</span></code>(databases)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_db_table_comment</span></code>(databases)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_swappable</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_swappable</span></code>()</p></td>
 <td><p>Check if the swapped model exists.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_managers</span></code>(**kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_managers</span></code>(**kwargs)</p></td>
 <td><p>Perform all manager checks.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_fields</span></code>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_fields</span></code>(**kwargs)</p></td>
 <td><p>Perform all field checks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_m2m_through_same_relationship</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_m2m_through_same_relationship</span></code>()</p></td>
 <td><p>Check if no relationship model is used by more than one m2m field.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_id_field</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_id_field</span></code>()</p></td>
 <td><p>Check if <cite>id</cite> field is a primary key.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_field_name_clashes</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_field_name_clashes</span></code>()</p></td>
 <td><p>Forbid field shadowing in multi-table inheritance.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_column_name_clashes</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_column_name_clashes</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model_name_db_lookup_clashes</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model_name_db_lookup_clashes</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_property_name_related_field_accessor_clashes</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_property_name_related_field_accessor_clashes</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_single_primary_key</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_single_primary_key</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_unique_together</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_unique_together</span></code>()</p></td>
 <td><p>Check the value of "unique_together" option.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_indexes</span></code>(databases)</p></td>
-<td><p>Check fields, names, and conditions of indexes.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_local_fields</span></code>(fields, option)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_indexes</span></code>(databases)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_ordering</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_local_fields</span></code>(fields, option)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_ordering</span></code>()</p></td>
 <td><p>Check "ordering" option -- is it a list of strings and do all fields exist?</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_long_column_names</span></code>(databases)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_long_column_names</span></code>(databases)</p></td>
 <td><p>Check that any auto-generated column names are shorter than the limits for each database in which the model will be created.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_expr_references</span></code>(expr)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_expr_references</span></code>(expr)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_constraints</span></code>(databases)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_constraints</span></code>(databases)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -753,6 +751,10 @@
 <dl class="py exception">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned">
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.NotUpdated">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.NotUpdated" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.NotUpdated'">¶</a></dt>
 <dd></dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon">
@@ -1058,10 +1060,10 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">serializable_value</span></code>(field_name)</p></td>
 <td><p>Return the value of the field name for this instance.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*[, force_insert, force_update, using, ...])</p></td>
 <td><p>Save the current instance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asave</span></code>(*args[, force_insert, force_update, ...])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">asave</span></code>(*[, force_insert, force_update, ...])</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_base</span></code>([raw, force_insert, force_update, ...])</p></td>
@@ -1136,23 +1138,23 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_is_pk_set</span></code>([meta])</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_parse_save_params</span></code>(*args, method_name, **kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_force_insert</span></code>(force_insert)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_force_insert</span></code>(force_insert)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_parents</span></code>(cls, using, update_fields, ...)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_parents</span></code>(cls, using, update_fields, ...)</p></td>
 <td><p>Save all the parents of cls using values from self.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_table</span></code>([raw, cls, force_insert, ...])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_save_table</span></code>([raw, cls, force_insert, ...])</p></td>
 <td><p>Do the heavy-lifting involved in saving.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_update</span></code>(base_qs, using, pk_val, values, ...)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_update</span></code>(base_qs, using, pk_val, values, ...)</p></td>
 <td><p>Try to update the model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_insert</span></code>(manager, using, fields, ...)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_do_insert</span></code>(manager, using, fields, ...)</p></td>
 <td><p>Do an INSERT.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_assign_returned_values</span></code>(returned_values, ...)</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_prepare_related_fields_for_save</span></code>(operation_name)</p></td>
 <td><p></p></td>
@@ -1178,67 +1180,64 @@
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_perform_date_checks</span></code>(date_checks)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_default_pk</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_composite_pk</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_composite_pk</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_db_table_comment</span></code>(databases)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_db_table_comment</span></code>(databases)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_swappable</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_swappable</span></code>()</p></td>
 <td><p>Check if the swapped model exists.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_managers</span></code>(**kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_managers</span></code>(**kwargs)</p></td>
 <td><p>Perform all manager checks.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_fields</span></code>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_fields</span></code>(**kwargs)</p></td>
 <td><p>Perform all field checks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_m2m_through_same_relationship</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_m2m_through_same_relationship</span></code>()</p></td>
 <td><p>Check if no relationship model is used by more than one m2m field.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_id_field</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_id_field</span></code>()</p></td>
 <td><p>Check if <cite>id</cite> field is a primary key.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_field_name_clashes</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_field_name_clashes</span></code>()</p></td>
 <td><p>Forbid field shadowing in multi-table inheritance.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_column_name_clashes</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_column_name_clashes</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model_name_db_lookup_clashes</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_model_name_db_lookup_clashes</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_property_name_related_field_accessor_clashes</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_property_name_related_field_accessor_clashes</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_single_primary_key</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_single_primary_key</span></code>()</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_unique_together</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_unique_together</span></code>()</p></td>
 <td><p>Check the value of "unique_together" option.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_indexes</span></code>(databases)</p></td>
-<td><p>Check fields, names, and conditions of indexes.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_local_fields</span></code>(fields, option)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_indexes</span></code>(databases)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_ordering</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_local_fields</span></code>(fields, option)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_ordering</span></code>()</p></td>
 <td><p>Check "ordering" option -- is it a list of strings and do all fields exist?</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_long_column_names</span></code>(databases)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_long_column_names</span></code>(databases)</p></td>
 <td><p>Check that any auto-generated column names are shorter than the limits for each database in which the model will be created.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_expr_references</span></code>(expr)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_get_expr_references</span></code>(expr)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_constraints</span></code>(databases)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_check_constraints</span></code>(databases)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -1252,6 +1251,10 @@
 <dl class="py exception">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.WialonToken.MultipleObjectsReturned">
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonToken.MultipleObjectsReturned" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonToken.MultipleObjectsReturned'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonToken.NotUpdated">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonToken.NotUpdated" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonToken.NotUpdated'">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.WialonToken.customer">
@@ -1295,6 +1298,10 @@
 <dl class="py exception">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned">
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultipleObjectsReturned</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned'">¶</a></dt>
+<dd></dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.NotUpdated">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NotUpdated</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.NotUpdated" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.NotUpdated'">¶</a></dt>
 <dd></dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.WialonNotificationMethod">
@@ -1866,6 +1873,7 @@
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage"><code class="docutils literal notranslate"><span class="pre">MessagePackage</span></code></a><ul>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.DoesNotExist'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">MessagePackage.DoesNotExist</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">MessagePackage.MultipleObjectsReturned</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.NotUpdated'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.NotUpdated"><code class="docutils literal notranslate"><span class="pre">MessagePackage.NotUpdated</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.count'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.count"><code class="docutils literal notranslate"><span class="pre">MessagePackage.count</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.customer'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.customer"><code class="docutils literal notranslate"><span class="pre">MessagePackage.customer</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.MessagePackage.max'" class="reference internal" href="#terminusgps_notifications.models.MessagePackage.max"><code class="docutils literal notranslate"><span class="pre">MessagePackage.max</span></code></a></li>
@@ -1875,6 +1883,7 @@
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer</span></code></a><ul>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.DoesNotExist'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.DoesNotExist</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.MultipleObjectsReturned</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.NotUpdated'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.NotUpdated"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.NotUpdated</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_resources_from_wialon"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.get_resources_from_wialon()</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_units_from_wialon'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.get_units_from_wialon"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.get_units_from_wialon()</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.company'" class="reference internal" href="#terminusgps_notifications.models.TerminusgpsNotificationsCustomer.company"><code class="docutils literal notranslate"><span class="pre">TerminusgpsNotificationsCustomer.company</span></code></a></li>
@@ -1893,6 +1902,7 @@
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken'" class="reference internal" href="#terminusgps_notifications.models.WialonToken"><code class="docutils literal notranslate"><span class="pre">WialonToken</span></code></a><ul>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.DoesNotExist'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">WialonToken.DoesNotExist</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.MultipleObjectsReturned'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">WialonToken.MultipleObjectsReturned</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.NotUpdated'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.NotUpdated"><code class="docutils literal notranslate"><span class="pre">WialonToken.NotUpdated</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.customer'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.customer"><code class="docutils literal notranslate"><span class="pre">WialonToken.customer</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.flags'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.flags"><code class="docutils literal notranslate"><span class="pre">WialonToken.flags</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonToken.name'" class="reference internal" href="#terminusgps_notifications.models.WialonToken.name"><code class="docutils literal notranslate"><span class="pre">WialonToken.name</span></code></a></li>
@@ -1901,6 +1911,7 @@
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification"><code class="docutils literal notranslate"><span class="pre">WialonNotification</span></code></a><ul>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.DoesNotExist'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.DoesNotExist"><code class="docutils literal notranslate"><span class="pre">WialonNotification.DoesNotExist</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.MultipleObjectsReturned"><code class="docutils literal notranslate"><span class="pre">WialonNotification.MultipleObjectsReturned</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.NotUpdated'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.NotUpdated"><code class="docutils literal notranslate"><span class="pre">WialonNotification.NotUpdated</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.WialonNotificationMethod'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.WialonNotificationMethod"><code class="docutils literal notranslate"><span class="pre">WialonNotification.WialonNotificationMethod</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_absolute_url'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_absolute_url"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_absolute_url()</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_actions'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_actions"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_actions()</span></code></a></li>
