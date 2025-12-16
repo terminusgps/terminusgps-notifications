@@ -2,9 +2,9 @@
 <section class="relative" id="{{ notif.pk }}" hx-target="this" hx-inherit="false">
     <a href="{{ notif.get_absolute_url }}">
         <div class="py-2 px-4 border border-current rounded bg-gray-50 flex justify-between items-center dark:bg-gray-900">
-            <div class="flex gap-2 items-center">
-                <div class="rounded-full size-4 border {% if notif.enabled %}bg-green-400 border-green-600 animate-pulse{% else %}bg-red-400 border-red-600{% endif %}">&nbsp;</div>
-                <p class="font-semibold">{{ notif.name }}</p>
+            <div class="flex flex-col">
+                <p class="font-semibold truncate">{{ notif.name }}</p>
+                {% if notif.resource_name %}<p class="font-light text-sm">{{ notif.resource_name }}</p>{% endif %}
             </div>
             <div class="flex flex-col gap-1 items-center">
             {% if notif.method == "sms" %}
