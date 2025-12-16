@@ -1522,6 +1522,22 @@
 </dl>
 </dd></dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.get_resource_name">
+<span class="sig-name descname"><span class="pre">get_resource_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">WialonSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.get_resource_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.get_resource_name" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.get_resource_name'">¶</a></dt>
+<dd><p>Returns the Wialon resource name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>session</strong> (<em>WialonSession</em>) – A valid Wialon API session.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Wialon resource name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.get_text">
 <span class="sig-name descname"><span class="pre">get_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.get_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.get_text" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.get_text'">¶</a></dt>
 <dd><p>Returns the notification text (txt).</p>
@@ -1541,6 +1557,15 @@
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><em>Any</em></a>]</p>
 </dd>
 </dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/terminusgps_notifications/models.html#WialonNotification.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.save" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.save'">¶</a></dt>
+<dd><p>Save the current instance. Override this in a subclass if you want to
+control the saving process.</p>
+<p>The ‘force_insert’ and ‘force_update’ parameters can be used to insist
+that the “save” must be an SQL insert or update (or equivalent for
+non-SQL backends), respectively. Normally, they should not be set.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.update_in_wialon">
@@ -1831,6 +1856,11 @@
 <dd><p>Resource id.</p>
 </dd></dl>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.resource_name">
+<span class="sig-name descname"><span class="pre">resource_name</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.resource_name" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.resource_name'">¶</a></dt>
+<dd><p>Resource name.</p>
+</dd></dl>
+<dl class="py attribute">
 <dt class="sig sig-object py" id="terminusgps_notifications.models.WialonNotification.schedule">
 <span class="sig-name descname"><span class="pre">schedule</span></span><a class="headerlink" href="#terminusgps_notifications.models.WialonNotification.schedule" title="Link to this definition" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#terminusgps_notifications.models.WialonNotification.schedule'">¶</a></dt>
 <dd><p>Schedule.</p>
@@ -1916,8 +1946,10 @@
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_absolute_url'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_absolute_url"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_absolute_url()</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_actions'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_actions"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_actions()</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_data_from_wialon'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_data_from_wialon"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_data_from_wialon()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_resource_name'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_resource_name"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_resource_name()</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_text'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_text"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_text()</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.get_wialon_parameters'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.get_wialon_parameters"><code class="docutils literal notranslate"><span class="pre">WialonNotification.get_wialon_parameters()</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.save'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.save"><code class="docutils literal notranslate"><span class="pre">WialonNotification.save()</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.update_in_wialon'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.update_in_wialon"><code class="docutils literal notranslate"><span class="pre">WialonNotification.update_in_wialon()</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.actions'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.actions"><code class="docutils literal notranslate"><span class="pre">WialonNotification.actions</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.activation_time'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.activation_time"><code class="docutils literal notranslate"><span class="pre">WialonNotification.activation_time</span></code></a></li>
@@ -1939,6 +1971,7 @@
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.min_duration_prev'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.min_duration_prev"><code class="docutils literal notranslate"><span class="pre">WialonNotification.min_duration_prev</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.name'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.name"><code class="docutils literal notranslate"><span class="pre">WialonNotification.name</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.resource_id'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.resource_id"><code class="docutils literal notranslate"><span class="pre">WialonNotification.resource_id</span></code></a></li>
+<li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.resource_name'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.resource_name"><code class="docutils literal notranslate"><span class="pre">WialonNotification.resource_name</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.schedule'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.schedule"><code class="docutils literal notranslate"><span class="pre">WialonNotification.schedule</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.text'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.text"><code class="docutils literal notranslate"><span class="pre">WialonNotification.text</span></code></a></li>
 <li><a :data-current="activeSection === '#terminusgps_notifications.models.WialonNotification.timezone'" class="reference internal" href="#terminusgps_notifications.models.WialonNotification.timezone"><code class="docutils literal notranslate"><span class="pre">WialonNotification.timezone</span></code></a></li>
