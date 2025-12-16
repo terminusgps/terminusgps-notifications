@@ -623,6 +623,8 @@ class WialonNotification(models.Model):
     """Wialon id."""
     resource_id = models.PositiveBigIntegerField()
     """Resource id."""
+    resource_name = models.CharField(max_length=50, blank=True)
+    """Resource name."""
     customer = models.ForeignKey(
         "terminusgps_notifications.TerminusgpsNotificationsCustomer",
         on_delete=models.CASCADE,

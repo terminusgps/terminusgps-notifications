@@ -3,12 +3,29 @@ import urllib.parse
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
 from django.urls import reverse
+from terminusgps.wialon.session import WialonSession
 from terminusgps_payments.models import CustomerProfile
 
 from terminusgps_notifications.models import (
     TerminusgpsNotificationsCustomer,
     WialonToken,
 )
+
+
+def get_resource_name(id: int, session: WialonSession) -> str:
+    """
+    Returns a Wialon resource name by id.
+
+    :param id: Wialon resource id.
+    :type id: int
+    :param session: A valid Wialon API session.
+    :type session: ~terminusgps.wialon.session.WialonSession
+    :returns: The Wialon resource name.
+    :rtype: str
+
+    """
+    response = session.wialon_api.core_search_item(**{"id": id, "flags": 1})
+    return str(response["item"]["nm"])
 
 
 def get_customer(
