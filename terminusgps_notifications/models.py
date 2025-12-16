@@ -640,11 +640,33 @@ class WialonNotification(models.Model):
         """Returns the notification name."""
         return str(self.name)
 
+    def save(self, **kwargs) -> None:
+        if not self.resource_name:
+            with WialonSession(token=self.customer.token.name) as session:
+                self.resource_name = self.get_resource_name(session)
+        return super().save(**kwargs)
+
     def get_absolute_url(self) -> str:
         """Returns a URL pointing to the notification's detail view."""
         return reverse(
             "terminusgps_notifications:detail notifications",
             kwargs={"notification_pk": self.pk},
+        )
+
+    def get_resource_name(self, session: WialonSession) -> str:
+        """
+        Returns the Wialon resource name.
+
+        :param session: A valid Wialon API session.
+        :type session: ~terminusgps.wialon.session.WialonSession
+        :returns: The Wialon resource name.
+        :rtype: str
+
+        """
+        return str(
+            session.wialon_api.core_search_item(
+                **{"id": self.resource_id, "flags": 1}
+            )["item"]["nm"]
         )
 
     def get_text(self) -> str:
