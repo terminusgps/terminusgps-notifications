@@ -17,7 +17,7 @@ django.setup()
 project = "terminusgps-notifications"
 copyright = "2025, Terminus GPS, LLC"
 author = "Terminus GPS, LLC"
-release = "1.2.0"
+release = "1.4.0"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
